@@ -213,6 +213,9 @@
         saleUntil: parseDate(get(r, "sale_until"), true),
         description: get(r, "description"),
         image: get(r, "image"),
+        details: get(r, "details"),
+        gallery: get(r, "gallery").split(/[,\n]+/).map(s => s.trim()).filter(Boolean),
+        contact: get(r, "contact"),
         sort: isNaN(sort) ? 1e9 + idx : sort
       });
     });

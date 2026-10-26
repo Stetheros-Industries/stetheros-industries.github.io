@@ -7,6 +7,7 @@
   const $ = s => document.querySelector(s);
   const SALE_CHIP = "On sale";
   const BRAND_BG = "#050810";
+  const DISCORD = window.DISCORD_URL || "https://discord.gg/qZYwghHq5J";
   let brands = {};
 
   // ---------- branded divisions (§3.8) ----------
@@ -117,11 +118,12 @@
         <h3>${esc(it.name)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
         ${priceHTML(it)}
+        ${moreBtn(it)}
       </div></article>`;
   }
   function svcHTML(it, withBadge) {
     return `<article class="svc">
-        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}</div>
+        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
   }
@@ -166,6 +168,95 @@
 
   $("#q").addEventListener("input", e => { query = e.target.value; renderGoods(); });
 
+  // ---------- item details (a pop-up window, one at a time) ----------
+  // An item gets a "More info" button when its row has text in "details" or files in "gallery".
+  function hasMore(it) { return !!(it.details || it.gallery.length); }
+  function itemKey(it) { return String(it.id || it.name).replace(/[^A-Za-z0-9_-]+/g, "-"); }
+  function moreBtn(it) {
+    return hasMore(it) ? `<button type="button" class="more-btn" data-item="${esc(itemKey(it))}">More info</button>` : "";
+  }
+  // Plain text from the sheet: blank lines separate paragraphs, lines starting "- " are bullets.
+  function detailsHTML(s) {
+    const out = []; let para = [], list = [];
+    const flushP = () => { if (para.length) out.push(`<p>${para.map(esc).join("<br>")}</p>`); para = []; };
+    const flushL = () => { if (list.length) out.push(`<ul>${list.map(l => `<li>${esc(l)}</li>`).join("")}</ul>`); list = []; };
+    String(s).split("\n").forEach(raw => {
+      const l = raw.trim();
+      if (!l) { flushP(); flushL(); return; }
+      const m = l.match(/^[-*\u2022]\s+(.*)$/);
+      if (m) { flushP(); list.push(m[1]); } else { flushL(); para.push(l); }
+    });
+    flushP(); flushL();
+    return out.join("");
+  }
+  function contactHTML(it) {
+    const who = it.contact ? `<strong>${esc(it.contact)}</strong>` : `someone with the <strong>@Sales</strong> role`;
+    const what = it.type === "service"
+      ? `To book this service, join our Discord server and message ${who}. You pay when you book, and the payment is held in escrow until the job is done (<a href="policy/index.html#s8-4">§8.4</a>).`
+      : `Buy it at any Stetheros Industries shop (<a href="#stores" data-close>store locations</a>). For a custom or bulk order, join our Discord server and message ${who}.`;
+    return `<div class="dlg-contact"><p>${what}</p>
+      <div class="dlg-actions"><a class="btn" href="${esc(DISCORD)}" target="_blank" rel="noopener">Join the Discord server</a>
+      <button type="button" class="btn ghost" data-copy>Copy link to this item</button></div></div>`;
+  }
+  function dialogHTML(it) {
+    const pics = [...new Set([it.image, ...it.gallery].filter(Boolean))];
+    const media = pics.length ? `<div class="dlg-media">
+        <div class="dlg-main"><img src="${esc(imageSrc(pics[0]))}" alt="${esc(it.name)}"></div>
+        ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic="${esc(imageSrc(p))}" aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img src="${esc(imageSrc(p))}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
+      </div>` : "";
+    return `<div class="dlg-head"><div>
+        <p class="cat">${esc(it.category || (it.type === "service" ? "Service" : "Other"))}${tags(it)}</p>
+        ${badge(it)}
+        <h2 id="dlg-title">${esc(it.name)}</h2></div>
+        <button type="button" class="dlg-close" data-close aria-label="Close" autofocus>&times;</button></div>
+      ${media}
+      ${it.description ? `<p class="dlg-desc">${esc(it.description)}</p>` : ""}
+      ${priceHTML(it)}
+      ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
+      ${contactHTML(it)}`;
+  }
+  const dlg = $("#item-dialog");
+  function openItem(key) {
+    const it = items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === key);
+    if (!it || !dlg) return false;
+    const b = brandOf(it);
+    dlg.className = "item-dialog" + (b ? " dlg-brand" : "");
+    dlg.setAttribute("style", b ? brandVars(b) : "");
+    dlg.innerHTML = dialogHTML(it);
+    dlg.dataset.item = key;
+    if (!dlg.open) dlg.showModal();
+    dlg.scrollTop = 0;
+    history.replaceState(null, "", "#item-" + key);
+    return true;
+  }
+  if (dlg) {
+    dlg.addEventListener("click", e => {
+      if (e.target === dlg || e.target.closest("[data-close]") || e.target.closest(".brand-badge")) { dlg.close(); return; }
+      const pic = e.target.closest("[data-pic]");
+      if (pic) {
+        dlg.querySelector(".dlg-main img").src = pic.dataset.pic;
+        dlg.querySelectorAll("[data-pic]").forEach(x => x.setAttribute("aria-pressed", String(x === pic)));
+      }
+      const copy = e.target.closest("[data-copy]");
+      if (copy) {
+        const url = location.href.split("#")[0] + "#item-" + dlg.dataset.item;
+        const done = () => { copy.textContent = "Link copied"; setTimeout(() => { copy.textContent = "Copy link to this item"; }, 2000); };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => window.prompt("Copy this link:", url));
+        else window.prompt("Copy this link:", url);
+      }
+    });
+    dlg.addEventListener("close", () => {
+      if (location.hash.startsWith("#item-")) history.replaceState(null, "", location.pathname + location.search);
+    });
+  }
+  window.addEventListener("hashchange", () => {
+    if (location.hash.startsWith("#item-")) openItem(decodeURIComponent(location.hash.slice(6)));
+  });
+  document.addEventListener("click", e => {
+    const btn = e.target.closest(".more-btn");
+    if (btn) openItem(btn.dataset.item);
+  });
+
   loadConstants().then(() => {
     renderDiscount();
     return loadCatalog();
@@ -181,7 +272,8 @@
     renderChips(); renderGoods(); renderServices(); renderStores();
     // Sections such as a division's are built after the page loads, so the browser
     // cannot jump to a link like index.html#brand-ihi by itself. Do it now.
-    if (location.hash.length > 1) {
+    if (location.hash.startsWith("#item-")) openItem(decodeURIComponent(location.hash.slice(6)));
+    else if (location.hash.length > 1) {
       const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
       if (target) requestAnimationFrame(() => target.scrollIntoView());
     }
