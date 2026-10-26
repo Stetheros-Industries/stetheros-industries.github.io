@@ -299,7 +299,7 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .brand-zone {
   --paper: var(--b-bg); --surface: #0e1322; --sunken: #141b2e; --ink: #eef2fb; --muted: #9ba6c2; --line: #222b45;
   --accent: var(--b-hi); --accent-ink: #ffffff; --steel: var(--b-acc); --warn-bg: #33270f; --warn: #f0b75e;
-  position: relative; background: var(--b-bg); color: var(--ink); padding-block: 100px 88px; margin-top: 8px; scroll-margin-top: var(--head-h);
+  position: relative; background: var(--b-bg); color: var(--ink); padding-block: 100px 88px; margin-top: 8px; scroll-margin-top: -72px;
 }
 .brand-zone::before, .brand-zone::after { content: ""; position: absolute; left: 0; right: 0; height: 88px; pointer-events: none; }
 .brand-zone::before { top: 0; background: linear-gradient(to bottom, var(--page), var(--b-bg)); }

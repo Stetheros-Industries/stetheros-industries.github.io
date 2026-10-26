@@ -179,6 +179,12 @@
       s.textContent = "These are example items. Connect the Catalog tab of the company sheet in js/config.js to show the real catalog.";
     }
     renderChips(); renderGoods(); renderServices(); renderStores();
+    // Sections such as a division's are built after the page loads, so the browser
+    // cannot jump to a link like index.html#brand-ihi by itself. Do it now.
+    if (location.hash.length > 1) {
+      const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) requestAnimationFrame(() => target.scrollIntoView());
+    }
   }).catch(e => {
     $("#goods-grid").innerHTML = `<p class="empty-msg">The catalog could not be loaded (${esc(e.message)}). Please try again later.</p>`;
     $("#services-list").innerHTML = "";
