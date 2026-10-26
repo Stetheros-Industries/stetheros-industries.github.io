@@ -11,4 +11,8 @@
   if (window.ResizeObserver) new ResizeObserver(size).observe(band);
   else window.addEventListener("resize", size);
   window.addEventListener("scroll", shade, { passive: true });
+  // The Discord invite can be changed in one place: window.DISCORD_URL in js/config.js.
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.DISCORD_URL) document.querySelectorAll("[data-discord]").forEach(a => { a.href = window.DISCORD_URL; });
+  });
 })();

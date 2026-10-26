@@ -373,3 +373,5 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .dlg-head { padding: 14px 16px 10px; }
   .dlg-head h2 { font-size: 24px; }
 }
+
+.foot-links { margin-top: 8px; }
