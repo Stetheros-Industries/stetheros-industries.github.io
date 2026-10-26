@@ -39,7 +39,7 @@
     const d = C.citizen_discount;
     return [
       { id: "none", label: "No discount", value: 0 },
-      { id: "home", label: `Prunia citizen or government (${fmt(d, "pct")})`, value: d },
+      { id: "home", label: `Prunian citizen or government (${fmt(d, "pct")})`, value: d },
       { id: "plan", label: `Economic Plan nation (${fmt(d, "pct")})`, value: d },
       { id: "custom", label: "Other discount", value: null }
     ];

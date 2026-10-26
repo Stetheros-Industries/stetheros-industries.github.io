@@ -119,11 +119,11 @@ The second prohibition applies within reason. General-use infrastructure, such a
 
 **§3.8 Branded divisions.** A branded division is a part of the company that sells under its own name and logo, for example Isonian Heavy Industries. It remains part of the company in every respect, and the rules on revenue, supply, equity, dividends, and assets apply to its members exactly as to every other member (§4 to §7).
 
-1. A branded division is created by a 66% vote of the whole board, including the member who will head it (§9.2). The same vote can end it.
+1. A branded division is created by a 66% vote of the whole board, including the member who will head it (§9.2). The same vote can end it at any time.
 2. A good or service carries the division's name when the division produces it and it is listed under that name on the catalog (§3.2), even if company resources helped produce it. Its prices and promotional discounts are set as for any other item (§3.7), and it is sold through company shops, which may display the division's name.
 3. The division may use company resources, such as company-owned assets, supplies, or capital, only with the usual approval, and its head may not approve that use. Heading a division gives no powers beyond the member's existing role.
 4. The ledger shows the division's revenue separately, for reporting only.
-5. A division also ends when its head leaves the company or becomes inactive (§6.6). Its goods are then listed under the company's name, and assets stay with whoever owns them under §7. The division's name and logo belong to its head, and the company stops using them.
+5. A division also ends when its head leaves the company. It does not end because its head is inactive, but once the head has been inactive for six weeks (§6.6), the CEO may end it alone or a majority of the board may end it, and a majority of the board may challenge the CEO's decision within the 24-hour window (§9.2, §9.3). When a division ends, its goods are listed under the company's name, and assets stay with whoever owns them under §7. The division's name and logo belong to its head, and the company stops using them.
 
 ## §4 Revenue and Payouts
 
@@ -353,7 +353,7 @@ c_g = κ × D_g,   where κ = 0.5 to start
 **§9.2 Approvals.**
 
 1. The CEO alone can approve builds, contracts, supply budgets, changes to the bulk discount (§3.2), promotional discounts (§3.7), and changes to the dividend rate (§6.5). A majority of the board can challenge such an approval before or after the CEO makes it, and can also approve these on its own, without the CEO. A majority means more than half of the board, and a tie leaves the CEO's approval standing.
-2. A 66% vote of the board is required for cash-limit overrides (§7.6), changes to infrastructure payments (§7.8), lull periods (§6.7), decisions on severe offenses (§9.9), wartime remedies beyond escrow (§12.8), creating or ending a branded division (§3.8), and any payment to the CEO.
+2. A 66% vote of the board is required for cash-limit overrides (§7.6), changes to infrastructure payments (§7.8), lull periods (§6.7), decisions on severe offenses (§9.9), wartime remedies beyond escrow (§12.8), creating or ending a branded division, except that one whose head has been inactive for six weeks may be ended under §3.8, and any payment to the CEO.
 3. An approval that benefits the CEO personally needs a majority of the board excluding the CEO.
 
 **§9.3 Challenge window.** The challenge window is 24 hours after the CEO's approval. Members may start building before it closes, at the risk of the approval being blocked. After the window closes, the approval is final, and the board can change only future decisions.
@@ -411,7 +411,7 @@ Strikes expire after 12 weeks without a violation.
 
 > **What this section does.** It sets out how the company returns value to the nations where it operates. Prunia, the home nation, is covered by the Home Charter, and any other nation may sign the Economic Plan. It lists what each side gives and receives under the two agreements, the 10% citizen discount and how it interacts with the revenue split, the profit pool and how it is shared among nations, and the rule against reselling discounted goods.
 
-**§11.1 Two agreements.** Both agreements are contracts between the company and a nation's government. Any nation that grants benefits similar to Prunia's can receive similar extras. The one exception is priority on stock that is not tied to any nation, which belongs only to the home nation, because the company cannot give that priority to both sides of a war (§12.4). The company is a private business with Prunia as its home jurisdiction, and it does not take any nation's side in a war beyond the rules in §12.
+**§11.1 Two agreements.** Both agreements are contracts between the company and a nation's government. Any nation that grants benefits similar to those Prunia grants can receive similar extras. The one exception is priority on stock that is not tied to any nation, which belongs only to the home nation, because the company cannot give that priority to both sides of a war (§12.4). The company is a private business with Prunia as its home jurisdiction, and it does not take any nation's side in a war beyond the rules in §12.
 
 **§11.2 The Home Charter (Prunia).**
 
@@ -433,14 +433,14 @@ The company gives Prunia:
 
 Two further terms are *provisional*:
 
-1. Prunia's treasury should receive at least as much from the company as it pays out, measured each period by the formula below.
-2. The company will not move its core infrastructure and storage out of Prunia without Prunia's consent.
+1. The Prunian treasury should receive at least as much from the company as it pays out, measured each period by the formula below.
+2. The company will not move its core infrastructure and storage out of Prunia without Prunian consent.
 
 ```text
 N = Taxes + Pool − Exchange ≥ 0
 ```
 
-**In plain terms.** Taxes are what the company pays Prunia in tax. Pool is Prunia's share of the profit pool (§11.5). Exchange is the exchange-cost compensation that Prunia pays the company. The test passes when taxes plus the pool share are at least the exchange compensation. With taxes of 100, a pool share of 150, and exchange compensation of 40, the result is 210, so the test passes.
+**In plain terms.** Taxes are what the company pays Prunia in tax. Pool is the Prunian share of the profit pool (§11.5). Exchange is the exchange-cost compensation that Prunia pays the company. The test passes when taxes plus the pool share are at least the exchange compensation. With taxes of 100, a pool share of 150, and exchange compensation of 40, the result is 210, so the test passes.
 
 **§11.3 The Economic Plan (any nation).** A signatory nation receives:
 
@@ -472,7 +472,7 @@ r_new = 0.8 × r_old
 
 &#91;image: Formula: nation profit pool allocation, half by infrastructure value and half by sales\]
 
-**In plain terms.** P\_r is nation r's payment and Π is total company profit for the period. A\_r is the approved value of company-owned infrastructure currently active in nation r, and retired infrastructure is excluded. S\_r is the revenue the company received from sales at shops in nation r during the period, after discounts. Each sum runs over every pool nation m, Prunia included. If either total is zero, the other term carries the full weight. A new signatory dilutes the other nations' shares rather than enlarging the pool. For example, suppose Prunia holds 80% of the infrastructure value and 70% of the sales, and a second nation holds 20% and 30%. Prunia's weight is 0.5 × 0.8 + 0.5 × 0.7 = 0.75 and the second nation's is 0.25. On a profit of 1,000 Credits the pool is 70, of which Prunia receives 52.5 and the second nation 17.5.
+**In plain terms.** P\_r is nation r's payment and Π is total company profit for the period. A\_r is the approved value of company-owned infrastructure currently active in nation r, and retired infrastructure is excluded. S\_r is the revenue the company received from sales at shops in nation r during the period, after discounts. Each sum runs over every pool nation m, Prunia included. If either total is zero, the other term carries the full weight. A new signatory dilutes the other nations' shares rather than enlarging the pool. For example, suppose Prunia holds 80% of the infrastructure value and 70% of the sales, and a second nation holds 20% and 30%. The Prunian weight is 0.5 × 0.8 + 0.5 × 0.7 = 0.75 and the second nation's is 0.25. On a profit of 1,000 Credits the pool is 70, of which Prunia receives 52.5 and the second nation 17.5.
 
 **§11.6 Resale of discounted goods.** Because discounted purchases have no cap, discounted goods are for the buyer's own use or for other citizens of the buyer's nation, who qualify for the discount anyway. Resale to anyone else is prohibited. A government may distribute discounted goods to its citizens but may not sell them on.
 
@@ -533,7 +533,7 @@ x_b > 5 × median(x)
 | §1.4 | Company currency | The Credit for all banking; no conversion unless the law of a nation where the company operates requires it |
 | §3.2 | Bulk discount | 15% to start, on orders of at least an item's listed bulk quantity; set by the CEO or the board; combines with the citizen discount and any promotional discount |
 | §3.7 | Promotional discount | A temporary discount on a good or service; approved by the CEO or the board, with the consent of each member who supplies it from production the member owns; members who sold the asset to the company, or only operate or maintain company-owned assets, do not consent; combines with the bulk and citizen discounts |
-| §3.8 | Branded division | Created or ended by a 66% vote of the whole board, including its head; pay, equity, and dividends unchanged; uses company resources only with approval its head may not give; ends if its head leaves or becomes inactive; its name and logo belong to its head |
+| §3.8 | Branded division | Created or ended by a 66% vote of the whole board, including its head; pay, equity, and dividends unchanged; uses company resources only with approval its head may not give; ends if its head leaves, or by a decision of the CEO or a board majority once its head has been inactive for six weeks; its name and logo belong to its head |
 | §3.5 | Internal price | Determined dynamically; used for personal use of company goods, goods paid in a buyback, and custom orders |
 | §4.1 | Member share of revenue | 80% |
 | §4.1 | Company share of revenue | 20%, unless a separate deal is made |

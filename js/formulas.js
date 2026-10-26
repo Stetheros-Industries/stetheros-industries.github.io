@@ -185,7 +185,7 @@ window.FORMULAS = {
     title: "Prunia net-flow test",
     sections: ["11.2"],
     tex: String.raw`N = \text{Taxes} + \text{Pool} - \text{Exchange} \ge 0`,
-    plain: "A provisional Home Charter term: what the company pays Prunia in tax plus Prunia's pool share should be at least the exchange compensation Prunia pays the company."
+    plain: "A provisional Home Charter term: what the company pays Prunia in tax plus the Prunian pool share should be at least the exchange compensation Prunia pays the company."
   },
   tax: {
     title: "Signatory sales-tax cut",

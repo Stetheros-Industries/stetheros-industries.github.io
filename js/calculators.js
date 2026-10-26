@@ -483,8 +483,8 @@
     {
       id: "netflow", title: "Prunia net-flow test", modes: ["board", "government"],
       sections: ["11.2"], formulas: ["netflow"],
-      intro: "The provisional Home Charter test of what Prunia's treasury receives against what it pays.",
-      inputs: [num("taxes", "Taxes paid to Prunia (Cr)", 100), num("pool", "Prunia's pool share (Cr)", 150), num("ex", "Exchange compensation paid by Prunia (Cr)", 40)],
+      intro: "The provisional Home Charter test of what the Prunian treasury receives against what it pays.",
+      inputs: [num("taxes", "Taxes paid to Prunia (Cr)", 100), num("pool", "Prunian pool share (Cr)", 150), num("ex", "Exchange compensation paid by Prunia (Cr)", 40)],
       compute(v) {
         const n = v.taxes + v.pool - v.ex;
         return { results: [R("Net flow to Prunia", n, "cr", true)], status: n >= 0 ? { tone: "good", text: "The test passes." } : { tone: "bad", text: "The test fails." } };
