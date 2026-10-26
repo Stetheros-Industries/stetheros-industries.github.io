@@ -499,15 +499,17 @@
     },
     {
       id: "discount", title: "Discounted sale", modes: ["member", "board", "government"],
-      sections: ["11.4", "3.2", "4.1"], formulas: ["discount"],
-      intro: "How the citizen and bulk discounts are shared when a member's goods sell at a discount.",
+      sections: ["11.4", "3.2", "3.7", "4.1"], formulas: ["discount"],
+      intro: "How the citizen, bulk, and promotional discounts are shared when a member's goods sell at a discount.",
       inputs: [num("price", "List price per unit (Cr)", 100), num("units", "Units", 1),
         yn("citizen", "Buyer is a citizen or government of a Home Charter or Economic Plan nation", "yes"),
-        yn("bulk", "Order meets the item's bulk quantity", "no")],
+        yn("bulk", "Order meets the item's bulk quantity", "no"),
+        pct("promo", "Approved promotional discount on the item (0 if none)", 0)],
       compute(v, C) {
         const d = B(v.citizen) ? C.citizen_discount : 0, b = B(v.bulk) ? C.bulk_discount : 0;
-        const paid = (1 - d) * (1 - b) * v.price * v.units;
-        return { results: [R("Combined discount", 1 - (1 - d) * (1 - b), "pct"), R("Buyer pays", paid, "cr"), R("Member receives", C.member_share * paid, "cr", true), R("Company keeps", (1 - C.member_share) * paid, "cr")], notes: ["The discounts are applied one after the other, and the 80/20 split applies to the discounted price (§4.1). On goods the company produces itself, the company bears the whole discount."] };
+        const g = Math.min(Math.max(v.promo || 0, 0), 1);
+        const keep = (1 - d) * (1 - b) * (1 - g), paid = keep * v.price * v.units;
+        return { results: [R("Combined discount", 1 - keep, "pct"), R("Buyer pays", paid, "cr"), R("Member receives", C.member_share * paid, "cr", true), R("Company keeps", (1 - C.member_share) * paid, "cr")], notes: ["The discounts are applied one after the other, and the 80/20 split applies to the discounted price (§4.1). On goods the company produces itself, the company bears the whole discount.", "A promotional discount needs approval by the CEO or the board, and the consent of each member who supplies the item from production the member owns (§3.7)."] };
       }
     },
     {

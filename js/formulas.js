@@ -195,11 +195,11 @@ window.FORMULAS = {
     plain: "A provisional Economic Plan term: the nation cuts its sales tax on company sales by a share of its existing rate."
   },
   discount: {
-    title: "Citizen and bulk discounts",
-    sections: ["11.4", "3.2", "4.1"],
-    tex: String.raw`\begin{aligned}\text{Buyer pays} &= (1-d)\,(1-b)\,p\\ \text{Member} &= s \times \text{Buyer pays}\\ \text{Company} &= (1-s) \times \text{Buyer pays}\end{aligned}`,
+    title: "Citizen, bulk, and promotional discounts",
+    sections: ["11.4", "3.2", "3.7", "4.1"],
+    tex: String.raw`\begin{aligned}\text{Buyer pays} &= (1-d)\,(1-b)\,(1-g)\,p\\ \text{Member} &= s \times \text{Buyer pays}\\ \text{Company} &= (1-s) \times \text{Buyer pays}\end{aligned}`,
     symbols: { d: "citizen_discount", b: "bulk_discount", s: "member_share" },
-    legend: "p is the list price. d is 0 if the buyer is not a citizen of a partner nation; b is 0 if the order is below the item's bulk quantity.",
+    legend: "p is the list price. d is 0 if the buyer is not a citizen of a partner nation; b is 0 if the order is below the item's bulk quantity; g is the item's approved promotional discount, or 0 if it has none.",
     plain: "Each discount comes off the price in turn, and the 80/20 split is applied to what the buyer pays."
   },
   pool: {

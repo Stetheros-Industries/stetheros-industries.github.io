@@ -11,7 +11,7 @@ Stetheros Industries is a member-run industrial company. Members make goods and 
 **The company in ten points**
 
 1. **One seller.** Only the company lists company goods for sale. Members produce goods and deposit them in company storage, and may not sell catalog goods, or goods made with company production infrastructure, anywhere else. A sale outside the company is handled by the three-strike system (§3, §9.8).
-2. **Revenue split.** When a member's goods sell, the member receives 80% of the revenue and the company keeps 20%. Where the company pays for approved supplies, the split applies to profit after those supplies (§4.1, §4.2).
+2. **Revenue split.** When a member's goods sell, the member receives 80% of the revenue and the company keeps 20%. Where the company pays for approved supplies, the split applies to profit after those supplies. The split applies to the price after any discount, and a promotional discount on goods from a member's own production needs that member's consent (§3.7, §4.1, §4.2).
 3. **Paid before the sale.** For goods with a proven sales record, meaning sales in at least 3 of the last 4 weeks, the company pays 20% of the member's cut when the goods are deposited and the rest when they sell. Goods without a record, and deposits beyond what the company will pay for up front, are accepted on consignment and paid only after they sell (§4.3 to §4.5).
 4. **Stock targets.** The company aims to hold two weeks of expected sales of each good. Up-front payment is guaranteed only while stock is below that target, and the weekly budget is divided equally among active members, with a priority contract holder's committed quota covered first. A ledger kept by the Sales role and checked by an auditor records every deposit (§5).
 5. **Ownership and dividends.** Members earn equity points by contributing assets, with a bonus for contributing early in a server's life. The company distributes part of its profit to active members. The rate is 25% at server launch, and afterward the CEO or the board may change it, subject to the usual board challenge. Of each dividend, 85% is paid by equity share and 15% equally among active members. A member stays active by passing the activity test every two weeks, inactive points decay, and a member who leaves is bought out at the original value of the equity granted (§6).
@@ -29,7 +29,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | --- | --- | --- |
 | §1 | Purpose and Principles | Why the company exists and the rules it follows |
 | §2 | Definitions | The terms used throughout |
-| §3 | Membership and the Product Catalog | What members may not sell elsewhere, and how that is enforced |
+| §3 | Membership and the Product Catalog | What members may not sell elsewhere, how that is enforced, and promotional discounts |
 | §4 | Revenue and Payouts | The 80/20 split, up-front payments, consignment |
 | §5 | Supply Management | Stock targets, guarantee budgets, the stock ledger |
 | §6 | Equity and Dividends | Earning equity, dividends, activity, decay, buyback |
@@ -37,7 +37,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | §8 | Contracts and Services | Priority contracts, custom orders, services |
 | §9 | Governance and Enforcement | The board, the CEO, votes, roles, strikes |
 | §10 | Member-Advanced Purchases | Repayment when a member pays for approved purchases |
-| §11 | Nations | The Home Charter, the Economic Plan, discounts, the profit pool |
+| §11 | Nations: the Home Charter and the Economic Plan | The Home Charter, the Economic Plan, discounts, the profit pool |
 | §12 | Wartime Provisions | Strategic goods, asset protection, escrow, leave |
 | Appendix A | Reference Table | Every value, with its section |
 
@@ -95,11 +95,11 @@ Every section except §2 opens with a statement of what the section does, follow
 
 ## §3 Membership and the Product Catalog
 
-> **What this section does.** It sets out what members may not sell outside the company, which is what keeps the company the only seller. It defines the catalog and production infrastructure, states the two prohibitions that follow from them, explains how a member may take company goods for personal use, and describes how a sale outside the company is proven and penalized.
+> **What this section does.** It sets out what members may not sell outside the company, which is what keeps the company the only seller. It defines the catalog and production infrastructure, states the two prohibitions that follow from them, explains how a member may take company goods for personal use, describes how a sale outside the company is proven and penalized, and sets how a promotional discount is approved.
 
 **§3.1 The rule.** A member may not sell outside the company any good on the catalog, and may not sell outside the company any good made with company production infrastructure.
 
-**§3.2 The catalog.** The catalog is a fixed, named list of goods the company officially produces and sells, for example refined iron, redstone components, or a specific crafted item. Anything not on the list is personal activity and is unrestricted. The official catalog is the list of goods published on the company website, which the CEO and the Sales role maintain. Prices shown on the website are for reference only; the price charged in the company's shops governs. A good listed with a bulk quantity is sold at a bulk discount on orders of at least that quantity. The bulk discount is 15% to start, and the CEO or the board may change it like any other approval. It combines with the citizen discount (§11.4), each applied in turn.
+**§3.2 The catalog.** The catalog is a fixed, named list of goods the company officially produces and sells, for example refined iron, redstone components, or a specific crafted item. Anything not on the list is personal activity and is unrestricted. The official catalog is the list of goods published on the company website, which the CEO and the Sales role maintain. Prices shown on the website are for reference only; the price charged in the company's shops governs. A good listed with a bulk quantity is sold at a bulk discount on orders of at least that quantity. The bulk discount is 15% to start, and the CEO or the board may change it like any other approval. It combines with the citizen discount (§11.4) and any promotional discount (§3.7), each applied in turn.
 
 **§3.3 Production infrastructure.** Production infrastructure is any company-owned machine whose output flows automatically into company-owned storage. Goods made this way never pass through a member's inventory.
 
@@ -114,11 +114,13 @@ The second prohibition applies within reason. General-use infrastructure, such a
 
 **§3.6 Enforcement.** Player-to-player transfers are not logged on the server, so a sale outside the company is established by evidence from the buyer or a witness, such as a screenshot of the transfer. Violations are handled under the strike system (§9.8).
 
+**§3.7 Promotional discounts.** A promotional discount is a temporary price reduction on a particular good or service, such as 20% off for two weeks. It is approved like any other approval: the CEO may approve it alone or a majority of the board may approve it, and a majority of the board may challenge the CEO's approval within the 24-hour window (§9.2, §9.3). It also needs the consent of each member who supplies the good or service from production the member owns, such as goods from an asset the member keeps (§7.1) or a service the member provides (§8.4), because that member's share is paid on the reduced price (§4.1). A member who has sold the asset to the company (§7.1), or who only operates or maintains a company-owned asset (§7.7, §7.9), does not need to consent, even if goods the member deposited earlier are still in stock. Once a promotional discount is approved, the Sales role lists it on the company website with its end date, if it has one. It combines with the bulk discount (§3.2) and the citizen discount (§11.4), each applied in turn.
+
 ## §4 Revenue and Payouts
 
 > **What this section does.** It sets how revenue is shared between a member and the company, and when a member is paid. It covers the 80/20 split and who bears the cost of supplies, the up-front payment on goods with proven revenue and how that status is earned, how goods without it are accepted on consignment, and how the cost of goods relates to dividends.
 
-**§4.1 The split.** A member whose goods are sold through the company receives 80% of the revenue from those goods. The company keeps 20%, unless a separate deal is made. Where a sale carries a discount, such as the bulk discount (§3.2) or the citizen discount (§11.4), the split applies to the discounted price.
+**§4.1 The split.** A member whose goods are sold through the company receives 80% of the revenue from those goods. The company keeps 20%, unless a separate deal is made. Where a sale carries a discount, such as the bulk discount (§3.2), a promotional discount (§3.7), or the citizen discount (§11.4), the split applies to the discounted price.
 
 **§4.2 Who pays for supplies.** Where a member pays for their own supplies, the split applies to revenue. Where the company pays for approved supplies, the split applies to profit after those supplies (see §7.9).
 
@@ -341,7 +343,7 @@ c_g = κ × D_g,   where κ = 0.5 to start
 
 **§9.2 Approvals.**
 
-1. The CEO alone can approve builds, contracts, supply budgets, and changes to the dividend rate (§6.5). A majority of the board can challenge such an approval before or after the CEO makes it, and can also approve these on its own, without the CEO. A majority means more than half of the board, and a tie leaves the CEO's approval standing.
+1. The CEO alone can approve builds, contracts, supply budgets, changes to the bulk discount (§3.2), promotional discounts (§3.7), and changes to the dividend rate (§6.5). A majority of the board can challenge such an approval before or after the CEO makes it, and can also approve these on its own, without the CEO. A majority means more than half of the board, and a tie leaves the CEO's approval standing.
 2. A 66% vote of the board is required for cash-limit overrides (§7.6), changes to infrastructure payments (§7.8), lull periods (§6.7), decisions on severe offenses (§9.9), wartime remedies beyond escrow (§12.8), and any payment to the CEO.
 3. An approval that benefits the CEO personally needs a majority of the board excluding the CEO.
 
@@ -520,7 +522,8 @@ x_b > 5 × median(x)
 | § | Parameter | Value |
 | --- | --- | --- |
 | §1.4 | Company currency | The Credit for all banking; no conversion unless the law of a nation where the company operates requires it |
-| §3.2 | Bulk discount | 15% to start, on orders of at least an item's listed bulk quantity; set by the CEO or the board; combines with the citizen discount |
+| §3.2 | Bulk discount | 15% to start, on orders of at least an item's listed bulk quantity; set by the CEO or the board; combines with the citizen discount and any promotional discount |
+| §3.7 | Promotional discount | A temporary discount on a good or service; approved by the CEO or the board, with the consent of each member who supplies it from production the member owns; members who sold the asset to the company, or only operate or maintain company-owned assets, do not consent; combines with the bulk and citizen discounts |
 | §3.5 | Internal price | Determined dynamically; used for personal use of company goods, goods paid in a buyback, and custom orders |
 | §4.1 | Member share of revenue | 80% |
 | §4.1 | Company share of revenue | 20%, unless a separate deal is made |

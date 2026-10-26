@@ -81,7 +81,7 @@ The old `Company-Calculator` repository keeps working at its address until you c
 ## 3. Routine updates
 
 - **Prices and catalog items:** edit the Catalog tab and update `last_updated`. The website changes on the next reload.
-- **Sales:** put a percentage in an item's `sale` column, and optionally a `sale_until` date so it ends by itself. Clear the cell to end a sale early.
+- **Sales:** a sale is a promotional discount under §3.7 of the policy. Before entering one, get approval from the CEO or the board and the consent of every member who supplies the item from production they own. Then put the percentage in the item's `sale` column, and optionally a `sale_until` date so it ends by itself. Clear the cell to end a sale early.
 - **Members:** add, edit, or hide `member` rows on the Catalog tab. The About page changes on the next reload.
 - **Constants:** edit the Constants tab and update `last_updated` there.
 - **Policy document:** in Claude, click the document's name → **Export → Markdown**, rename the file `policy.md`, and upload it into the repository's **`policy` folder**, replacing the old one.
