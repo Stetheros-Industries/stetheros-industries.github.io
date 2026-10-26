@@ -202,7 +202,8 @@
       const bulk = parseNumber(get(r, "bulk_min"));
       out.push({
         id, name, example,
-        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : "good",
+        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : /^(brand|division)/i.test(t) ? "brand" : "good",
+        brand: get(r, "brand").toUpperCase(),
         category: get(r, "category"),
         price: isNaN(p) ? null : p,
         unit: get(r, "unit"),

@@ -34,7 +34,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | Column | What to enter |
 |---|---|
 | `id` | Any short code, such as G001 or S001. Not shown on the site. |
-| `type` | `good`, `service`, `store`, or `member`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). |
+| `type` | `good`, `service`, `store`, `member`, or `brand`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). A `brand` row is a branded division (see below). |
 | `category` | A heading such as Metals or Logistics. Goods can be filtered by category. |
 | `name` | The item name. |
 | `price` | The reference price in Credits, as a number. Leave it empty to show "Price on request" (goods) or "Quoted" (services). |
@@ -43,6 +43,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | `sale` | A sale on this good or service, such as `20%`. Leave it empty for no sale. The sale price is shown with the full price struck through, the item is tagged "Sale", and an "On sale" filter appears. It combines with the customer's own discount and the bulk discount. |
 | `sale_from` | Optional. The first day of the sale, as `2026-11-01` or `11/1/2026`. Before that day the sale is not shown. |
 | `sale_until` | Optional. The last day of the sale, in the same format. After that day the sale disappears by itself, so you do not have to remember to remove it. A date the site cannot read hides the sale rather than risk advertising an old one. |
+| `brand` | For a good or service sold by a branded division (policy §3.8), the division's key, such as `IHI`. The item gets the division's badge in the main catalog and also appears in the division's own section. Leave it empty for Stetheros items. |
 | `description` | One or two sentences. |
 | `image` | A file name in the `images/` folder (for example `iron-ingots.png` or `stetheros-store.png`), or a full `https://` link. Leave it empty for a plain tile. Goods use a 4:3 picture; stores use a wider one, about 16:9. |
 | `visible` | `yes` or `no`. `no` hides the item without deleting the row. Empty counts as yes. |
@@ -53,6 +54,8 @@ Keep the row whose `id` is `last_updated`, and put the date of each change in it
 The service row whose `id` is `DELIVERY` lists delivery in the Services section. Its price always shows as "Quoted by a board member", because delivery rates are quoted per order.
 
 **If you already imported the Catalog tab,** add three columns with the headings `sale`, `sale_from`, and `sale_until`. The site reads columns by their heading, so they can go anywhere. Then add the member rows: type `member`, the name in `name`, the role in `category`.
+
+**Branded divisions.** Add a `brand` column, then one row per division: type `brand`, its key in `id` (for example `IHI`), its name in `name`, its logo file in `image` (for example `ihi-logo.png`, uploaded to the `images` folder), and an optional short line in `description`. In `category`, put up to three colors: the accent, a highlight, and the background, for example `#2563FF #F42F66 #050810`. Each division gets its own dark section near the bottom of the catalog, labeled as a branded division of Stetheros Industries. A division exists only after a 66% vote of the whole board (§3.8); hide its row with `visible` set to `no` if it ends.
 
 **If you already have a Constants tab,** add one row to it: `bulk_discount` with the value `15%`. Until you do, the site uses 15% and the calculator shows a note that the row is missing.
 

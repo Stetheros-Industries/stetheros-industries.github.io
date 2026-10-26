@@ -6,6 +6,29 @@
   const ROOT = window.SITE_ROOT || "";
   const $ = s => document.querySelector(s);
   const SALE_CHIP = "On sale";
+  const BRAND_BG = "#050810";
+  let brands = {};
+
+  // ---------- branded divisions (§3.8) ----------
+  // A row of type "brand": id = the key used in the brand column, name, image = logo,
+  // description = a short line, category = up to three colors: accent, highlight, background.
+  function hexes(s) { return (String(s || "").match(/#[0-9a-f]{3}(?:[0-9a-f]{3})?\b/gi) || []); }
+  function buildBrands() {
+    brands = {};
+    items.filter(i => i.type === "brand").forEach(b => {
+      const key = (b.id || b.name).toUpperCase();
+      const c = hexes(b.category);
+      brands[key] = { key, name: b.name, image: b.image, description: b.description, example: b.example,
+        accent: c[0] || "#2563ff", highlight: c[1] || c[0] || "#2563ff", bg: c[2] || BRAND_BG };
+    });
+  }
+  function brandOf(it) { return it.brand && brands[it.brand] ? brands[it.brand] : null; }
+  function slug(k) { return "brand-" + k.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
+  function brandVars(b) { return `--b-acc:${b.accent};--b-hi:${b.highlight};--b-bg:${b.bg}`; }
+  function badge(it) {
+    const b = brandOf(it);
+    return b ? `<a class="brand-badge" href="#${slug(b.key)}" style="${brandVars(b)}"><span class="chev" aria-hidden="true"></span>${esc(b.name)}</a>` : "";
+  }
 
   let items = [], category = "All", query = "", discount = 0, discChoice = "none";
   try { discChoice = localStorage.getItem("si-disc") || "none"; } catch (e) { /* storage blocked */ }
@@ -83,20 +106,50 @@
     const list = items.filter(i => i.type === "good")
       .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : (i.category || "Other") === category))
       .filter(i => !q || (i.name + " " + i.description + " " + i.category).toLowerCase().includes(q));
-    $("#goods-grid").innerHTML = list.length ? list.map(it => `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}">${thumbHTML(it)}<div class="item-body">
+    $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
+      : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
+    renderBrands();
+  }
+  function goodHTML(it, withBadge) {
+    return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}">${thumbHTML(it)}<div class="item-body">
         <p class="cat">${esc(it.category || "Other")}${tags(it)}</p>
+        ${withBadge ? badge(it) : ""}
         <h3>${esc(it.name)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
         ${priceHTML(it)}
-      </div></article>`).join("")
-      : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
+      </div></article>`;
+  }
+  function svcHTML(it, withBadge) {
+    return `<article class="svc">
+        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}</div>
+        ${priceHTML(it)}
+      </article>`;
+  }
+  function renderBrands() {
+    const host = $("#brand-zones");
+    if (!host) return;
+    host.innerHTML = Object.values(brands).map(b => {
+      const goods = items.filter(i => i.type === "good" && i.brand === b.key);
+      const svcs = items.filter(i => i.type === "service" && i.brand === b.key);
+      const logo = b.image ? `<img class="brand-logo" src="${esc(imageSrc(b.image))}" alt="${esc(b.name)} logo" loading="lazy">` : "";
+      return `<section class="brand-zone" id="${slug(b.key)}" style="${brandVars(b)}" aria-labelledby="${slug(b.key)}-h">
+        <div class="wrap brand-inner">
+          <header class="brand-head">${logo}<div>
+            <p class="brand-kicker">A branded division of Stetheros Industries${b.example ? ' <span class="ex">Example</span>' : ""}</p>
+            <h2 id="${slug(b.key)}-h">${esc(b.name)}</h2>
+            ${b.description ? `<p class="brand-desc">${esc(b.description)}</p>` : ""}
+            <p class="brand-note">Sold through Stetheros Industries shops, at the same prices, discounts, and terms as every other company good (<a href="policy/index.html#s3-8">§3.8</a>).</p>
+          </div></header>
+          ${goods.length ? `<h3 class="brand-sub">Goods</h3><div class="grid">${goods.map(it => goodHTML(it, false)).join("")}</div>` : ""}
+          ${svcs.length ? `<h3 class="brand-sub">Services</h3><div class="services">${svcs.map(it => svcHTML(it, false)).join("")}</div>` : ""}
+          ${!goods.length && !svcs.length ? `<p class="empty-msg">Goods from ${esc(b.name)} will be listed here.</p>` : ""}
+        </div>
+      </section>`;
+    }).join("");
   }
   function renderServices() {
     const list = items.filter(i => i.type === "service");
-    $("#services-list").innerHTML = list.length ? list.map(it => `<article class="svc">
-        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p><h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}</div>
-        ${priceHTML(it)}
-      </article>`).join("") : `<p class="empty-msg">No services are listed at the moment.</p>`;
+    $("#services-list").innerHTML = list.length ? list.map(it => svcHTML(it, true)).join("") : `<p class="empty-msg">No services are listed at the moment.</p>`;
   }
   function renderStores() {
     const list = items.filter(i => i.type === "store");
@@ -118,6 +171,7 @@
     return loadCatalog();
   }).then(r => {
     items = r.items;
+    buildBrands();
     if (r.updated) $("#cat-updated").textContent = `Last updated ${r.updated}.`;
     if (r.example) {
       const s = $("#cat-status");
