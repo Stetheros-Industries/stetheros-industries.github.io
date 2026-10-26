@@ -5,7 +5,7 @@
 // Each tab has its own link (see README.md). Leave a link empty to run on the
 // built-in starting values (constants) or the example items (catalog).
 window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZUn_e6HAYiMersD33BJ_7LhHgQ7I0V1xvDrM36g9WTkrhH6NckrzF8roG3BKc5r6fi_NqKMD3bZu7/pub?gid=1971219426&single=true&output=csv";
-window.CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZUn_e6HAYiMersD33BJ_7LhHgQ7I0V1xvDrM36g9WTkrhH6NckrzF8roG3BKc5r6fi_NqKMD3bZu7/pubhtml?gid=1616221061&single=true";
+window.CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZUn_e6HAYiMersD33BJ_7LhHgQ7I0V1xvDrM36g9WTkrhH6NckrzF8roG3BKc5r6fi_NqKMD3bZu7/pub?gid=1616221061&single=true&output=csv";
 
 // Every constant the calculator uses. The sheet overrides `value` by `key`.
 // `min` and `max` are safety limits: a sheet value outside them is ignored,
