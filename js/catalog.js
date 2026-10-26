@@ -93,7 +93,7 @@
   function thumbHTML(it, cls) {
     cls = cls || "thumb";
     if (!it.image) return `<div class="${cls} empty" aria-hidden="true"><img src="${ROOT}assets/icon-192.png" alt=""></div>`;
-    return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';"></div>`;
+    return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';}"></div>`;
   }
   function anySale() { return items.some(i => i.type === "good" && saleNow(i) > 0); }
   function renderChips() {
@@ -199,10 +199,11 @@
       <button type="button" class="btn ghost" data-copy>Copy link to this item</button></div></div>`;
   }
   function dialogHTML(it) {
-    const pics = [...new Set([it.image, ...it.gallery].filter(Boolean))];
+    const seen = new Set();
+    const pics = [it.image, ...it.gallery].filter(p => p && !seen.has(p.toLowerCase()) && seen.add(p.toLowerCase()));
     const media = pics.length ? `<div class="dlg-media">
-        <div class="dlg-main"><img src="${esc(imageSrc(pics[0]))}" alt="${esc(it.name)}"></div>
-        ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic="${esc(imageSrc(p))}" aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img src="${esc(imageSrc(p))}" alt="" loading="lazy"></button>`).join("")}</div>` : ""}
+        <div class="dlg-main"><img src="${esc(imageSrc(pics[0]))}" alt="${esc(it.name)}" onerror="SI.imgRetry(this)"></div>
+        ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img src="${esc(imageSrc(p))}" alt="" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.hidden=true;}"></button>`).join("")}</div>` : ""}
       </div>` : "";
     return `<div class="dlg-head"><div>
         <p class="cat">${esc(it.category || (it.type === "service" ? "Service" : "Other"))}${tags(it)}</p>
@@ -234,7 +235,9 @@
       if (e.target === dlg || e.target.closest("[data-close]") || e.target.closest(".brand-badge")) { dlg.close(); return; }
       const pic = e.target.closest("[data-pic]");
       if (pic) {
-        dlg.querySelector(".dlg-main img").src = pic.dataset.pic;
+        const main = dlg.querySelector(".dlg-main img");
+        main.removeAttribute("data-orig"); main.removeAttribute("data-tried");
+        main.src = pic.querySelector("img").currentSrc || pic.querySelector("img").src;
         dlg.querySelectorAll("[data-pic]").forEach(x => x.setAttribute("aria-pressed", String(x === pic)));
       }
       const copy = e.target.closest("[data-copy]");

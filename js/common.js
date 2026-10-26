@@ -240,6 +240,26 @@
     return /^https?:\/\//i.test(img) ? img : `${root}images/${img}`;
   }
 
+  // GitHub Pages treats Iron.png and iron.png as different files. When a picture fails to
+  // load, try the same name in lower case, capitalized, and upper case before giving up.
+  function imgAlternates(url) {
+    if (/^https?:\/\//i.test(url) && !url.startsWith(location.origin)) return [];
+    const m = String(url).match(/^(.*\/)?([^\/?#]+)$/);
+    if (!m) return [];
+    const dir = m[1] || "", f = m[2], lo = f.toLowerCase();
+    return [...new Set([lo, lo.charAt(0).toUpperCase() + lo.slice(1), f.toUpperCase()].map(x => dir + x))].filter(x => x !== url);
+  }
+  function imgRetry(img) {
+    const orig = img.dataset.orig || img.getAttribute("src");
+    img.dataset.orig = orig;
+    const tried = (img.dataset.tried || "").split("|").filter(Boolean);
+    const next = imgAlternates(orig).find(u => !tried.includes(u));
+    if (!next) return false;
+    tried.push(next); img.dataset.tried = tried.join("|");
+    img.src = next;
+    return true;
+  }
+
   window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc,
-    parseDate, fmtDate, parseSale, saleNow, parseCatalog, loadCatalog, imageSrc };
+    parseDate, fmtDate, parseSale, saleNow, parseCatalog, loadCatalog, imageSrc, imgRetry };
 })();
