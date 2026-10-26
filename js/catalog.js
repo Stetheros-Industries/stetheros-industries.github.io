@@ -6,6 +6,7 @@
   const ROOT = window.SITE_ROOT || "";
   const $ = s => document.querySelector(s);
   const SALE_CHIP = "On sale";
+  const NEW_CHIP = "New";
   const BRAND_BG = "#050810";
   const DISCORD = window.DISCORD_URL || "https://discord.gg/qZYwghHq5J";
   let brands = {};
@@ -96,16 +97,17 @@
     return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';}"></div>`;
   }
   function anySale() { return items.some(i => i.type === "good" && saleNow(i) > 0); }
+  function anyNew() { return items.some(i => i.type === "good" && SI.isNew(i)); }
   function renderChips() {
-    const cats = ["All", ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").map(i => i.category || "Other"))];
+    const cats = ["All", ...(anyNew() ? [NEW_CHIP] : []), ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").map(i => i.category || "Other"))];
     if (!cats.includes(category)) category = "All";
-    $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : ""}" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+    $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : c === NEW_CHIP ? " chip-new" : ""}" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
     $("#chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { category = b.dataset.c; renderChips(); renderGoods(); }));
   }
   function renderGoods() {
     const q = query.trim().toLowerCase();
     const list = items.filter(i => i.type === "good")
-      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : (i.category || "Other") === category))
+      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : category === NEW_CHIP ? SI.isNew(i) : (i.category || "Other") === category))
       .filter(i => !q || (i.name + " " + i.description + " " + i.category).toLowerCase().includes(q));
     $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
       : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
