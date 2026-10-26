@@ -247,15 +247,17 @@
         num("profit", "Profit for the period (Cr)", 1000),
         num("mine", "Your equity points", 400),
         num("total", "Total points of all active members", 1000, { hint: "Including yours" }),
-        num("n", "Active members", 4),
-        yn("active", "You are active", "yes")
+        num("n", "Members sharing the equal portion", 4, { hint: "Active members, not counting new members without equity in their first two weeks" }),
+        yn("active", "You are active", "yes"),
+        yn("newbie", "You joined less than two weeks ago", "no")
       ],
       compute(v, C) {
         const a = B(v.active) ? 1 : 0;
         const share = v.total > 0 ? a * v.mine / v.total : 0;
+        const waits = B(v.newbie) && !(v.mine > 0);
         const dist = C.dividend_rate * Math.max(0, v.profit);
         const eq = dist * C.dividend_equity_share * share;
-        const equal = v.n > 0 ? dist * (1 - C.dividend_equity_share) * a / v.n : 0;
+        const equal = v.n > 0 && !waits ? dist * (1 - C.dividend_equity_share) * a / v.n : 0;
         return {
           results: [
             R("Amount distributed", dist, "cr"),
@@ -264,7 +266,8 @@
             R("From the equal portion", equal, "cr"),
             R("Your dividend", eq + equal, "cr", true)
           ],
-          status: a ? null : { tone: "warn", text: "Inactive members receive no dividend (§6.5)." },
+          status: !a ? { tone: "warn", text: "Inactive members receive no dividend (§6.5)." }
+            : waits ? { tone: "warn", text: "A new member without equity starts receiving the equal portion after the first two weeks (§6.5)." } : null,
           notes: v.profit <= 0 ? ["With no profit, nothing is distributed."] : []
         };
       }
@@ -275,26 +278,29 @@
       intro: "Every member's dividend for the period. Paste the member list from the ledger.",
       inputs: [num("profit", "Profit for the period (Cr)", 1000)],
       table: {
-        label: "One member per line: name, equity points, active (yes/no)",
-        columns: ["Member", "Points", "Active"],
-        example: "Alex, 400, yes\nBea, 300, yes\nCy, 200, yes\nDee, 100, yes\nEli, 250, no"
+        label: "One member per line: name, equity points, active (yes/no), joined less than two weeks ago (yes/no, optional)",
+        columns: ["Member", "Points", "Active", "New"],
+        example: "Alex, 400, yes\nBea, 300, yes\nCy, 200, yes\nDee, 100, yes\nEli, 250, no\nFin, 0, yes, yes"
       },
       compute(v, C, rows) {
-        const ms = rows.map(r => ({ name: r[0], pts: N(r[1]) || 0, a: B(r[2]) ? 1 : 0 }));
-        const n = ms.filter(m => m.a).length;
+        const ms = rows.map(r => {
+          const pts = N(r[1]) || 0, a = B(r[2]) ? 1 : 0;
+          return { name: r[0], pts, a, eqPart: a && !(B(r[3]) && !(pts > 0)) ? 1 : 0 };
+        });
+        const n = ms.filter(m => m.eqPart).length;
         const tot = ms.reduce((s, m) => s + m.a * m.pts, 0);
         const dist = C.dividend_rate * Math.max(0, v.profit);
         let paid = 0;
         const data = ms.map(m => {
           const sh = tot > 0 ? m.a * m.pts / tot : 0;
           const eq = dist * C.dividend_equity_share * sh;
-          const equal = n > 0 ? dist * (1 - C.dividend_equity_share) * m.a / n : 0;
+          const equal = n > 0 ? dist * (1 - C.dividend_equity_share) * m.eqPart / n : 0;
           paid += eq + equal;
           return [m.name, m.a ? "Yes" : "No", sh, eq, equal, eq + equal];
         });
         return {
           results: [
-            R("Active members", n, "int"),
+            R("Members sharing the equal portion", n, "int"),
             R("Total active points", tot),
             R("Amount distributed", dist, "cr", true),
             R("Sum of payouts", paid, "cr")

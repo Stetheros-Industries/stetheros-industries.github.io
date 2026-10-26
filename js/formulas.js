@@ -76,8 +76,8 @@ window.FORMULAS = {
     sections: ["6.5"],
     tex: String.raw`D_i = \rho\, \Pi \left(e\, s_i + \frac{(1-e)\, a_i}{n}\right)`,
     symbols: { "ρ": "dividend_rate", e: "dividend_equity_share" },
-    legend: "Π is profit; s_i is the equity share (§6.2); n is the number of active members.",
-    plain: "Part of profit is distributed. Most of it is paid by equity share, and the rest is split equally among active members. Inactive members receive nothing."
+    legend: "Π is profit; s_i is the equity share (§6.2); a_i is 1 for a member who shares the equal portion and 0 otherwise; n is the number who share it: every active member except a new member without equity in the first two weeks.",
+    plain: "Part of profit is distributed. Most of it is paid by equity share, and the rest is split equally among active members, except new members without equity in their first two weeks. Inactive members receive nothing."
   },
   activity: {
     title: "Activity test",

@@ -375,3 +375,23 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 }
 
 .foot-links { margin-top: 8px; }
+
+/* ---------- Compact goods on phones: one row per item, picture on the left ---------- */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .item { display: grid; grid-template-columns: 92px minmax(0, 1fr); flex-direction: row; }
+  .item .thumb { aspect-ratio: auto; height: 100%; min-height: 92px; }
+  .item .thumb.empty img { width: 46%; }
+  .item-body { padding: 8px 10px 10px; gap: 2px; }
+  .item .cat { font-size: 11px; }
+  .item h3 { font-size: 18px; }
+  .item .desc { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .item .price { padding-top: 4px; gap: 0 6px; }
+  .item .price .list { font-size: 16px; }
+  .item .price .disc { font-size: 16px; }
+  .item .price .bulk { font-size: 12px; padding: 3px 6px; margin-top: 4px; }
+  .item .price .bulk small { display: none; }
+  .item .price .bulk .per { display: none; }
+  .item .more-btn { margin-top: 6px; padding: 3px 10px; font-size: 12.5px; }
+  .item .brand-badge { font-size: 10px; padding: 1px 7px 1px 6px; }
+}
