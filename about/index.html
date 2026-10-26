@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="../assets/style.css?v=2026-10-26a">
+<link rel="stylesheet" href="../assets/style.css?v=2026-10-26b">
 <style>
   .page-title { font: 700 clamp(32px, 5vw, 46px)/1.05 var(--display); margin: 0 0 12px; text-wrap: balance; }
   .about { display: grid; gap: 40px; padding-block: 32px 56px; }
@@ -50,6 +50,15 @@
   .members-list .m-name { font-weight: 600; }
   .members-list .m-role { color: var(--muted); }
   .members-list .muted { color: var(--muted); list-style: none; margin-left: -22px; }
+  .division-list { display: grid; gap: 14px; }
+  .division { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; padding: 18px 20px; border-radius: var(--radius);
+    background: var(--b-bg); color: #e8ecf6; border: 1px solid #222b45; border-left: 4px solid var(--b-acc); }
+  .division img { width: 120px; height: auto; border-radius: 4px; }
+  .division .kicker { margin: 0 0 2px; font: italic 600 12px var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--b-acc); }
+  .division h3 { margin: 0 0 6px; font: italic 700 26px/1.05 var(--display); letter-spacing: 0.04em; text-transform: uppercase; color: #ffffff; }
+  .division p { margin: 0 0 6px; max-width: 70ch; color: #c9d1e4; }
+  .division a { color: var(--b-acc); font-weight: 600; }
+  @media (max-width: 560px) { .division { grid-template-columns: minmax(0, 1fr); } .division img { width: 110px; } }
   .cta { display: flex; flex-wrap: wrap; gap: 10px; }
   .cta .btn { text-decoration: none; }
   @media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
@@ -86,6 +95,11 @@
     <h2>Our members</h2>
     <p>Stetheros Industries is run by the people who work in it. Our current members:</p>
     <ul class="members-list" id="member-list"><li class="muted">Loading…</li></ul>
+  </section>
+
+  <section id="divisions" hidden>
+    <h2>Our divisions</h2>
+    <div class="division-list" id="division-list"></div>
   </section>
 
   <section>
@@ -144,9 +158,9 @@
 </div></footer>
 
 <script>window.SITE_ROOT = "../";</script>
-<script src="../js/header.js?v=2026-10-26a"></script>
-<script src="../js/config.js?v=2026-10-26a"></script>
-<script src="../js/common.js?v=2026-10-26a"></script>
-<script src="../js/about.js?v=2026-10-26a"></script>
+<script src="../js/header.js?v=2026-10-26b"></script>
+<script src="../js/config.js?v=2026-10-26b"></script>
+<script src="../js/common.js?v=2026-10-26b"></script>
+<script src="../js/about.js?v=2026-10-26b"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@ DELIVERY,service,Logistics,Delivery,,per order,,,,,,"Delivery of an order to any
 S002,service,Logistics,Rail connection,150,per 100 blocks of track,,,,,,Example service. Track laid to company standard and linked to the network.,,yes,20
 S003,service,Construction,Build contract,,quoted per job,,,,,,Example service. Custom builds; the Sales role quotes each job and payment is held in escrow until it is done.,,yes,30
 S004,service,Construction,Heavy lift installation,,quoted per job,,,,,IHI,Example service from a branded division.,,yes,35
-IHI,brand,#2563FF #F42F66 #050810,Isonian Heavy Industries,,,,,,,,,ihi-logo.png,yes,10
+IHI,brand,#2563FF #F42F66 #050810,Isonian Heavy Industries,,,,,,,,"Focused on logistics and transport, and headed by IsoKamakazi.",ihi-logo.png,yes,10
 ST01,store,Prunia,Stetheros,,,,,,,,Company headquarters. Main shop and order pickup point.,,yes,10
 ST02,store,Example Nation,Second Example City,,,,,,,,Example store.,,yes,20
 M01,member,CEO & Board,FighterPilot O5,,,,,,,,,,yes,10
