@@ -48,6 +48,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | `details` | Optional. Longer information shown when a visitor clicks **More info**, such as what a service includes, what the buyer supplies, and lead times. Leave a blank line between paragraphs; start a line with `- ` to make it a bullet point. In Google Sheets, press Ctrl+Enter (Cmd+Enter on a Mac) for a new line inside a cell. |
 | `gallery` | Optional. Extra pictures for the More info window: file names in the `images/` folder (or `https://` links), separated by commas, for example `rail-1.png, rail-2.png`. |
 | `contact` | Optional. Who to message about this item, for example `@IsoKamakazi`. Leave it empty and the site says to message someone with the @Sales role. |
+| `listed` | Optional. The date the item was added, as `2026-11-01` or `11/1/2026`. The item shows a teal **New** label for 8 days, counting that day, and the label then disappears by itself. |
 | `image` | A file name in the `images/` folder (for example `iron-ingots.png` or `stetheros-store.png`), or a full `https://` link. Leave it empty for a plain tile. Goods use a 4:3 picture; stores use a wider one, about 16:9. |
 | `visible` | `yes` or `no`. `no` hides the item without deleting the row. Empty counts as yes. |
 | `sort` | A number that sets the order. Categories follow the order of their first item. |

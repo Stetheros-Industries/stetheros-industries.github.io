@@ -182,6 +182,16 @@
     return it.sale;
   }
 
+  // An item is "new" for NEW_DAYS days from the date in its "listed" column, counting
+  // the listing day as the first. A date in the future or one that cannot be read shows nothing.
+  const NEW_DAYS = 8;
+  function isNew(it, now) {
+    if (!(it.listed instanceof Date)) return false;
+    now = now || new Date();
+    const end = new Date(it.listed.getFullYear(), it.listed.getMonth(), it.listed.getDate() + NEW_DAYS);
+    return now >= it.listed && now < end;
+  }
+
   function parseCatalog(text, example) {
     const rows = parseCSV(text);
     if (!rows.length) return { items: [], updated: null };
@@ -216,6 +226,7 @@
         details: get(r, "details"),
         gallery: get(r, "gallery").split(/[,\n]+/).map(s => s.trim()).filter(Boolean),
         contact: get(r, "contact"),
+        listed: parseDate(get(r, "listed"), false),
         sort: isNaN(sort) ? 1e9 + idx : sort
       });
     });
@@ -261,5 +272,5 @@
   }
 
   window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc,
-    parseDate, fmtDate, parseSale, saleNow, parseCatalog, loadCatalog, imageSrc, imgRetry };
+    parseDate, fmtDate, parseSale, saleNow, isNew, parseCatalog, loadCatalog, imageSrc, imgRetry };
 })();

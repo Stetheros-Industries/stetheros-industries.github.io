@@ -70,7 +70,7 @@
   // ---------- catalog ----------
   function perUnit(it) { return !it.unit ? "" : /^each$/i.test(it.unit) ? "each" : `per ${it.unit}`; }
   function tags(it) {
-    return (saleNow(it) > 0 ? ' <span class="sale-tag">Sale</span>' : "") + (it.example ? ' <span class="ex">Example</span>' : "");
+    return (SI.isNew(it) ? ' <span class="new-tag">New</span>' : "") + (saleNow(it) > 0 ? ' <span class="sale-tag">Sale</span>' : "") + (it.example ? ' <span class="ex">Example</span>' : "");
   }
   function priceHTML(it) {
     if (it.price === null) {

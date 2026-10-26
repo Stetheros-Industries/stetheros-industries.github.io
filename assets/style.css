@@ -24,20 +24,21 @@
   --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
   --radius: 6px;
   --head-h: 72px; /* header height; js/header.js keeps it exact */
+  --teal: #00706f; --teal-bg: #d9f1ef; /* the teal diamond of the logo, for New labels */
   --page: var(--paper); /* the page colour, kept when a section restyles --paper */
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0f151b; --surface: #17202a; --sunken: #121a22; --ink: #e5eaef; --muted: #9aa6b2; --line: #2a3643;
     --band: #0a0f14; --band-ink: #e5eaef; --accent: #e6773f; --accent-ink: #10161c; --steel: #79a6dd;
-    --good: #6fcf97; --good-bg: #16301f; --warn: #f0b75e; --warn-bg: #33270f; --bad: #f08a8a; --bad-bg: #3a1a1a; --neutral-bg: #1c2733;
+    --good: #6fcf97; --good-bg: #16301f; --warn: #f0b75e; --warn-bg: #33270f; --bad: #f08a8a; --bad-bg: #3a1a1a; --neutral-bg: #1c2733; --teal: #4fd1cf; --teal-bg: #0f2c2d;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f151b; --surface: #17202a; --sunken: #121a22; --ink: #e5eaef; --muted: #9aa6b2; --line: #2a3643;
   --band: #0a0f14; --band-ink: #e5eaef; --accent: #e6773f; --accent-ink: #10161c; --steel: #79a6dd;
-  --good: #6fcf97; --good-bg: #16301f; --warn: #f0b75e; --warn-bg: #33270f; --bad: #f08a8a; --bad-bg: #3a1a1a; --neutral-bg: #1c2733;
+  --good: #6fcf97; --good-bg: #16301f; --warn: #f0b75e; --warn-bg: #33270f; --bad: #f08a8a; --bad-bg: #3a1a1a; --neutral-bg: #1c2733; --teal: #4fd1cf; --teal-bg: #0f2c2d;
   color-scheme: dark;
 }
 
@@ -395,3 +396,7 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .item .more-btn { margin-top: 6px; padding: 3px 10px; font-size: 12.5px; }
   .item .brand-badge { font-size: 10px; padding: 1px 7px 1px 6px; }
 }
+
+/* ---------- "New" label (listed within the last 8 days) ---------- */
+.new-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 0 7px; border-radius: 99px; background: var(--teal-bg); color: var(--teal); border: 1px solid var(--teal); }
+.brand-zone .new-tag, .dlg-brand .new-tag { background: #0f2c2d; color: #4fd1cf; border-color: #4fd1cf; }
