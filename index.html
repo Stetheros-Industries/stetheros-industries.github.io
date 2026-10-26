@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Stetheros Industries</title>
+<meta name="description" content="Stetheros Industries: raw materials, processed goods and services, sold through the company's shops. Official catalog and prices.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stetheros Industries">
+<meta property="og:title" content="Stetheros Industries">
+<meta property="og:description" content="Raw materials, processed goods and services from Stetheros Industries. Official catalog and reference prices.">
+<meta property="og:url" content="https://stetheros-industries.github.io/">
+<meta property="og:image" content="https://stetheros-industries.github.io/assets/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Stetheros Industries logo">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#c4561f">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="band">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/icon-192.png" alt="Stetheros Industries logo"><span><small>Scale. Strength. Stetheros.</small><b>Stetheros Industries</b></span></a>
+    <nav class="topnav" aria-label="Site"><a href="index.html" aria-current="page">Catalog</a><a href="about/index.html">About</a><a href="policy/index.html">Policy</a><a class="members" href="calculator/index.html">Members &amp; Government</a></nav>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <h1>Goods and services from Stetheros Industries</h1>
+      <p>A member-run industrial company headquartered in Stetheros, Prunia. Our members produce raw materials, processed goods and services, and the company sells them through its shops to customers of every nation.</p>
+      <div class="hero-links"><a class="btn" href="#goods">Browse goods</a><a class="btn ghost-light" href="#services">Services</a><a class="btn ghost-light" href="#stores">Stores and orders</a></div>
+    </div>
+    <img class="hero-mark" src="assets/logo-full.png" alt="Stetheros Industries logo" width="280" height="280">
+  </div>
+</header>
+
+<main class="wrap hub">
+  <section class="notice-row" aria-label="About these prices">
+    <div class="notice">
+      <h2>Shop prices govern</h2>
+      <p>Prices on this page are for reference. The price charged in the company's shops is the price that applies, because shop prices account for discounts, taxes and currency exchange that this page cannot.</p>
+    </div>
+    <div class="notice">
+      <h2>The official catalog</h2>
+      <p>The goods listed here are the company's official catalog under <a href="policy/index.html#s3-2">§3.2</a> of the policy document, and the services are its service schedule under <a href="policy/index.html#s8-4">§8.4</a>. <span id="cat-updated"></span></p>
+    </div>
+  </section>
+
+  <section class="discount" aria-labelledby="disc-h">
+    <h2 id="disc-h">See your price with a discount</h2>
+    <div class="disc-controls">
+      <div class="seg" role="group" aria-label="Discount" id="disc-seg"></div>
+      <label class="disc-custom" for="disc-custom" hidden><span>Discount</span><span class="inwrap"><input id="disc-custom" type="text" inputmode="decimal" value="10" autocomplete="off"><span class="suffix">%</span></span></label>
+    </div>
+    <p class="fine" id="disc-note">Citizens and governments of nations under the Home Charter or the Economic Plan receive a discount on company goods (<a href="policy/index.html#s11-4">§11.4</a>). This is an estimate: the shop applies the actual discount at the time of sale.</p>
+  </section>
+
+  <p class="cat-status" id="cat-status" hidden></p>
+
+  <section id="goods" aria-labelledby="goods-h">
+    <div class="sec-head">
+      <h2 id="goods-h">Goods</h2>
+      <label class="search" for="q"><span class="visually-hidden">Search goods</span><input id="q" type="search" placeholder="Search goods" autocomplete="off"></label>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <div class="grid" id="goods-grid"><p class="loading">Loading the catalog…</p></div>
+  </section>
+
+  <section id="services" aria-labelledby="services-h">
+    <div class="sec-head"><h2 id="services-h">Services</h2></div>
+    <p class="fine">Services are booked through the company. The buyer pays at booking and the payment is held in escrow until the job is done (<a href="policy/index.html#s8-4">§8.4</a>).</p>
+    <div class="services" id="services-list"></div>
+  </section>
+
+  <section id="stores" aria-labelledby="stores-h">
+    <div class="sec-head"><h2 id="stores-h">Stores and orders</h2></div>
+    <div class="stores-grid">
+      <div>
+        <h3 class="sub-h">Store locations</h3>
+        <ul class="stores" id="stores-list"><li class="loading">Loading…</li></ul>
+      </div>
+      <div class="orders">
+        <h3 class="sub-h">Custom and bulk orders</h3>
+        <p>Need something that isn't on the shelf, or a larger quantity than a shop holds? Place a custom order with the company. When it is ready, you can collect it at any of our stores, or have it delivered at a rate quoted by a board member.</p>
+        <p id="delivery-fee" class="fine"></p>
+        <p class="fine">Goods with a bulk price are discounted when you order at least the quantity shown on the item. Custom orders are quoted by the company's Sales role, and payment is held in escrow until the order is complete (<a href="policy/index.html#s8-3">§8.3</a>).</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap foot-inner">
+  <span>Stetheros Industries · Headquartered in Stetheros, Prunia · All prices in Prunian Credits (Cr)</span>
+  <span><a href="about/index.html">About</a> · <a href="policy/index.html">Policy document</a> · <a href="calculator/index.html">Members &amp; Government</a></span>
+</div></footer>
+
+<script>window.SITE_ROOT = "";</script>
+<script src="js/config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/catalog.js"></script>
+</body>
+</html>

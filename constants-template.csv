@@ -1,0 +1,33 @@
+key,value,label,section,notes
+last_updated,2026-10-25,Date of the last change (shown on the calculator),,Update this whenever you change a value
+member_share,80%,Member share of revenue,§4.1,Percent. Allowed range 0% to 100%
+upfront_fraction,20%,Up-front share of the member's cut,§4.3,Percent. Allowed range 0% to 100%
+proven_weeks,3,Weeks with sales needed for proven revenue,§4.4,Allowed range 1 to 52
+proven_window,4,Window for proven revenue (weeks),§4.4,Allowed range 1 to 52
+cover_weeks,2,Weeks of stock cover (τ),§5.2,Allowed range 0 to 52
+multiplier_start,1.5,Early-contribution multiplier at launch,§6.3,Allowed range 1 to 5
+multiplier_weeks,6,Weeks until the multiplier reaches 1,§6.3,Allowed range 1 to 104
+dividend_rate,25%,Dividend rate (ρ),§6.5,Percent. Allowed range 0% to 100%
+dividend_equity_share,85%,Share of a dividend paid by equity,§6.5,Percent. Allowed range 0% to 100%
+activity_threshold,0.5,Activity test fraction,§6.6,Allowed range 0 to 10
+decay_start,6,Weeks of inactivity before decay starts,§6.8,Allowed range 0 to 104
+decay_end,12,Weeks of inactivity when decay reaches the floor,§6.8,Allowed range 1 to 208
+decay_floor,50%,Decay floor,§6.8,Percent. Allowed range 0% to 100%
+margin_weeks,4,Weeks of margin paid up front (H),§7.2,Allowed range 0 to 52
+cash_limit,25%,Weekly cash limit (share of treasury),§7.6,Percent. Allowed range 0% to 100%
+operator_share,20%,Operator share of margin (ω),§7.7,Percent. Allowed range 0% to 100%
+infra_floor,50%,Infrastructure payment floor (f),§7.8,Percent. Allowed range 0% to 100%
+infra_max_cut,25%,Largest cut per infrastructure review,§7.8,Percent. Allowed range 0% to 100%
+staged_upfront,50%,Share of an asset price paid at purchase (α),§7.10,Percent. Allowed range 0% to 100%
+launch_share,50%,Launch share for unproven goods,§7.11,Percent. Allowed range 0% to 100%
+contract_quota,50%,"Committed quota, share of demand (κ)",§8.1,Percent. Allowed range 0% to 100%
+board_supermajority,66%,Board supermajority,§9.2,Percent. Allowed range 50% to 100%
+reimb_days,7,Reimbursement window (days),§10.1,Allowed range 0 to 60
+advance_threshold,10%,Challenge-window threshold for member advances,§10.2,Percent. Allowed range 0% to 100%
+late_premium,10%,Late premium per full week,§10.4,Percent. Allowed range 0% to 100%
+late_cap,30%,Late premium cap,§10.4,Percent. Allowed range 0% to 500%
+tax_cut,20%,Signatory sales-tax cut,§11.3,Percent. Allowed range 0% to 100%
+bulk_discount,15%,Bulk-order discount,Catalog,Percent. Allowed range 0% to 100%
+citizen_discount,10%,Citizen discount,§11.4,Percent. Allowed range 0% to 100%
+pool_rate,7%,Nation profit pool (share of profit),§11.5,Percent. Allowed range 0% to 100%
+resale_multiple,5,Resale review multiple of the median buyer,§11.6,Allowed range 1 to 100
