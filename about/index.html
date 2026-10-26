@@ -46,6 +46,10 @@
   .sw { width: 22px; height: 22px; transform: rotate(45deg); margin: 4px 0 0 3px; border-radius: 2px; }
   .legend b { display: block; }
   .legend span { color: var(--muted); font-size: 14.5px; }
+  .members-list { margin: 0; padding-left: 22px; display: grid; gap: 4px; font-size: 16px; }
+  .members-list .m-name { font-weight: 600; }
+  .members-list .m-role { color: var(--muted); }
+  .members-list .muted { color: var(--muted); list-style: none; margin-left: -22px; }
   .cta { display: flex; flex-wrap: wrap; gap: 10px; }
   .cta .btn { text-decoration: none; }
   @media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
@@ -64,13 +68,13 @@
     <h1 class="page-title">About Stetheros Industries</h1>
     <p class="motto">Scale. Strength. Stetheros.</p>
     <p class="lead">Stetheros Industries was founded in 2024 by FighterPilot O5 in the city of Stetheros, Prunia. The company takes its name from its home city, where it is still headquartered. From there the company has grown into an industrial producer that trades across borders, selling to customers and working with governments in every nation that will deal fairly with it.</p>
-    <p>The company is run by its members. They mine, refine, manufacture and build, and the company brings their work to market through its shops. Pooling production lets every member sell at a scale none could reach alone, and each member's reward follows what that member actually contributes.</p>
+    <p>The company is run by its members. They mine, refine, manufacture, and build; the company brings their work to market through its shops. Pooling production lets every member sell at a scale none could reach alone, and each member's reward follows what that member actually contributes.</p>
   </section>
 
   <section class="two">
     <div>
       <h2>Founded in Stetheros, 2024</h2>
-      <p>Our headquarters remain in Stetheros, and our core infrastructure and storage are in Prunia, and all company banking is in the Prunian Credit. Prunia's government and citizens hold the company's Home Charter, the agreement that ties the company to its home nation.</p>
+      <p>Our headquarters remain in Stetheros, our core infrastructure and storage are in Prunia, and all company banking is in the Prunian Credit. Prunia's government and citizens hold the company's Home Charter, the agreement that ties the company to its home nation.</p>
     </div>
     <div>
       <h2>Trading internationally</h2>
@@ -79,11 +83,17 @@
   </section>
 
   <section>
+    <h2>Our members</h2>
+    <p>Stetheros Industries is run by the people who work in it. Our current members:</p>
+    <ul class="members-list" id="member-list"><li class="muted">Loading…</li></ul>
+  </section>
+
+  <section>
     <h2>What we stand for</h2>
     <div class="values">
-      <div class="value"><h3>We honor our deals</h3><p>An agreement with a customer, a member or a nation is kept as written. Payments due are paid on time, and a late reimbursement carries a premium the company pays, not the member.</p></div>
+      <div class="value"><h3>We honor our deals</h3><p>An agreement with a customer, a member, or a nation is kept as written. Payments due are paid on time, and a late reimbursement carries a premium the company pays, not the member.</p></div>
       <div class="value"><h3>Quality you can build on</h3><p>Every good is recorded as it enters company storage and sold under the company's name, so the company stands behind what it sells. Services are paid into escrow and released only when the job is done.</p></div>
-      <div class="value"><h3>Fair to the people who make it</h3><p>Members keep 80% of what their goods earn, share in the company's profit, and can see the ledger, the payments and the approvals.</p></div>
+      <div class="value"><h3>Fair to the people who make it</h3><p>Members keep 80% of what their goods earn, share in the company's profit, and can see the ledger, the payments, and the approvals.</p></div>
       <div class="value"><h3>Steady through hard times</h3><p>Trade continues in war and in peace. Partner nations stay supplied, and goods important in a war never reach the enemy of the nation that made them.</p></div>
     </div>
   </section>
@@ -113,10 +123,10 @@
       </svg>
     </div>
     <ol class="legend">
-      <li><i class="sw" style="background:#bfc4c8"></i><div><b>Raw materials</b><span>Ore, timber, crops and stone: what our members gather from the land.</span></div></li>
-      <li><i class="sw" style="background:#d35400"></i><div><b>Refining</b><span>Smelting, pressing and processing raw materials into usable stock.</span></div></li>
-      <li><i class="sw" style="background:#008080"></i><div><b>Manufactured products</b><span>Components, machines and finished goods made from refined stock.</span></div></li>
-      <li><i class="sw" style="background:#4a4a4a"></i><div><b>Services</b><span>Delivery, construction and the work that puts products to use.</span></div></li>
+      <li><i class="sw" style="background:#bfc4c8"></i><div><b>Raw materials</b><span>Ore, timber, crops, and stone: what our members gather from the land.</span></div></li>
+      <li><i class="sw" style="background:#d35400"></i><div><b>Refining</b><span>Smelting, pressing, and processing raw materials into usable stock.</span></div></li>
+      <li><i class="sw" style="background:#008080"></i><div><b>Manufactured products</b><span>Components, machines, and finished goods made from refined stock.</span></div></li>
+      <li><i class="sw" style="background:#4a4a4a"></i><div><b>Services</b><span>Delivery, construction, and the work that puts products to use.</span></div></li>
       <li><i class="sw" style="background:#003366"></i><div><b>The consumer</b><span>The customer at the end of the chain, and the reason for every step before it.</span></div></li>
     </ol>
   </section>
@@ -132,5 +142,11 @@
   <span>Stetheros Industries · Headquartered in Stetheros, Prunia · All prices in Prunian Credits (Cr)</span>
   <span><a href="../index.html">Catalog</a> · <a href="../policy/index.html">Policy document</a> · <a href="../calculator/index.html">Members &amp; Government</a></span>
 </div></footer>
+
+<script>window.SITE_ROOT = "../";</script>
+<script src="../js/header.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/common.js"></script>
+<script src="../js/about.js"></script>
 </body>
 </html>

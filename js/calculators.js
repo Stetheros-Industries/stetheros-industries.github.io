@@ -131,7 +131,7 @@
     {
       id: "supply", title: "Supply plan", modes: ["board"],
       sections: ["5.2", "5.3", "5.4", "8.1"], formulas: ["target", "budget", "quota", "entitle"],
-      intro: "Target stock, guarantee budget and entitlements for every good at once.",
+      intro: "Target stock, guarantee budget, and entitlements for every good at once.",
       inputs: [num("n", "Active members", 4)],
       table: {
         label: "One good per line: good, expected weekly sales, stock on hand, contract holder (yes/no)",
@@ -392,7 +392,7 @@
             R("Cash from selling", sell, "cr"),
             R("Better on cash", keep > sell ? "Keep" : keep < sell ? "Sell" : "Equal", null, true)
           ],
-          notes: ["This compares cash only. Taking equity, the early multiplier and freeing capital for the next build are reasons to sell (§7.2). With the company paying supplies, the break-even matches the document's §7.2 formula."]
+          notes: ["This compares cash only. Taking equity, the early multiplier, and freeing capital for the next build are reasons to sell (§7.2). With the company paying supplies, the break-even matches the document's §7.2 formula."]
         };
       }
     },
@@ -440,7 +440,7 @@
       inputs: [num("base", "Base weekly payment (Cr)", 50), num("approved", "Approved weekly output", 100), num("actual", "Actual weekly output", 80)],
       compute(v, C) {
         const f = v.approved > 0 ? Math.min(1, v.actual / v.approved) : NaN;
-        return { results: [R("Output factor", f, "pct"), R("Payment", v.base * f, "cr", true)], notes: ["Rails, storage and defense have no output to measure; the CEO or board confirms each week that they work."] };
+        return { results: [R("Output factor", f, "pct"), R("Payment", v.base * f, "cr", true)], notes: ["Rails, storage, and defense have no output to measure; the CEO or board confirms each week that they work."] };
       }
     },
 

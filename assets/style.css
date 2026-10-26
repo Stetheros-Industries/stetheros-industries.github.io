@@ -23,6 +23,7 @@
   --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
   --radius: 6px;
+  --head-h: 72px; /* header height; js/header.js keeps it exact */
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -41,7 +42,7 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-padding-top: 16px; }
+html { scroll-padding-top: calc(var(--head-h) + 16px); }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--body); }
 a { color: var(--steel); }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible {
@@ -50,7 +51,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
 /* Header band */
-.band { background: var(--band); color: var(--band-ink); }
+.band { background: var(--band); color: var(--band-ink); position: sticky; top: 0; z-index: 50; transition: box-shadow 0.2s; }
+.band.scrolled { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.28); }
 .band .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 14px; }
 .brand { display: flex; align-items: center; gap: 12px; color: inherit; text-decoration: none; margin-right: auto; }
 .brand img { height: 44px; width: auto; }
@@ -85,7 +87,7 @@ details.panel > summary { cursor: pointer; padding: 12px 16px; font-weight: 600;
 
 /* Main grid */
 .main { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 28px; align-items: start; padding-bottom: 48px; }
-.side { position: sticky; top: 16px; }
+.side { position: sticky; top: calc(var(--head-h) + 16px); max-height: calc(100vh - var(--head-h) - 32px); overflow-y: auto; }
 .side h2 { font: 600 13px var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
 #index { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
 #index a { display: flex; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: var(--radius); color: var(--ink); text-decoration: none; font-size: 14px; }
@@ -95,7 +97,7 @@ details.panel > summary { cursor: pointer; padding: 12px 16px; font-weight: 600;
 #cards { display: grid; gap: 20px; min-width: 0; }
 
 /* Calculator card */
-.calc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; min-width: 0; scroll-margin-top: 16px; }
+.calc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; min-width: 0; scroll-margin-top: calc(var(--head-h) + 16px); }
 .calc-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
 .calc h3 { font: 600 22px/1.15 var(--display); letter-spacing: 0.01em; margin: 0; text-wrap: balance; }
 .secs, .f-secs { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -210,6 +212,11 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 .chip-btn { font: 500 13.5px var(--body); padding: 5px 12px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
 .chip-btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chip-btn.chip-sale { border-color: var(--accent); color: var(--accent); }
+.chip-btn.chip-sale[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.sale-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 1px 7px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); }
+.item.on-sale { border-color: var(--accent); }
+.price .sale-ends { flex-basis: 100%; font-size: 12.5px; color: var(--accent); font-weight: 500; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 .item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
 .thumb { aspect-ratio: 4 / 3; background: var(--sunken); display: grid; place-items: center; overflow: hidden; }
@@ -246,7 +253,11 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .stores-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
 .sub-h { font: 600 20px var(--display); letter-spacing: 0.01em; margin: 0 0 10px; }
 .stores { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.store { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; display: grid; gap: 2px; }
+.store { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-columns: 150px minmax(0, 1fr); min-height: 112px; }
+.store-img { background: var(--sunken); display: grid; place-items: center; overflow: hidden; min-height: 100%; }
+.store-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.store-img.empty img { width: 40px; height: auto; opacity: 0.35; filter: grayscale(1); }
+.store-text { padding: 10px 14px; display: grid; gap: 2px; align-content: center; }
 .store-city { font-weight: 600; }
 .store-nation { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .store-note { font-size: 14px; color: var(--muted); }
@@ -262,3 +273,16 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .page-intro p { margin: 0; color: var(--muted); font-size: 15px; }
 
 @media (max-width: 700px) { .stores-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) { .store { grid-template-columns: minmax(0, 1fr); } .store-img { aspect-ratio: 16 / 9; } }
+
+/* ---------- Compact pinned header on phones ---------- */
+@media (max-width: 600px) {
+  .band .wrap { padding-block: 8px; gap: 6px 12px; }
+  .brand img { height: 34px; }
+  .brand b { font-size: 20px; }
+  .brand small { display: none; }
+  .topnav { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: none; margin-inline: -4px; }
+  .topnav::-webkit-scrollbar { display: none; }
+  .topnav { gap: 2px; }
+  .topnav a { white-space: nowrap; padding: 5px 7px; font-size: 13.5px; }
+}

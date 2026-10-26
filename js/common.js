@@ -141,5 +141,101 @@
     return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
-  window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc };
+  // ---------- Catalog tab ----------
+  // Dates may be written 2026-11-01 or 11/1/2026 (month first). Returns a Date,
+  // null for an empty cell, or undefined for a date that cannot be read.
+  function parseDate(raw, endOfDay) {
+    const s = String(raw || "").trim();
+    if (!s) return null;
+    let y, m, d, k;
+    if ((k = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) { y = +k[1]; m = +k[2]; d = +k[3]; }
+    else if ((k = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) { m = +k[1]; d = +k[2]; y = +k[3]; }
+    else {
+      const t = Date.parse(s);
+      if (isNaN(t)) return undefined;
+      const x = new Date(t); y = x.getFullYear(); m = x.getMonth() + 1; d = x.getDate();
+    }
+    const out = endOfDay ? new Date(y, m - 1, d, 23, 59, 59, 999) : new Date(y, m - 1, d);
+    return isNaN(out) ? undefined : out;
+  }
+  function fmtDate(dt) {
+    const opts = { month: "short", day: "numeric" };
+    if (dt.getFullYear() !== new Date().getFullYear()) opts.year = "numeric";
+    return dt.toLocaleDateString("en-US", opts);
+  }
+  // "20%", "20" and "0.2" all mean a 20% sale. Anything else means no sale.
+  function parseSale(raw) {
+    const s = String(raw || "").trim();
+    let n = parseNumber(s);
+    if (isNaN(n) || n <= 0) return 0;
+    if (!s.endsWith("%") && n >= 1) n = n / 100;
+    return n < 1 ? n : 0;
+  }
+  // The sale fraction that applies now, or 0. A sale with a date that cannot
+  // be read is not shown, so a mistyped end date never advertises an old sale.
+  function saleNow(it, now) {
+    if (!it.sale) return 0;
+    now = now || new Date();
+    if (it.saleFrom === undefined || it.saleUntil === undefined) return 0;
+    if (it.saleFrom && now < it.saleFrom) return 0;
+    if (it.saleUntil && now > it.saleUntil) return 0;
+    return it.sale;
+  }
+
+  function parseCatalog(text, example) {
+    const rows = parseCSV(text);
+    if (!rows.length) return { items: [], updated: null };
+    const head = rows[0].map(h => h.toLowerCase().trim());
+    const get = (r, name) => { const i = head.indexOf(name); return i >= 0 ? (r[i] || "").trim() : ""; };
+    let updated = null;
+    const out = [];
+    rows.slice(1).forEach((r, idx) => {
+      const id = get(r, "id");
+      if (id.toLowerCase() === "last_updated") { updated = get(r, "name") || get(r, "price") || null; return; }
+      const name = get(r, "name");
+      if (!name) return;
+      const vis = get(r, "visible");
+      if (vis && !parseBool(vis)) return;
+      const t = get(r, "type");
+      const p = parseNumber(get(r, "price"));
+      const sort = parseNumber(get(r, "sort"));
+      const bulk = parseNumber(get(r, "bulk_min"));
+      out.push({
+        id, name, example,
+        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : "good",
+        category: get(r, "category"),
+        price: isNaN(p) ? null : p,
+        unit: get(r, "unit"),
+        bulk: isNaN(bulk) || bulk <= 0 ? null : bulk,
+        sale: parseSale(get(r, "sale")),
+        saleFrom: parseDate(get(r, "sale_from"), false),
+        saleUntil: parseDate(get(r, "sale_until"), true),
+        description: get(r, "description"),
+        image: get(r, "image"),
+        sort: isNaN(sort) ? 1e9 + idx : sort
+      });
+    });
+    // Categories appear in the order of their first item; items by sort, then name.
+    const firstSort = {};
+    out.forEach(i => { const k = i.type + "|" + i.category; firstSort[k] = Math.min(firstSort[k] ?? Infinity, i.sort); });
+    out.sort((a, b) => (firstSort[a.type + "|" + a.category] - firstSort[b.type + "|" + b.category]) || (a.sort - b.sort) || a.name.localeCompare(b.name));
+    return { items: out, updated };
+  }
+
+  async function loadCatalog() {
+    const url = (window.CATALOG_CSV_URL || "").trim();
+    const example = !url;
+    const src = example ? (window.SITE_ROOT || "") + "catalog-template.csv" : url + (url.includes("?") ? "&" : "?") + "nocache=" + Date.now();
+    const res = await fetch(src, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return Object.assign(parseCatalog(await res.text(), example), { example });
+  }
+
+  function imageSrc(img) {
+    const root = window.SITE_ROOT || "";
+    return /^https?:\/\//i.test(img) ? img : `${root}images/${img}`;
+  }
+
+  window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc,
+    parseDate, fmtDate, parseSale, saleNow, parseCatalog, loadCatalog, imageSrc };
 })();

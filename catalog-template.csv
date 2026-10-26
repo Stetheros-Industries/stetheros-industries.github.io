@@ -1,15 +1,18 @@
-id,type,category,name,price,unit,bulk_min,description,image,visible,sort
-last_updated,,,2026-10-25,,,,"The date in the name column is shown on the website as the catalog's last update. Change it whenever you edit the catalog.",,,
-G001,good,Metals,Iron ingots,48,stack of 64,10,"Example item. Smelted at company works in Prunia from ore mined on site.",,yes,10
-G002,good,Metals,Copper sheets,40,stack of 64,10,"Example item. Pressed copper for roofing, pipework and machinery.",,yes,20
-G003,good,Metals,Brass ingots,96,stack of 64,5,"Example item. Alloyed from copper and zinc for mechanical parts.",,yes,30
-G004,good,Components,Andesite alloy,32,stack of 64,10,"Example item. The base material for shafts, cogs and casings.",,yes,40
-G005,good,Components,Precision mechanisms,18,each,32,"Example item. Assembled to order on the company's sequenced lines.",,yes,50
-G006,good,Building materials,White concrete,24,stack of 64,20,"Example item. Mixed and set in bulk; other colours on request.",,yes,60
-G007,good,Food,Bread,12,stack of 64,,"Example item. Baked from company wheat. No bulk discount on this item.",,yes,70
-G008,good,Metals,Gold ingots,,stack of 64,,"Example of a hidden item: visible is set to no, so it does not appear on the website.",,no,80
-DELIVERY,service,Logistics,Delivery,,per order,,"Delivery of an order to any connected station, at a rate quoted by a board member.",,yes,10
-S002,service,Logistics,Rail connection,150,per 100 blocks of track,,"Example service. Track laid to company standard and linked to the network.",,yes,20
-S003,service,Construction,Build contract,,quoted per job,,"Example service. Custom builds; the Sales role quotes each job and payment is held in escrow until it is done.",,yes,30
-ST01,store,Prunia,Stetheros,,,,"Company headquarters. Main shop and order pickup point.",,yes,10
-ST02,store,Example Nation,Second Example City,,,,"Example store.",,yes,20
+id,type,category,name,price,unit,bulk_min,sale,sale_from,sale_until,description,image,visible,sort
+last_updated,,,2026-10-25,,,,,,,The date in the name column is shown on the website as the catalog's last update. Change it whenever you edit the catalog.,,,
+G001,good,Metals,Iron ingots,48,stack of 64,10,,,,Example item. Smelted at company works in Prunia from ore mined on site.,,yes,10
+G002,good,Metals,Copper sheets,40,stack of 64,10,,,,"Example item. Pressed copper for roofing, pipework, and machinery.",,yes,20
+G003,good,Metals,Brass ingots,96,stack of 64,5,,,,Example item. Alloyed from copper and zinc for mechanical parts.,,yes,30
+G004,good,Components,Andesite alloy,32,stack of 64,10,20%,,2026-11-30,"Example item on sale: the sale column is 20% and sale_until is 2026-11-30, so the sale ends by itself after that date.",,yes,40
+G005,good,Components,Precision mechanisms,18,each,32,,,,Example item. Assembled to order on the company's sequenced lines.,,yes,50
+G006,good,Building materials,White concrete,24,stack of 64,20,,,,Example item. Mixed and set in bulk; other colors on request.,,yes,60
+G007,good,Food,Bread,12,stack of 64,,,,,Example item. Baked from company wheat. No bulk discount on this item.,,yes,70
+G008,good,Metals,Gold ingots,,stack of 64,,,,,"Example of a hidden item: visible is set to no, so it does not appear on the website.",,no,80
+DELIVERY,service,Logistics,Delivery,,per order,,,,,"Delivery of an order to any connected station, at a rate quoted by a board member.",,yes,10
+S002,service,Logistics,Rail connection,150,per 100 blocks of track,,,,,Example service. Track laid to company standard and linked to the network.,,yes,20
+S003,service,Construction,Build contract,,quoted per job,,,,,Example service. Custom builds; the Sales role quotes each job and payment is held in escrow until it is done.,,yes,30
+ST01,store,Prunia,Stetheros,,,,,,,Company headquarters. Main shop and order pickup point.,,yes,10
+ST02,store,Example Nation,Second Example City,,,,,,,Example store.,,yes,20
+M01,member,CEO & Board,FighterPilot O5,,,,,,,,,yes,10
+M02,member,Board,IsoKamakazi,,,,,,,,,yes,20
+M03,member,,Golden,,,,,,,,,yes,30

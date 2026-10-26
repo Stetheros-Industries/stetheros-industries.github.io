@@ -1,10 +1,11 @@
-// Catalog page: reads the Catalog tab of the company sheet and lists goods and
-// services, with an optional discount estimate.
+// Catalog page: reads the Catalog tab of the company sheet and lists goods,
+// services, and stores, with sales from the sheet and an optional discount estimate.
 (function () {
   "use strict";
-  const { C, esc, fmt, parseCSV, parseNumber, parseBool, loadConstants } = SI;
+  const { C, esc, fmt, fmtDate, parseNumber, saleNow, loadConstants, loadCatalog, imageSrc } = SI;
   const ROOT = window.SITE_ROOT || "";
   const $ = s => document.querySelector(s);
+  const SALE_CHIP = "On sale";
 
   let items = [], category = "All", query = "", discount = 0, discChoice = "none";
   try { discChoice = localStorage.getItem("si-disc") || "none"; } catch (e) { /* storage blocked */ }
@@ -44,35 +45,46 @@
 
   // ---------- catalog ----------
   function perUnit(it) { return !it.unit ? "" : /^each$/i.test(it.unit) ? "each" : `per ${it.unit}`; }
+  function tags(it) {
+    return (saleNow(it) > 0 ? ' <span class="sale-tag">Sale</span>' : "") + (it.example ? ' <span class="ex">Example</span>' : "");
+  }
   function priceHTML(it) {
     if (it.price === null) {
       const label = it.id.toUpperCase() === "DELIVERY" ? "Quoted by a board member" : it.type === "service" ? "Quoted" : "Price on request";
       return `<div class="price"><span class="list">${label}</span>${it.unit ? `<span class="unit">${esc(it.unit)}</span>` : ""}</div>`;
     }
+    const s = saleNow(it);
     const d = it.type === "good" ? discount : 0;
-    const disc = d > 0 ? `<span class="disc">${fmt(it.price * (1 - d), "cr")} <small>with ${fmt(d, "pct")} off</small></span>` : "";
+    const now = it.price * (1 - s) * (1 - d);
+    const parts = [];
+    if (s > 0) parts.push(`the ${fmt(s, "pct")} sale`);
+    if (d > 0) parts.push(`your ${fmt(d, "pct")} discount`);
+    const disc = parts.length ? `<span class="disc">${fmt(now, "cr")} <small>with ${parts.join(" and ")}</small></span>` : "";
+    const ends = s > 0 && it.saleUntil ? `<span class="sale-ends">Sale ends ${esc(fmtDate(it.saleUntil))}</span>` : "";
     const b = C.bulk_discount;
     const bulk = it.type === "good" && it.bulk && b > 0
-      ? `<span class="bulk">Order ${esc(SI.fmt(it.bulk))} or more: <b>${fmt(it.price * (1 - d) * (1 - b), "cr")}</b> ${esc(perUnit(it))} <small>(${fmt(b, "pct")} bulk discount${d > 0 ? ", combined with yours" : ""})</small></span>` : "";
-    return `<div class="price"><span class="list${d > 0 ? " struck" : ""}">${fmt(it.price, "cr")}</span>${it.unit ? `<span class="unit">${esc(it.unit)}</span>` : ""}${disc}${bulk}</div>`;
+      ? `<span class="bulk">Order ${esc(fmt(it.bulk))} or more: <b>${fmt(now * (1 - b), "cr")}</b> ${esc(perUnit(it))} <small>(${fmt(b, "pct")} bulk discount${parts.length ? `, combined with ${parts.join(" and ")}` : ""})</small></span>` : "";
+    return `<div class="price"><span class="list${parts.length ? " struck" : ""}">${fmt(it.price, "cr")}</span>${it.unit ? `<span class="unit">${esc(it.unit)}</span>` : ""}${disc}${ends}${bulk}</div>`;
   }
-  function thumbHTML(it) {
-    if (!it.image) return `<div class="thumb empty" aria-hidden="true"><img src="${ROOT}assets/icon-192.png" alt=""></div>`;
-    const src = /^https?:\/\//i.test(it.image) ? it.image : `${ROOT}images/${it.image}`;
-    return `<div class="thumb"><img src="${esc(src)}" alt="${esc(it.name)}" loading="lazy" onerror="this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';"></div>`;
+  function thumbHTML(it, cls) {
+    cls = cls || "thumb";
+    if (!it.image) return `<div class="${cls} empty" aria-hidden="true"><img src="${ROOT}assets/icon-192.png" alt=""></div>`;
+    return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';"></div>`;
   }
+  function anySale() { return items.some(i => i.type === "good" && saleNow(i) > 0); }
   function renderChips() {
-    const cats = ["All", ...new Set(items.filter(i => i.type === "good").map(i => i.category || "Other"))];
-    $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+    const cats = ["All", ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").map(i => i.category || "Other"))];
+    if (!cats.includes(category)) category = "All";
+    $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : ""}" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
     $("#chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { category = b.dataset.c; renderChips(); renderGoods(); }));
   }
   function renderGoods() {
     const q = query.trim().toLowerCase();
     const list = items.filter(i => i.type === "good")
-      .filter(i => category === "All" || (i.category || "Other") === category)
+      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : (i.category || "Other") === category))
       .filter(i => !q || (i.name + " " + i.description + " " + i.category).toLowerCase().includes(q));
-    $("#goods-grid").innerHTML = list.length ? list.map(it => `<article class="item">${thumbHTML(it)}<div class="item-body">
-        <p class="cat">${esc(it.category || "Other")}${it.example ? ' <span class="ex">Example</span>' : ""}</p>
+    $("#goods-grid").innerHTML = list.length ? list.map(it => `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}">${thumbHTML(it)}<div class="item-body">
+        <p class="cat">${esc(it.category || "Other")}${tags(it)}</p>
         <h3>${esc(it.name)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
         ${priceHTML(it)}
@@ -82,63 +94,21 @@
   function renderServices() {
     const list = items.filter(i => i.type === "service");
     $("#services-list").innerHTML = list.length ? list.map(it => `<article class="svc">
-        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${it.example ? ' <span class="ex">Example</span>' : ""}</p><h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}</div>
+        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p><h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}</div>
         ${priceHTML(it)}
       </article>`).join("") : `<p class="empty-msg">No services are listed at the moment.</p>`;
   }
   function renderStores() {
     const list = items.filter(i => i.type === "store");
     $("#stores-list").innerHTML = list.length ? list.map(it => `<li class="store">
-        <span class="store-city">${esc(it.name)}${it.example ? ' <span class="ex">Example</span>' : ""}</span>
-        <span class="store-nation">${esc(it.category)}</span>
-        ${it.description ? `<span class="store-note">${esc(it.description)}</span>` : ""}
+        ${thumbHTML(it, "store-img")}
+        <div class="store-text">
+          <span class="store-city">${esc(it.name)}${it.example ? ' <span class="ex">Example</span>' : ""}</span>
+          <span class="store-nation">${esc(it.category)}</span>
+          ${it.description ? `<span class="store-note">${esc(it.description)}</span>` : ""}
+        </div>
       </li>`).join("") : `<li class="empty-msg">Store locations will be listed here.</li>`;
     $("#delivery-fee").textContent = "Delivery is charged at a rate quoted by a board member when you place the order.";
-  }
-
-  function parseCatalog(text, example) {
-    const rows = parseCSV(text);
-    if (!rows.length) return { items: [], updated: null };
-    const head = rows[0].map(h => h.toLowerCase().trim());
-    const col = name => head.indexOf(name);
-    const get = (r, name) => { const i = col(name); return i >= 0 ? (r[i] || "").trim() : ""; };
-    let updated = null;
-    const out = [];
-    rows.slice(1).forEach((r, idx) => {
-      const id = get(r, "id");
-      if (id.toLowerCase() === "last_updated") { updated = get(r, "name") || get(r, "price") || null; return; }
-      const name = get(r, "name");
-      if (!name) return;
-      const vis = get(r, "visible");
-      if (vis && !parseBool(vis)) return;
-      const p = parseNumber(get(r, "price"));
-      const sort = parseNumber(get(r, "sort"));
-      out.push({
-        id, name, example,
-        type: /^serv/i.test(get(r, "type")) ? "service" : /^(store|shop|location)/i.test(get(r, "type")) ? "store" : "good",
-        category: get(r, "category"),
-        price: isNaN(p) ? null : p,
-        unit: get(r, "unit"),
-        bulk: (() => { const n = parseNumber(get(r, "bulk_min")); return isNaN(n) || n <= 0 ? null : n; })(),
-        description: get(r, "description"),
-        image: get(r, "image"),
-        sort: isNaN(sort) ? 1e9 + idx : sort
-      });
-    });
-    // Categories appear in the order of their first item; items by sort, then name.
-    const firstSort = {};
-    out.forEach(i => { const k = i.type + "|" + i.category; firstSort[k] = Math.min(firstSort[k] ?? Infinity, i.sort); });
-    out.sort((a, b) => (firstSort[a.type + "|" + a.category] - firstSort[b.type + "|" + b.category]) || (a.sort - b.sort) || a.name.localeCompare(b.name));
-    return { items: out, updated };
-  }
-
-  async function loadCatalog() {
-    const url = (window.CATALOG_CSV_URL || "").trim();
-    const example = !url;
-    const src = example ? ROOT + "catalog-template.csv" : url + (url.includes("?") ? "&" : "?") + "nocache=" + Date.now();
-    const res = await fetch(src, { cache: "no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    return Object.assign(parseCatalog(await res.text(), example), { example });
   }
 
   $("#q").addEventListener("input", e => { query = e.target.value; renderGoods(); });
@@ -158,5 +128,6 @@
   }).catch(e => {
     $("#goods-grid").innerHTML = `<p class="empty-msg">The catalog could not be loaded (${esc(e.message)}). Please try again later.</p>`;
     $("#services-list").innerHTML = "";
+    $("#stores-list").innerHTML = "";
   });
 })();

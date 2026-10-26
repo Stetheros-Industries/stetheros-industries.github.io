@@ -108,7 +108,7 @@ window.FORMULAS = {
     tex: String.raw`\theta > \frac{H}{s - \omega}`,
     symbols: { H: "margin_weeks", s: "member_share", "ω": "operator_share" },
     legend: "θ is the number of weeks the asset runs.",
-    plain: "This is the document's formula, which assumes the company pays for supplies. Keeping pays more on cash alone once the asset has run longer than this many weeks. Equity, the early multiplier and freed capital are the reasons to sell."
+    plain: "This is the document's formula, which assumes the company pays for supplies. Keeping pays more on cash alone once the asset has run longer than this many weeks. Equity, the early multiplier, and freed capital are the reasons to sell."
   },
   keepsell_totals: {
     title: "Keeping versus selling, with supply costs",
