@@ -32,6 +32,13 @@
     return b ? `<a class="brand-badge" href="#${slug(b.key)}" style="${brandVars(b)}"><span class="chev" aria-hidden="true"></span>${esc(b.name)}</a>` : "";
   }
 
+  // A good or service may list several categories, separated by commas: "Metals, Components".
+  function catsOf(it) {
+    const list = String(it.category || "").split(/[,;]/).map(s => s.trim()).filter(Boolean);
+    return list.length ? list : [it.type === "service" ? "Service" : "Other"];
+  }
+  function catLine(it) { return esc(catsOf(it).join(" · ")); }
+
   let items = [], category = "All", query = "", discount = 0, discChoice = "none";
   try { discChoice = localStorage.getItem("si-disc") || "none"; } catch (e) { /* storage blocked */ }
 
@@ -99,7 +106,7 @@
   function anySale() { return items.some(i => i.type === "good" && saleNow(i) > 0); }
   function anyNew() { return items.some(i => i.type === "good" && SI.isNew(i)); }
   function renderChips() {
-    const cats = ["All", ...(anyNew() ? [NEW_CHIP] : []), ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").map(i => i.category || "Other"))];
+    const cats = ["All", ...(anyNew() ? [NEW_CHIP] : []), ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").flatMap(catsOf))];
     if (!cats.includes(category)) category = "All";
     $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : c === NEW_CHIP ? " chip-new" : ""}" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
     $("#chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { category = b.dataset.c; renderChips(); renderGoods(); }));
@@ -107,7 +114,7 @@
   function renderGoods() {
     const q = query.trim().toLowerCase();
     const list = items.filter(i => i.type === "good")
-      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : category === NEW_CHIP ? SI.isNew(i) : (i.category || "Other") === category))
+      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : category === NEW_CHIP ? SI.isNew(i) : catsOf(i).includes(category)))
       .filter(i => !q || (i.name + " " + i.description + " " + i.category).toLowerCase().includes(q));
     $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
       : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
@@ -115,7 +122,7 @@
   }
   function goodHTML(it, withBadge) {
     return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}">${thumbHTML(it)}<div class="item-body">
-        <p class="cat">${esc(it.category || "Other")}${tags(it)}</p>
+        <p class="cat">${catLine(it)}${tags(it)}</p>
         ${withBadge ? badge(it) : ""}
         <h3>${esc(it.name)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
@@ -125,7 +132,7 @@
   }
   function svcHTML(it, withBadge) {
     return `<article class="svc">
-        <div class="svc-main"><p class="cat">${esc(it.category || "Service")}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
+        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
   }
@@ -208,7 +215,7 @@
         ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img src="${esc(imageSrc(p))}" alt="" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.hidden=true;}"></button>`).join("")}</div>` : ""}
       </div>` : "";
     return `<div class="dlg-head"><div>
-        <p class="cat">${esc(it.category || (it.type === "service" ? "Service" : "Other"))}${tags(it)}</p>
+        <p class="cat">${catLine(it)}${tags(it)}</p>
         ${badge(it)}
         <h2 id="dlg-title">${esc(it.name)}</h2></div>
         <button type="button" class="dlg-close" data-close aria-label="Close" autofocus>&times;</button></div>

@@ -2,7 +2,7 @@ id,type,category,name,price,unit,bulk_min,sale,sale_from,sale_until,brand,descri
 last_updated,,,2026-10-25,,,,,,,,The date in the name column is shown on the website as the catalog's last update. Change it whenever you edit the catalog.,,,,,,,
 G001,good,Metals,Iron ingots,48,stack of 64,10,,,,,Example item. Smelted at company works in Prunia from ore mined on site.,,yes,10,,,,
 G002,good,Metals,Copper sheets,40,stack of 64,10,,,,,"Example item. Pressed copper for roofing, pipework, and machinery.",,yes,20,,,,
-G003,good,Metals,Brass ingots,96,stack of 64,5,,,,,Example item. Alloyed from copper and zinc for mechanical parts.,,yes,30,,,,
+G003,good,"Metals, Components",Brass ingots,96,stack of 64,5,,,,,"Example item with two categories: the category cell is ""Metals, Components"", so it appears under both filters.",,yes,30,,,,
 G004,good,Components,Andesite alloy,32,stack of 64,10,20%,,2026-11-30,,"Example item on sale: the sale column is 20% and sale_until is 2026-11-30, so the sale ends by itself after that date.",,yes,40,,,,
 G005,good,Components,Precision mechanisms,18,each,32,,,,,"Example item. Assembled to order on the company's sequenced lines. Its listed date is 2026-10-26, so it shows a New label for 8 days.",,yes,50,,,,2026-10-26
 G006,good,Building materials,White concrete,24,stack of 64,20,,,,,Example item. Mixed and set in bulk; other colors on request.,,yes,60,,,,
