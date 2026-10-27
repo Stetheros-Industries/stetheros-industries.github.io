@@ -407,3 +407,4 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .brand-zone .new-tag, .dlg-brand .new-tag { background: #0f2c2d; color: #4fd1cf; border-color: #4fd1cf; }
 .chip-btn.chip-new { border-color: var(--teal); color: var(--teal); }
 .chip-btn.chip-new[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: var(--surface); }
+.svc-chips { margin: 10px 0 0; }

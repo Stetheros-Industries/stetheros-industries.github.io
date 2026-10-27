@@ -103,19 +103,29 @@
     if (!it.image) return `<div class="${cls} empty" aria-hidden="true"><img src="${ROOT}assets/icon-192.png" alt=""></div>`;
     return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';}"></div>`;
   }
-  function anySale() { return items.some(i => i.type === "good" && saleNow(i) > 0); }
-  function anyNew() { return items.some(i => i.type === "good" && SI.isNew(i)); }
+  // ---------- filters and search (goods and services each have their own) ----------
+  function anySale(type) { return items.some(i => i.type === type && saleNow(i) > 0); }
+  function anyNew(type) { return items.some(i => i.type === type && SI.isNew(i)); }
+  function matches(i, cat, q) {
+    const inCat = cat === "All" || (cat === SALE_CHIP ? saleNow(i) > 0 : cat === NEW_CHIP ? SI.isNew(i) : catsOf(i).includes(cat));
+    return inCat && (!q || (i.name + " " + i.description + " " + i.category + " " + (i.details || "")).toLowerCase().includes(q));
+  }
+  function chipsFor(type, host, current, onPick) {
+    const cats = ["All", ...(anyNew(type) ? [NEW_CHIP] : []), ...(anySale(type) ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === type).flatMap(catsOf))];
+    if (!cats.includes(current)) current = "All";
+    host.innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : c === NEW_CHIP ? " chip-new" : ""}" aria-pressed="${c === current}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+    host.querySelectorAll("button").forEach(b => b.addEventListener("click", () => onPick(b.dataset.c)));
+    return current;
+  }
+  let svcCategory = "All", svcQuery = "";
   function renderChips() {
-    const cats = ["All", ...(anyNew() ? [NEW_CHIP] : []), ...(anySale() ? [SALE_CHIP] : []), ...new Set(items.filter(i => i.type === "good").flatMap(catsOf))];
-    if (!cats.includes(category)) category = "All";
-    $("#chips").innerHTML = cats.map(c => `<button type="button" class="chip-btn${c === SALE_CHIP ? " chip-sale" : c === NEW_CHIP ? " chip-new" : ""}" aria-pressed="${c === category}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
-    $("#chips").querySelectorAll("button").forEach(b => b.addEventListener("click", () => { category = b.dataset.c; renderChips(); renderGoods(); }));
+    category = chipsFor("good", $("#chips"), category, c => { category = c; renderChips(); renderGoods(); });
+    const sc = $("#chips-svc");
+    if (sc) svcCategory = chipsFor("service", sc, svcCategory, c => { svcCategory = c; renderChips(); renderServices(); });
   }
   function renderGoods() {
     const q = query.trim().toLowerCase();
-    const list = items.filter(i => i.type === "good")
-      .filter(i => category === "All" || (category === SALE_CHIP ? saleNow(i) > 0 : category === NEW_CHIP ? SI.isNew(i) : catsOf(i).includes(category)))
-      .filter(i => !q || (i.name + " " + i.description + " " + i.category).toLowerCase().includes(q));
+    const list = items.filter(i => i.type === "good").filter(i => matches(i, category, q));
     $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
       : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
     renderBrands();
@@ -159,8 +169,12 @@
     }).join("");
   }
   function renderServices() {
-    const list = items.filter(i => i.type === "service");
-    $("#services-list").innerHTML = list.length ? list.map(it => svcHTML(it, true)).join("") : `<p class="empty-msg">No services are listed at the moment.</p>`;
+    const all = items.filter(i => i.type === "service");
+    const q = svcQuery.trim().toLowerCase();
+    const list = all.filter(i => matches(i, svcCategory, q));
+    $("#services-list").innerHTML = list.length ? list.map(it => svcHTML(it, true)).join("")
+      : all.length ? `<p class="empty-msg">No services match${q ? ` "${esc(svcQuery)}"` : ""}.</p>`
+      : `<p class="empty-msg">No services are listed at the moment.</p>`;
   }
   function renderStores() {
     const list = items.filter(i => i.type === "store");
@@ -176,6 +190,7 @@
   }
 
   $("#q").addEventListener("input", e => { query = e.target.value; renderGoods(); });
+  if ($("#q-svc")) $("#q-svc").addEventListener("input", e => { svcQuery = e.target.value; renderServices(); });
 
   // ---------- item details (a pop-up window, one at a time) ----------
   // An item gets a "More info" button when its row has text in "details" or files in "gallery".

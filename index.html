@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-27b">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-27c">
 </head>
 <body>
 <div class="band">
@@ -79,8 +79,12 @@
   </section>
 
   <section id="services" aria-labelledby="services-h">
-    <div class="sec-head"><h2 id="services-h">Services</h2></div>
+    <div class="sec-head">
+      <h2 id="services-h">Services</h2>
+      <label class="search" for="q-svc"><span class="visually-hidden">Search services</span><input id="q-svc" type="search" placeholder="Search services" autocomplete="off"></label>
+    </div>
     <p class="fine">Services are booked through the company. The buyer pays at booking and the payment is held in escrow until the job is done (<a href="policy/index.html#s8-4">§8.4</a>).</p>
+    <div class="chips svc-chips" id="chips-svc" role="group" aria-label="Filter services by category"></div>
     <div class="services" id="services-list"></div>
   </section>
 </main>
@@ -113,9 +117,9 @@
 </div></footer>
 
 <script>window.SITE_ROOT = "";</script>
-<script src="js/header.js?v=2026-10-27b"></script>
-<script src="js/config.js?v=2026-10-27b"></script>
-<script src="js/common.js?v=2026-10-27b"></script>
-<script src="js/catalog.js?v=2026-10-27b"></script>
+<script src="js/header.js?v=2026-10-27c"></script>
+<script src="js/config.js?v=2026-10-27c"></script>
+<script src="js/common.js?v=2026-10-27c"></script>
+<script src="js/catalog.js?v=2026-10-27c"></script>
 </body>
 </html>
