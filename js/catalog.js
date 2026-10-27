@@ -131,10 +131,10 @@
     renderBrands();
   }
   function goodHTML(it, withBadge) {
-    return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}">${thumbHTML(it)}<div class="item-body">
+    return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}"><div class="thumb-open" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div><div class="item-body">
         <p class="cat">${catLine(it)}${tags(it)}</p>
         ${withBadge ? badge(it) : ""}
-        <h3>${esc(it.name)}</h3>
+        <h3>${titleBtn(it)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
         ${priceHTML(it)}
         ${moreBtn(it)}
@@ -142,7 +142,7 @@
   }
   function svcHTML(it, withBadge) {
     return `<article class="svc">
-        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${esc(it.name)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
+        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
   }
@@ -196,6 +196,10 @@
   // An item gets a "More info" button when its row has text in "details" or files in "gallery".
   function hasMore(it) { return !!(it.details || it.gallery.length); }
   function itemKey(it) { return String(it.id || it.name).replace(/[^A-Za-z0-9_-]+/g, "-"); }
+  // Every good and service opens its window (with a shareable link) from its name or picture.
+  function titleBtn(it) {
+    return `<button type="button" class="title-btn" data-item="${esc(itemKey(it))}" title="Open ${esc(it.name)}">${esc(it.name)}</button>`;
+  }
   function moreBtn(it) {
     return hasMore(it) ? `<button type="button" class="more-btn" data-item="${esc(itemKey(it))}">More info</button>` : "";
   }
@@ -280,7 +284,7 @@
     if (location.hash.startsWith("#item-")) openItem(decodeURIComponent(location.hash.slice(6)));
   });
   document.addEventListener("click", e => {
-    const btn = e.target.closest(".more-btn");
+    const btn = e.target.closest(".more-btn, .title-btn, .thumb-open");
     if (btn) openItem(btn.dataset.item);
   });
 
