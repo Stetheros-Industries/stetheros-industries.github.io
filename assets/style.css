@@ -281,7 +281,14 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .page-intro p { margin: 0; color: var(--muted); font-size: 15px; }
 
 @media (max-width: 700px) { .stores-grid { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 420px) { .store { grid-template-columns: minmax(0, 1fr); } .store-img { aspect-ratio: 16 / 9; } }
+@media (max-width: 600px) {
+  /* Phones: compact store rows, picture on the left, like goods and services */
+  .store { grid-template-columns: 92px minmax(0, 1fr); min-height: 76px; }
+  .store-img.empty img { width: 32px; }
+  .store-text { padding: 8px 10px; gap: 0; }
+  .store-note { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .stores { gap: 6px; }
+}
 
 /* ---------- Compact pinned header on phones ---------- */
 @media (max-width: 600px) {
@@ -322,7 +329,8 @@ footer.foot { border-top: 1px solid var(--line); color: var(--muted); font-size:
 .brand-note a { color: var(--b-acc); }
 .brand-sub { font: 600 20px var(--display); letter-spacing: 0.06em; text-transform: uppercase; margin: 10px 0 2px; color: #ffffff; }
 .brand-zone .item { border-color: var(--line); }
-.brand-zone .item:hover { border-color: var(--b-acc); }
+.brand-zone .item:hover, .brand-zone .svc:hover { border-color: var(--b-acc); }
+.brand-zone .svc { border-color: var(--line); }
 .brand-zone .thumb, .brand-zone .thumb.empty { background: #101626; }
 .brand-zone .price .list { color: #ffffff; }
 .brand-zone .price .bulk { color: var(--ink); }
@@ -445,3 +453,8 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .compact-nations li .ex { margin-left: 2px; }
 .compact-note { font-weight: 400; color: #c8d6ea; }
 .compact-list .fine { font-size: 13px; }
+
+/* ---------- Store nation filter ---------- */
+.stores-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin-bottom: 10px; }
+.stores-head .sub-h { margin: 0; }
+.nation-filter select { font: 14px var(--body); padding: 6px 30px 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); max-width: 100%; }

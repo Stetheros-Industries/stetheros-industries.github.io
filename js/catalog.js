@@ -190,8 +190,19 @@
       : all.length ? `<p class="empty-msg">No services match${q ? ` "${esc(svcQuery)}"` : ""}.</p>`
       : `<p class="empty-msg">No services are listed at the moment.</p>`;
   }
+  // Stores can be filtered by nation; the drop-down appears when stores span two or more nations.
+  let storeNation = "";
+  function renderStoreFilter() {
+    const sel = $("#store-nation");
+    if (!sel) return;
+    const nations = [...new Set(items.filter(i => i.type === "store").map(i => i.category.trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b));
+    sel.closest("label").hidden = nations.length < 2;
+    if (!nations.includes(storeNation)) storeNation = "";
+    sel.innerHTML = `<option value="">All nations</option>` + nations.map(n => `<option value="${esc(n)}"${n === storeNation ? " selected" : ""}>${esc(n)}</option>`).join("");
+  }
   function renderStores() {
-    const list = items.filter(i => i.type === "store");
+    const list = items.filter(i => i.type === "store" && (!storeNation || i.category.trim() === storeNation));
     $("#stores-list").innerHTML = list.length ? list.map(it => `<li class="store">
         ${thumbHTML(it, "store-img")}
         <div class="store-text">
@@ -204,6 +215,7 @@
   }
 
   $("#q").addEventListener("input", e => { query = e.target.value; renderGoods(); });
+  if ($("#store-nation")) $("#store-nation").addEventListener("change", e => { storeNation = e.target.value; renderStores(); });
   if ($("#q-svc")) $("#q-svc").addEventListener("input", e => { svcQuery = e.target.value; renderServices(); });
 
   // ---------- item details (a pop-up window, one at a time) ----------
@@ -317,7 +329,7 @@
       s.hidden = false;
       s.textContent = "These are example items. Connect the Catalog tab of the company sheet in js/config.js to show the real catalog.";
     }
-    renderChips(); renderGoods(); renderServices(); renderStores();
+    renderChips(); renderGoods(); renderServices(); renderStoreFilter(); renderStores();
     // Sections such as a division's are built after the page loads, so the browser
     // cannot jump to a link like index.html#brand-ihi by itself. Do it now.
     if (location.hash.startsWith("#item-")) openItem(decodeURIComponent(location.hash.slice(6)));
