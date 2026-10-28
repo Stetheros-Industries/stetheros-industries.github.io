@@ -34,7 +34,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | Column | What to enter |
 |---|---|
 | `id` | Any short code, such as G001 or S001. Not shown on the site. |
-| `type` | `good`, `service`, `store`, `member`, `brand`, or `nation`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). A `brand` row is a branded division (see below). A `nation` row is a nation that has signed the Stetheros Compact: put its name in `name` and, optionally, a short note in `description`. These are listed under the discount picker when a visitor chooses the Compact discount, and the list is hidden while there are none. |
+| `type` | `good`, `service`, `store`, `member`, `brand`, `nation`, or `notice`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). A `brand` row is a branded division (see below). A `nation` row is a nation that has signed the Stetheros Compact: put its name in `name` and, optionally, a short note in `description`. These are listed under the discount picker when a visitor chooses the Compact discount, and the list is hidden while there are none. A `notice` row is an announcement banner (see below). |
 | `category` | A heading such as Metals or Logistics. Goods can be filtered by category. A good or service can have several, separated by commas, such as `Metals, Components`; it then appears under each of those filters. (For `store`, `member`, and `brand` rows this column holds the nation, the role, or the colors, as described below.) |
 | `name` | The item name. |
 | `price` | The reference price in Credits, as a number. Leave it empty to show "Price on request" (goods) or "Quoted" (services). |
@@ -50,6 +50,9 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | `contact` | Optional. Who to message about this item, for example `@IsoKamakazi`. Leave it empty and the site says to message someone with the @Sales role. |
 | `listed` | Optional. The date the item was added, as `2026-11-01` or `11/1/2026`. The item shows a teal **New** label for 8 days, counting that day, and the label then disappears by itself. |
 | `image` | A file name in the `images/` folder (for example `iron-ingots.png` or `stetheros-store.png`), or a full `https://` link. Leave it empty for a plain tile. Goods use a 4:3 picture; stores use a wider one, about 16:9. |
+| `stock` | Optional. `in stock`, `low`, `out of stock`, or `made to order`. Cards show Low stock, Out of stock, and Made to order; the item window also shows In stock. When any good is out of stock, a **Hide out of stock** box appears above the goods. Leave it empty to show nothing. |
+| `coords` | Stores only, optional. The store's coordinates, as `1200 64 -340` (X Y Z) or `1200 -340` (X Z). Visitors get a **Copy** button that copies them. |
+| `map` | Stores only, optional. A `https://` link to the store on a web map, shown as **Open map**. |
 | `visible` | `yes` or `no`. `no` hides the item without deleting the row. Empty counts as yes. |
 | `sort` | A number that sets the order. Categories follow the order of their first item. |
 
@@ -63,11 +66,19 @@ The service row whose `id` is `DELIVERY` lists delivery in the Services section.
 
 **Branded divisions.** Add a column headed `brand` (anywhere; the site reads columns by their heading), then one row per division: type `brand`, its key in `id` (for example `IHI`), its name in `name`, its logo file in `image` (for example `ihi-logo.png`, uploaded to the `images` folder), and an optional short line in `description`. In `category`, put up to three colors: the accent, a highlight, and the background, for example `#2563FF #F42F66 #050810`. Each division gets its own dark section near the bottom of the catalog, labeled as a branded division of Stetheros Industries. A division exists only after a 66% vote of the whole board (§3.8). If it ends, set its row's `visible` to `no` and clear the `brand` cells of its items.
 
+**Announcements.** Add a row with type `notice`. Put the headline in `name` (for example `Winter sale.`) and the text in `description`. `sale_from` and `sale_until` set the first and last day it shows; leave both empty to show it until you hide the row. Put `warning` in `category` for an amber banner, or `sale` for an orange edge. Visitors can dismiss a notice, and a notice you reword shows again.
+
+**If you already imported the Catalog tab,** add the columns `stock`, `coords`, and `map` (anywhere; the site reads columns by their heading). Leave them empty where they don't apply.
+
 **If you already have a Constants tab,** add one row to it: `bulk_discount` with the value `15%`. Until you do, the site uses 15% and the calculator shows a note that the row is missing.
 
 ### Images
 
-Upload image files to the repository's `images/` folder (**Add file → Upload files**, then open the `images` folder first, or drag the files in with the folder). Then enter the file name in the `image` column. File names are case-sensitive. Images stored in the repository are more reliable than links to Discord, Imgur, or Google Drive, which tend to expire or block embedding.
+Upload image files to the repository's `images/` folder (**Add file → Upload files**, then open the `images` folder first, or drag the files in with the folder). Then enter the file name in the `image` column. Images stored in the repository are more reliable than links to Discord, Imgur, or Google Drive, which tend to expire or block embedding.
+
+**Pictures are shrunk automatically.** Upload pictures at any size. A minute or two after each upload, GitHub makes small copies in `images/thumb/` (cards), `images/opt/` (the item window), and `images/og/` (link previews), and the site uses those, so a 6 MB screenshot reaches visitors as about 20 KB. The original is kept unchanged. Until the copies exist, the site shows the original, so nothing breaks in the meantime. You can follow progress under the repository's **Actions** tab ("Update site files"). Do not upload into the `opt`, `thumb`, or `og` folders yourself; they are rebuilt automatically.
+
+The copies are named by the original's name in lower case, so `Iron.png` and `iron.png` in the sheet both work.
 
 ---
 
@@ -87,6 +98,21 @@ The old `Company-Calculator` repository keeps working at its address until you c
 
 ---
 
+### Automatic updates (GitHub Actions)
+
+The file `.github/workflows/site-files.yml` runs on GitHub's servers, at no cost for a public repository. It runs when pictures are uploaded, every hour, and on demand (**Actions → Update site files → Run workflow**). Each run:
+
+- makes the small picture copies described above, and
+- builds a page for every good and service at `item/<id>/` from the Catalog tab. When someone pastes an item's link into Discord, the preview shows the item's name, price (with any current sale), description, and picture. Opening the link takes the visitor to the item in the catalog. The **Copy link to this item** button gives these links. A link to an item added since the last run still works: it opens the catalog at that item, without the preview, until the next run.
+
+If a run fails with a permissions error, open **Settings → Actions → General → Workflow permissions**, choose **Read and write permissions**, save, and run it again. GitHub pauses hourly runs after 60 days without any change to the repository; the Actions tab then shows a button to turn them back on.
+
+### Features visitors use
+
+- **Order list.** Visitors open a good or service, choose a quantity, and add it to an order list. The list shows an estimated total with their discount, any sale, and bulk prices; asks for their in-game name and a store to collect from (or delivery); and copies the whole order as a message for the @Sales role on Discord. The list is kept in the visitor's own browser; the site sends nothing.
+- **Sort and filter.** Goods and services can be sorted by price, newest, or name. "Featured" follows the `sort` column.
+- **Links.** Every policy clause has a **Copy link** button. Each calculator has **Copy a link to these values**, which opens the calculator with the same numbers filled in. Unknown addresses show a "page not found" page with links back into the site.
+
 ## 3. Routine updates
 
 - **Prices and catalog items:** edit the Catalog tab and update `last_updated`. The website changes on the next reload.
@@ -105,7 +131,7 @@ The Markdown export leaves out images. The policy page puts the formulas back fr
 |---|---|
 | `index.html`, `js/catalog.js` | Catalog home page |
 | `about/index.html`, `js/about.js`, `assets/diamonds.png`, `assets/logo-full.png` | About page, its member list, and logo art |
-| `js/header.js` | Keeps the header pinned at the top while scrolling |
+| `js/header.js` | Keeps the header pinned at the top while scrolling, and adds the back-to-top button on phones |
 | `assets/share-card.png` | The image shown when a link is shared on Discord and similar apps |
 | `calculator/index.html`, `js/app.js`, `js/calculators.js`, `js/formulas.js` | Calculator |
 | `policy/index.html`, `policy/policy.md`, `js/policy.js`, `js/doc-formulas.js` | Policy page and its text |
@@ -113,6 +139,10 @@ The Markdown export leaves out images. The policy page puts the formulas back fr
 | `js/common.js` | Shared loading of both sheet tabs, and formatting |
 | `assets/` | Stylesheet, logo, and icons |
 | `images/` | Catalog images |
+| `404.html` | The "page not found" page, which also forwards item links that have no page yet |
+| `item/` | Link-preview pages for each item, built automatically. Do not edit. |
+| `images/opt/`, `images/thumb/`, `images/og/` | Small copies of the pictures, built automatically. Do not edit. |
+| `.github/workflows/site-files.yml`, `.github/scripts/` | The automatic picture and item-page updates |
 | `catalog-template.csv`, `constants-template.csv` | Starting tabs for the sheet. The site shows `catalog-template.csv` as example items until the Catalog link is set. |
 
 To test on your own computer, run `python -m http.server` in this folder and open `http://localhost:8000`. Pages that read files fail when opened by double-clicking.

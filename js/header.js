@@ -21,6 +21,15 @@
   document.addEventListener("click", e => {
     if (e.target.closest("[data-discord]")) window.siTrack("discord-join", "Join the Discord server");
   });
+  // Back-to-top button, shown on phones once the visitor has scrolled well down the page.
+  const top = document.createElement("button");
+  top.type = "button"; top.className = "to-top"; top.setAttribute("aria-label", "Back to top");
+  top.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 14l6-6 6 6"/></svg>';
+  top.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  document.body.appendChild(top);
+  const showTop = () => top.classList.toggle("show", window.scrollY > 900);
+  window.addEventListener("scroll", showTop, { passive: true });
+  showTop();
   // The Discord invite can be changed in one place: window.DISCORD_URL in js/config.js.
   document.addEventListener("DOMContentLoaded", () => {
     if (window.DISCORD_URL) document.querySelectorAll("[data-discord]").forEach(a => { a.href = window.DISCORD_URL; });

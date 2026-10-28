@@ -192,6 +192,18 @@
     return now >= it.listed && now < end;
   }
 
+  // The "stock" column: in stock, low, out of stock, or made to order. Anything else,
+  // or an empty cell, shows no stock label.
+  function parseStock(raw) {
+    const s = String(raw || "").trim().toLowerCase();
+    if (!s) return "";
+    if (/^(out|none|sold|0$|no$)/.test(s)) return "out";
+    if (/^(low|few|limited)/.test(s)) return "low";
+    if (/(order|request|custom|pre)/.test(s)) return "order";
+    if (/^(in|yes|available|ok|plenty|high)/.test(s)) return "in";
+    return "";
+  }
+
   function parseCatalog(text, example) {
     const rows = parseCSV(text);
     if (!rows.length) return { items: [], updated: null };
@@ -212,7 +224,7 @@
       const bulk = parseNumber(get(r, "bulk_min"));
       out.push({
         id, name, example,
-        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : /^(brand|division)/i.test(t) ? "brand" : /^(nation|compact)/i.test(t) ? "nation" : "good",
+        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : /^(brand|division)/i.test(t) ? "brand" : /^(nation|compact)/i.test(t) ? "nation" : /^(notice|announce|banner)/i.test(t) ? "notice" : "good",
         brand: get(r, "brand").toUpperCase(),
         category: get(r, "category"),
         price: isNaN(p) ? null : p,
@@ -227,6 +239,9 @@
         gallery: get(r, "gallery").split(/[,\n]+/).map(s => s.trim()).filter(Boolean),
         contact: get(r, "contact"),
         listed: parseDate(get(r, "listed"), false),
+        stock: parseStock(get(r, "stock")),
+        coords: get(r, "coords"),
+        map: get(r, "map"),
         sort: isNaN(sort) ? 1e9 + idx : sort
       });
     });
@@ -250,6 +265,22 @@
     const root = window.SITE_ROOT || "";
     return /^https?:\/\//i.test(img) ? img : `${root}images/${img}`;
   }
+  // Every picture uploaded to images/ also gets small, fast copies made automatically
+  // (see .github/scripts/optimize_images.py): images/thumb/<name>.webp for cards and
+  // images/opt/<name>.webp for the item window. <name> is the file name in lower case,
+  // with anything other than letters and digits turned into dashes.
+  function imgSlug(file) {
+    return String(file).replace(/\.[^.\/]+$/, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function imageVariant(img, size) {
+    if (!img || /^https?:\/\//i.test(img) || !size) return imageSrc(img);
+    return `${window.SITE_ROOT || ""}images/${size}/${imgSlug(img)}.webp`;
+  }
+  // src and fallback attributes for an <img>: the small copy first, then the original file.
+  function imgAttrs(img, size) {
+    const small = imageVariant(img, size), orig = imageSrc(img);
+    return `src="${esc(small)}"${small !== orig ? ` data-fallback="${esc(orig)}"` : ""}`;
+  }
 
   // GitHub Pages treats Iron.png and iron.png as different files. When a picture fails to
   // load, try the same name in lower case, capitalized, and upper case before giving up.
@@ -261,6 +292,9 @@
     return [...new Set([lo, lo.charAt(0).toUpperCase() + lo.slice(1), f.toUpperCase()].map(x => dir + x))].filter(x => x !== url);
   }
   function imgRetry(img) {
+    // A small copy that does not exist yet (a picture uploaded minutes ago): use the original.
+    const fb = img.getAttribute("data-fallback");
+    if (fb) { img.removeAttribute("data-fallback"); img.dataset.orig = fb; img.dataset.tried = ""; img.src = fb; return true; }
     const orig = img.dataset.orig || img.getAttribute("src");
     img.dataset.orig = orig;
     const tried = (img.dataset.tried || "").split("|").filter(Boolean);
@@ -271,6 +305,13 @@
     return true;
   }
 
+  // Copies text, falling back to a prompt where the clipboard is blocked.
+  function copyText(text, done) {
+    const fallback = () => window.prompt("Copy this:", text);
+    if (navigator.clipboard && window.isSecureContext !== false) navigator.clipboard.writeText(text).then(() => done && done(), fallback);
+    else fallback();
+  }
+
   window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc,
-    parseDate, fmtDate, parseSale, saleNow, isNew, parseCatalog, loadCatalog, imageSrc, imgRetry };
+    parseDate, fmtDate, parseSale, saleNow, isNew, parseCatalog, loadCatalog, imageSrc, imageVariant, imgAttrs, imgSlug, imgRetry, copyText };
 })();

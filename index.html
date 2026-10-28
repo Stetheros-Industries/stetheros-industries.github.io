@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-27k">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-28a">
 </head>
 <body>
 <div class="band">
@@ -46,6 +46,8 @@
 </header>
 
 <main class="wrap hub">
+  <div class="site-notices" id="site-notices" hidden></div>
+
   <section class="notice-row" aria-label="About these prices">
     <div class="notice">
       <h2>Shop prices govern</h2>
@@ -77,6 +79,11 @@
       <label class="search" for="q"><span class="visually-hidden">Search goods</span><input id="q" type="search" placeholder="Search goods" autocomplete="off"></label>
     </div>
     <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <div class="list-tools">
+      <label class="sort" for="sort-goods"><span>Sort</span><select id="sort-goods">
+        <option value="featured">Featured</option><option value="new">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label>
+      <label class="check" id="hide-out-wrap" for="hide-out" hidden><input id="hide-out" type="checkbox"> Hide out of stock</label>
+    </div>
     <div class="grid" id="goods-grid"><p class="loading">Loading the catalog…</p></div>
   </section>
 
@@ -87,6 +94,10 @@
     </div>
     <p class="fine">Services are booked through the company. The buyer pays at booking and the payment is held in escrow until the job is done (<a href="policy/index.html#s8-4">§8.4</a>).</p>
     <div class="chips svc-chips" id="chips-svc" role="group" aria-label="Filter services by category"></div>
+    <div class="list-tools">
+      <label class="sort" for="sort-svc"><span>Sort</span><select id="sort-svc">
+        <option value="featured">Featured</option><option value="new">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label>
+    </div>
     <div class="services" id="services-list"></div>
   </section>
 </main>
@@ -107,6 +118,7 @@
       </div>
       <div class="orders">
         <h3 class="sub-h">Custom and bulk orders</h3>
+        <p><strong>Build an order list:</strong> open any good or service and choose <em>Add to order list</em>. The list adds up an estimate with your discount, sales, and bulk prices, and copies the whole order as a message you can send on Discord.</p>
         <p>Need something that isn't on the shelf, or a larger quantity than a shop holds? Place a custom order with the company: join our <a href="https://discord.gg/qZYwghHq5J" target="_blank" rel="noopener">Discord server</a> and message someone with the @Sales role. When it is ready, you can collect it at any of our stores, or have it delivered at a rate quoted by a board member.</p>
         <p id="delivery-fee" class="fine"></p>
         <p class="fine">Goods with a bulk price are discounted when you order at least the quantity shown on the item. Custom orders are quoted by the company's Sales role, and payment is held in escrow until the order is complete (<a href="policy/index.html#s8-3">§8.3</a>).</p>
@@ -116,6 +128,8 @@
 </div>
 
 <dialog id="item-dialog" class="item-dialog" aria-labelledby="dlg-title"></dialog>
+<dialog id="order-dialog" class="item-dialog order-dialog" aria-labelledby="order-title"></dialog>
+<button type="button" class="order-fab" id="order-fab" hidden><span>Order list</span> <b data-count>0</b></button>
 
 <footer class="foot"><div class="wrap foot-inner">
   <span>Stetheros Industries · Headquartered in Stetheros, Prunia · All prices in Prunian Credits (Cr)</span>
@@ -124,10 +138,10 @@
 <div class="wrap foot-note">This site counts visits anonymously with GoatCounter: no cookies and no personal data.</div></footer>
 
 <script>window.SITE_ROOT = "";</script>
-<script src="js/header.js?v=2026-10-27k"></script>
-<script src="js/config.js?v=2026-10-27k"></script>
-<script src="js/common.js?v=2026-10-27k"></script>
-<script src="js/catalog.js?v=2026-10-27k"></script>
+<script src="js/header.js?v=2026-10-28a"></script>
+<script src="js/config.js?v=2026-10-28a"></script>
+<script src="js/common.js?v=2026-10-28a"></script>
+<script src="js/catalog.js?v=2026-10-28a"></script>
 <script data-goatcounter="https://stetheros.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>

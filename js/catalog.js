@@ -2,7 +2,7 @@
 // services, and stores, with sales from the sheet and an optional discount estimate.
 (function () {
   "use strict";
-  const { C, esc, fmt, fmtDate, parseNumber, saleNow, loadConstants, loadCatalog, imageSrc } = SI;
+  const { C, esc, fmt, fmtDate, parseNumber, saleNow, loadConstants, loadCatalog, imageSrc, imageVariant, imgAttrs, copyText } = SI;
   const ROOT = window.SITE_ROOT || "";
   const $ = s => document.querySelector(s);
   const SALE_CHIP = "On sale";
@@ -74,6 +74,8 @@
     } else discount = p.value;
     renderCompactList();
     renderGoods(); renderServices();
+    const od = $("#order-dialog");
+    if (od && od.open) renderOrder();
   }
   // The Stetheros Compact nations (rows of type "nation" on the Catalog tab), shown
   // under the discount picker when the Compact discount is chosen and at least one exists.
@@ -93,6 +95,13 @@
   function perUnit(it) { return !it.unit ? "" : /^each$/i.test(it.unit) ? "each" : `per ${it.unit}`; }
   function tags(it) {
     return (SI.isNew(it) ? ' <span class="new-tag">New</span>' : "") + (saleNow(it) > 0 ? ' <span class="sale-tag">Sale</span>' : "") + (it.example ? ' <span class="ex">Example</span>' : "");
+  }
+  // Stock from the "stock" column. Cards show only what a buyer needs to know before
+  // opening the item; the item window also shows "In stock".
+  const STOCK = { in: "In stock", low: "Low stock", out: "Out of stock", order: "Made to order" };
+  function stockTag(it, all) {
+    if (!it.stock || (it.stock === "in" && !all)) return "";
+    return `<span class="stock stock-${it.stock}">${STOCK[it.stock]}</span>`;
   }
   function priceHTML(it) {
     if (it.price === null) {
@@ -115,7 +124,7 @@
   function thumbHTML(it, cls) {
     cls = cls || "thumb";
     if (!it.image) return `<div class="${cls} empty" aria-hidden="true"><img src="${ROOT}assets/icon-192.png" alt=""></div>`;
-    return `<div class="${cls}"><img src="${esc(imageSrc(it.image))}" alt="${esc(it.name)}" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';}"></div>`;
+    return `<div class="${cls}"><img ${imgAttrs(it.image, "thumb")} alt="${esc(it.name)}" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.classList.add('empty');this.src='${ROOT}assets/icon-192.png';this.alt='';}"></div>`;
   }
   // ---------- filters and search (goods and services each have their own) ----------
   function anySale(type) { return items.some(i => i.type === type && saleNow(i) > 0); }
@@ -131,7 +140,30 @@
     host.querySelectorAll("button").forEach(b => b.addEventListener("click", () => onPick(b.dataset.c)));
     return current;
   }
-  let svcCategory = "All", svcQuery = "";
+  let svcCategory = "All", svcQuery = "", goodsSort = "featured", svcSort = "featured", hideOut = false;
+  // Sorting. "Featured" is the order set in the sheet's sort column.
+  function nowPrice(it) { return it.price === null ? null : it.price * (1 - saleNow(it)); }
+  function sorted(list, how) {
+    const by = {
+      featured: () => 0,
+      new: (a, b) => (b.listed ? b.listed.getTime() : -Infinity) - (a.listed ? a.listed.getTime() : -Infinity),
+      "price-asc": (a, b) => (nowPrice(a) ?? Infinity) - (nowPrice(b) ?? Infinity),
+      "price-desc": (a, b) => (nowPrice(b) ?? -Infinity) - (nowPrice(a) ?? -Infinity),
+      name: (a, b) => a.name.localeCompare(b.name)
+    }[how] || (() => 0);
+    return list.map((it, i) => [it, i]).sort((x, y) => by(x[0], y[0]) || x[1] - y[1]).map(x => x[0]);
+  }
+  function renderTools() {
+    const ho = $("#hide-out-wrap");
+    if (ho) ho.hidden = !items.some(i => i.type === "good" && i.stock === "out");
+    const anyListed = type => items.some(i => i.type === type && i.listed instanceof Date);
+    [["#sort-goods", "good"], ["#sort-svc", "service"]].forEach(([sel, type]) => {
+      const el = $(sel);
+      if (!el) return;
+      const opt = el.querySelector('option[value="new"]');
+      if (opt) opt.hidden = opt.disabled = !anyListed(type);
+    });
+  }
   function renderChips() {
     category = chipsFor("good", $("#chips"), category, c => { category = c; renderChips(); renderGoods(); });
     const sc = $("#chips-svc");
@@ -139,24 +171,25 @@
   }
   function renderGoods() {
     const q = query.trim().toLowerCase();
-    const list = items.filter(i => i.type === "good").filter(i => matches(i, category, q));
+    const list = sorted(items.filter(i => i.type === "good").filter(i => matches(i, category, q)).filter(i => !(hideOut && i.stock === "out")), goodsSort);
     $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
       : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
     renderBrands();
   }
   function goodHTML(it, withBadge) {
-    return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}"><div class="thumb-open" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div><div class="item-body">
+    return `<article class="item${saleNow(it) > 0 ? " on-sale" : ""}${it.stock === "out" ? " is-out" : ""}"><div class="thumb-open" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div><div class="item-body">
         <p class="cat">${catLine(it)}${tags(it)}</p>
         ${withBadge ? badge(it) : ""}
         <h3>${titleBtn(it)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
+        ${stockTag(it)}
         ${priceHTML(it)}
         ${moreBtn(it)}
       </div></article>`;
   }
   function svcHTML(it, withBadge) {
     return `<article class="svc"><div class="thumb-open svc-thumb" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div>
-        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
+        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${stockTag(it)}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
   }
@@ -166,7 +199,7 @@
     host.innerHTML = Object.values(brands).map(b => {
       const goods = items.filter(i => i.type === "good" && i.brand === b.key);
       const svcs = items.filter(i => i.type === "service" && i.brand === b.key);
-      const logo = b.image ? `<img class="brand-logo" src="${esc(imageSrc(b.image))}" alt="${esc(b.name)} logo" loading="lazy">` : "";
+      const logo = b.image ? `<img class="brand-logo" ${imgAttrs(b.image, "opt")} onerror="SI.imgRetry(this)" alt="${esc(b.name)} logo" loading="lazy">` : "";
       return `<section class="brand-zone" id="${slug(b.key)}" style="${brandVars(b)}" aria-labelledby="${slug(b.key)}-h">
         <div class="wrap brand-inner">
           <header class="brand-head">${logo}<div>
@@ -185,7 +218,7 @@
   function renderServices() {
     const all = items.filter(i => i.type === "service");
     const q = svcQuery.trim().toLowerCase();
-    const list = all.filter(i => matches(i, svcCategory, q));
+    const list = sorted(all.filter(i => matches(i, svcCategory, q)), svcSort);
     $("#services-list").innerHTML = list.length ? list.map(it => svcHTML(it, true)).join("")
       : all.length ? `<p class="empty-msg">No services match${q ? ` "${esc(svcQuery)}"` : ""}.</p>`
       : `<p class="empty-msg">No services are listed at the moment.</p>`;
@@ -201,6 +234,17 @@
     if (!nations.includes(storeNation)) storeNation = "";
     sel.innerHTML = `<option value="">All nations</option>` + nations.map(n => `<option value="${esc(n)}"${n === storeNation ? " selected" : ""}>${esc(n)}</option>`).join("");
   }
+  // The "coords" column holds the store's in-game coordinates, such as "1200 64 -340"
+  // (X Y Z) or "1200 -340" (X Z). The "map" column may hold a link to a web map.
+  function coordNums(s) { return (String(s || "").match(/-?\d+(?:\.\d+)?/g) || []); }
+  function coordsHTML(it) {
+    const n = coordNums(it.coords);
+    const map = /^https?:\/\//i.test(it.map) ? `<a class="store-map" href="${esc(it.map)}" target="_blank" rel="noopener">Open map</a>` : "";
+    if (n.length < 2 && !map) return "";
+    const axes = n.length === 2 ? ["X", "Z"] : ["X", "Y", "Z"];
+    const shown = n.length >= 2 ? n.slice(0, 3).map((v, i) => `<span><i>${axes[i]}</i> ${esc(v)}</span>`).join("") : "";
+    return `<span class="store-coords">${shown}${shown ? `<button type="button" class="copy-coords" data-coords="${esc(n.slice(0, 3).join(" "))}" aria-label="Copy the coordinates of ${esc(it.name)}">Copy</button>` : ""}${map}</span>`;
+  }
   function renderStores() {
     const list = items.filter(i => i.type === "store" && (!storeNation || i.category.trim() === storeNation));
     $("#stores-list").innerHTML = list.length ? list.map(it => `<li class="store">
@@ -209,6 +253,7 @@
           <span class="store-city">${esc(it.name)}${it.example ? ' <span class="ex">Example</span>' : ""}</span>
           <span class="store-nation">${esc(it.category)}</span>
           ${it.description ? `<span class="store-note">${esc(it.description)}</span>` : ""}
+          ${coordsHTML(it)}
         </div>
       </li>`).join("") : `<li class="empty-msg">Store locations will be listed here.</li>`;
     $("#delivery-fee").textContent = "Delivery is charged at a rate quoted by a board member when you place the order.";
@@ -217,6 +262,192 @@
   $("#q").addEventListener("input", e => { query = e.target.value; renderGoods(); });
   if ($("#store-nation")) $("#store-nation").addEventListener("change", e => { storeNation = e.target.value; renderStores(); });
   if ($("#q-svc")) $("#q-svc").addEventListener("input", e => { svcQuery = e.target.value; renderServices(); });
+  if ($("#sort-goods")) $("#sort-goods").addEventListener("change", e => { goodsSort = e.target.value; renderGoods(); });
+  if ($("#sort-svc")) $("#sort-svc").addEventListener("change", e => { svcSort = e.target.value; renderServices(); });
+  if ($("#hide-out")) $("#hide-out").addEventListener("change", e => { hideOut = e.target.checked; renderGoods(); });
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".copy-coords");
+    if (!b) return;
+    copyText(b.dataset.coords, () => { b.textContent = "Copied"; setTimeout(() => { b.textContent = "Copy"; }, 1600); });
+  });
+
+  // ---------- announcement banner ----------
+  // A row of type "notice": name = the headline, description = the text, and the optional
+  // sale_from and sale_until dates set when it shows. category may be "warning" or "sale"
+  // to change its color. Visitors can dismiss a notice; a changed notice shows again.
+  function noticeId(n) { return "si-notice-" + (n.id || n.name) + "-" + (n.name + n.description).length; }
+  function renderNotices() {
+    const host = $("#site-notices");
+    if (!host) return;
+    const now = new Date();
+    const live = items.filter(n => n.type === "notice"
+      && n.saleFrom !== undefined && n.saleUntil !== undefined
+      && !(n.saleFrom && now < n.saleFrom) && !(n.saleUntil && now > n.saleUntil)
+      && !(() => { try { return localStorage.getItem(noticeId(n)); } catch (e) { return null; } })());
+    host.hidden = !live.length;
+    host.innerHTML = live.map(n => {
+      const tone = /warn|alert|urgent/i.test(n.category) ? " warn" : /sale|promo/i.test(n.category) ? " sale" : "";
+      return `<div class="site-notice${tone}" data-nid="${esc(noticeId(n))}" role="status">
+        <p><strong>${esc(n.name)}</strong>${n.description ? ` ${esc(n.description)}` : ""}${n.saleUntil ? ` <span class="notice-until">Until ${esc(fmtDate(n.saleUntil))}.</span>` : ""}</p>
+        <button type="button" class="notice-x" aria-label="Dismiss this notice">&times;</button></div>`;
+    }).join("");
+    host.querySelectorAll(".notice-x").forEach(b => b.addEventListener("click", () => {
+      const box = b.closest(".site-notice");
+      try { localStorage.setItem(box.dataset.nid, "1"); } catch (e) { /* ignore */ }
+      box.remove();
+      host.hidden = !host.children.length;
+    }));
+  }
+
+  // ---------- order list ----------
+  // Visitors collect goods and services in a list kept in their own browser, then copy it
+  // as a message for the Sales role on Discord. Nothing is sent anywhere by the site.
+  let order = [];
+  let orderMeta = { name: "", where: "", note: "" };
+  function saveOrder() {
+    try { localStorage.setItem("si-order", JSON.stringify(order)); localStorage.setItem("si-order-meta", JSON.stringify(orderMeta)); } catch (e) { /* ignore */ }
+  }
+  function loadOrder() {
+    try {
+      const o = JSON.parse(localStorage.getItem("si-order") || "[]");
+      const m = JSON.parse(localStorage.getItem("si-order-meta") || "{}");
+      order = Array.isArray(o) ? o.filter(l => l && byKey(l.k) && l.q > 0) : [];
+      orderMeta = Object.assign(orderMeta, m && typeof m === "object" ? m : {});
+    } catch (e) { order = []; }
+  }
+  function byKey(k) { return items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === k); }
+  function qtyOf(k) { const l = order.find(x => x.k === k); return l ? l.q : 0; }
+  function setQty(k, q) {
+    order = order.filter(l => l.k !== k);
+    if (q > 0) order.push({ k, q });
+    saveOrder(); renderOrderFab();
+    const od = $("#order-dialog");
+    if (od && od.open) renderOrder();
+  }
+  // The estimated price per unit, with the sale, the visitor's discount (goods only), and,
+  // from the bulk quantity up, the bulk discount, each applied in turn (§3.2).
+  function lineFor(it, q) {
+    if (it.price === null) return { it, q, unit: null, total: null, bulk: false };
+    const d = it.type === "good" ? discount : 0;
+    let unit = it.price * (1 - saleNow(it)) * (1 - d);
+    const bulk = it.type === "good" && it.bulk && C.bulk_discount > 0 && q >= it.bulk;
+    if (bulk) unit *= 1 - C.bulk_discount;
+    return { it, q, unit, total: unit * q, bulk };
+  }
+  function unitWord(it) { return it.unit ? (/^each$/i.test(it.unit) ? "" : it.unit) : ""; }
+  function orderControlsHTML(it, msg) {
+    if (!it) return "";
+    const have = qtyOf(itemKey(it));
+    const unit = unitWord(it);
+    const bulk = it.type === "good" && it.bulk && C.bulk_discount > 0 ? ` <span class="hint">Bulk price from ${esc(fmt(it.bulk))}.</span>` : "";
+    return `<div class="dlg-order">
+      <label for="dlg-qty"><span>Quantity${unit ? ` <small>(${esc(unit)})</small>` : ""}</span>
+        <input id="dlg-qty" type="text" inputmode="decimal" autocomplete="off" value="${have || (it.type === "good" && it.bulk ? "1" : "1")}"></label>
+      <button type="button" class="btn" data-add>${have ? "Update order list" : "Add to order list"}</button>
+      ${have ? `<button type="button" class="btn ghost" data-remove>Remove</button>` : ""}
+      ${order.length ? `<button type="button" class="linkish" data-open-order>View order list (${order.length})</button>` : ""}
+      ${bulk}${msg ? `<span class="dlg-order-msg" role="status">${esc(msg)}</span>` : ""}
+    </div>`;
+  }
+  function renderOrderFab() {
+    const fab = $("#order-fab");
+    if (!fab) return;
+    fab.hidden = !order.length;
+    fab.querySelector("[data-count]").textContent = order.length;
+    document.body.classList.toggle("has-order", order.length > 0);
+  }
+  function discountLabel() {
+    const p = presets().find(x => x.id === discChoice);
+    if (!discount || !p || p.id === "none") return "";
+    return p.id === "custom" ? `Other discount (${fmt(discount, "pct")})` : p.label;
+  }
+  function stores() { return items.filter(i => i.type === "store"); }
+  function renderOrder() {
+    const od = $("#order-dialog");
+    const lines = order.map(l => lineFor(byKey(l.k), l.q)).filter(l => l.it);
+    const priced = lines.filter(l => l.total !== null);
+    const sum = priced.reduce((a, l) => a + l.total, 0);
+    const quoted = lines.length - priced.length;
+    const where = [["", "Choose…"], ...stores().map(s => [`store:${s.name}`, `Collect at ${s.name}${s.category ? `, ${s.category}` : ""}`]), ["delivery", "Delivery (rate quoted by a board member)"]];
+    const disc = discountLabel();
+    od.innerHTML = `<div class="dlg-head"><div><p class="cat">Kept in this browser only</p><h2 id="order-title">Your order list</h2></div>
+        <button type="button" class="dlg-close" data-close aria-label="Close">&times;</button></div>
+      ${lines.length ? `<div class="tablewrap"><table class="order-table"><thead><tr><th>Item</th><th class="numc">Quantity</th><th class="numc">Estimate</th><th><span class="visually-hidden">Remove</span></th></tr></thead><tbody>
+        ${lines.map(l => `<tr data-k="${esc(itemKey(l.it))}"><td><button type="button" class="title-btn" data-item="${esc(itemKey(l.it))}">${esc(l.it.name)}</button>${unitWord(l.it) ? `<small>${esc(unitWord(l.it))}</small>` : ""}${l.bulk ? ' <span class="bulk-tag">Bulk price</span>' : ""}${l.it.stock === "out" ? ' <span class="stock stock-out">Out of stock</span>' : ""}</td>
+          <td class="numc"><input class="ol-qty" type="text" inputmode="decimal" value="${esc(String(l.q))}" aria-label="Quantity of ${esc(l.it.name)}"></td>
+          <td class="numc">${l.total === null ? (l.it.type === "service" ? "Quoted" : "On request") : fmt(l.total, "cr")}</td>
+          <td><button type="button" class="ol-x" aria-label="Remove ${esc(l.it.name)}">&times;</button></td></tr>`).join("")}
+        </tbody><tfoot><tr><th colspan="2">Estimated total${quoted ? `, plus ${quoted} quoted item${quoted > 1 ? "s" : ""}` : ""}</th><td class="numc"><b>${fmt(sum, "cr")}</b></td><td></td></tr></tfoot></table></div>
+        <p class="fine">${disc ? `Includes your discount: ${esc(disc)}. ` : "No customer discount is included; choose one at the top of the catalog if it applies to you. "}Sales and bulk prices are applied where they apply. This is an estimate: the Sales role confirms the final price.</p>
+        <div class="order-form">
+          <label><span>Your in-game name</span><input id="ol-name" type="text" autocomplete="off" value="${esc(orderMeta.name)}"></label>
+          <label><span>Collection or delivery</span><select id="ol-where">${where.map(([v, t]) => `<option value="${esc(v)}"${v === orderMeta.where ? " selected" : ""}>${esc(t)}</option>`).join("")}</select></label>
+          <label class="wide"><span>Note (optional)</span><textarea id="ol-note" rows="2">${esc(orderMeta.note)}</textarea></label>
+        </div>
+        <ol class="order-steps"><li>Copy the order.</li><li>Join our Discord server and send it to someone with the <strong>@Sales</strong> role${lines.some(l => l.it.contact) ? ", or to the contact named on an item" : ""}.</li></ol>
+        <div class="dlg-actions"><button type="button" class="btn" data-copy-order>Copy order</button><a class="btn ghost" href="${esc(DISCORD)}" target="_blank" rel="noopener" data-discord>Open the Discord server</a><button type="button" class="linkish" data-clear>Clear the list</button></div>`
+      : `<p>Your order list is empty. Open any good or service to add it.</p>`}`;
+  }
+  function orderText() {
+    const lines = order.map(l => lineFor(byKey(l.k), l.q)).filter(l => l.it);
+    const sum = lines.filter(l => l.total !== null).reduce((a, l) => a + l.total, 0);
+    const quoted = lines.filter(l => l.total === null).length;
+    const out = ["**Order for Stetheros Industries**"];
+    if (orderMeta.name) out.push(`Name: ${orderMeta.name}`);
+    if (orderMeta.where === "delivery") out.push("Delivery: please quote a delivery rate");
+    else if (orderMeta.where.startsWith("store:")) out.push(`Collect at: ${orderMeta.where.slice(6)}`);
+    const disc = discountLabel();
+    if (disc) out.push(`Discount claimed: ${disc}`);
+    out.push("");
+    lines.forEach(l => {
+      const u = unitWord(l.it);
+      const what = `${fmt(l.q)} × ${l.it.name}${u ? ` (${u})` : ""}`;
+      const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.bulk ? " (bulk price)" : ""}`;
+      out.push(`- ${what}: ${price}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
+    });
+    out.push("", `Estimated total: ${fmt(sum, "cr")}${quoted ? `, plus ${quoted} item${quoted > 1 ? "s" : ""} to be quoted` : ""}${orderMeta.where === "delivery" ? ", plus delivery" : ""}`);
+    if (orderMeta.note.trim()) out.push(`Note: ${orderMeta.note.trim()}`);
+    return out.join("\n");
+  }
+  function openOrder() {
+    const od = $("#order-dialog");
+    if (!od) return;
+    renderOrder();
+    if (!od.open) od.showModal();
+    track("order-list", "Order list opened");
+  }
+  (function wireOrder() {
+    const od = $("#order-dialog"), fab = $("#order-fab");
+    if (!od || !fab) return;
+    fab.addEventListener("click", openOrder);
+    od.addEventListener("click", e => {
+      if (e.target === od || e.target.closest("[data-close]")) { od.close(); return; }
+      const x = e.target.closest(".ol-x");
+      if (x) { setQty(x.closest("tr").dataset.k, 0); return; }
+      if (e.target.closest(".title-btn")) { od.close(); return; } // the item window opens from the shared handler
+      if (e.target.closest("[data-clear]")) { order = []; saveOrder(); renderOrderFab(); renderOrder(); return; }
+      const c = e.target.closest("[data-copy-order]");
+      if (c) {
+        const missing = !orderMeta.where;
+        copyText(orderText(), () => { c.textContent = "Order copied"; setTimeout(() => { c.textContent = "Copy order"; }, 2000); });
+        track("order-copied", "Order copied");
+        if (missing) od.querySelector("#ol-where").classList.add("bad");
+      }
+    });
+    od.addEventListener("change", e => {
+      if (e.target.classList.contains("ol-qty")) {
+        const q = parseNumber(e.target.value);
+        if (q > 0) setQty(e.target.closest("tr").dataset.k, q); else e.target.classList.add("bad");
+      }
+    });
+    od.addEventListener("input", e => {
+      if (e.target.id === "ol-name") orderMeta.name = e.target.value;
+      else if (e.target.id === "ol-where") { orderMeta.where = e.target.value; e.target.classList.remove("bad"); }
+      else if (e.target.id === "ol-note") orderMeta.note = e.target.value;
+      else return;
+      saveOrder();
+    });
+  })();
 
   // ---------- item details (a pop-up window, one at a time) ----------
   // An item gets a "More info" button when its row has text in "details" or files in "gallery".
@@ -256,8 +487,8 @@
     const seen = new Set();
     const pics = [it.image, ...it.gallery].filter(p => p && !seen.has(p.toLowerCase()) && seen.add(p.toLowerCase()));
     const media = pics.length ? `<div class="dlg-media">
-        <div class="dlg-main"><img src="${esc(imageSrc(pics[0]))}" alt="${esc(it.name)}" onerror="SI.imgRetry(this)"></div>
-        ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img src="${esc(imageSrc(p))}" alt="" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.hidden=true;}"></button>`).join("")}</div>` : ""}
+        <div class="dlg-main"><img ${imgAttrs(pics[0], "opt")} alt="${esc(it.name)}" onerror="SI.imgRetry(this)"></div>
+        ${pics.length > 1 ? `<div class="dlg-thumbs">${pics.map((p, i) => `<button type="button" data-pic="${esc(p)}" aria-pressed="${i === 0}" aria-label="Picture ${i + 1} of ${pics.length}"><img ${imgAttrs(p, "thumb")} alt="" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.hidden=true;}"></button>`).join("")}</div>` : ""}
       </div>` : "";
     return `<div class="dlg-head"><div>
         <p class="cat">${catLine(it)}${tags(it)}</p>
@@ -266,11 +497,14 @@
         <button type="button" class="dlg-close" data-close aria-label="Close" autofocus>&times;</button></div>
       ${media}
       ${it.description ? `<p class="dlg-desc">${esc(it.description)}</p>` : ""}
+      ${stockTag(it, true) ? `<p class="dlg-stock">${stockTag(it, true)}</p>` : ""}
       ${priceHTML(it)}
+      ${orderControlsHTML(it)}
       ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${contactHTML(it)}`;
   }
   const track = (path, title) => window.siTrack && window.siTrack(path, title);
+  function currentItem() { return items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === dlg.dataset.item); }
   const dlg = $("#item-dialog");
   function openItem(key) {
     const it = items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === key);
@@ -293,16 +527,31 @@
       if (pic) {
         const main = dlg.querySelector(".dlg-main img");
         main.removeAttribute("data-orig"); main.removeAttribute("data-tried");
-        main.src = pic.querySelector("img").currentSrc || pic.querySelector("img").src;
+        const small = imageVariant(pic.dataset.pic, "opt"), orig = imageSrc(pic.dataset.pic);
+        if (small !== orig) main.setAttribute("data-fallback", orig); else main.removeAttribute("data-fallback");
+        main.src = small;
         dlg.querySelectorAll("[data-pic]").forEach(x => x.setAttribute("aria-pressed", String(x === pic)));
       }
       const copy = e.target.closest("[data-copy]");
       if (copy) {
-        const url = location.href.split("#")[0] + "#item-" + dlg.dataset.item;
-        const done = () => { copy.textContent = "Link copied"; setTimeout(() => { copy.textContent = "Copy link to this item"; }, 2000); };
-        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => window.prompt("Copy this link:", url));
-        else window.prompt("Copy this link:", url);
+        // Each item has its own page at /item/<key>/, which shows a preview with the item's
+        // name, price, and picture when the link is pasted into Discord, then opens this window.
+        const url = new URL(ROOT + "item/" + encodeURIComponent(dlg.dataset.item) + "/", location.href).href;
+        copyText(url, () => { copy.textContent = "Link copied"; setTimeout(() => { copy.textContent = "Copy link to this item"; }, 2000); });
       }
+      const add = e.target.closest("[data-add]");
+      if (add) {
+        const q = parseNumber(dlg.querySelector("#dlg-qty").value);
+        if (!(q > 0)) { dlg.querySelector("#dlg-qty").classList.add("bad"); return; }
+        setQty(dlg.dataset.item, q);
+        dlg.querySelector(".dlg-order").outerHTML = orderControlsHTML(currentItem(), "Added to your order list.");
+      }
+      const rem = e.target.closest("[data-remove]");
+      if (rem) {
+        setQty(dlg.dataset.item, 0);
+        dlg.querySelector(".dlg-order").outerHTML = orderControlsHTML(currentItem(), "Removed from your order list.");
+      }
+      if (e.target.closest("[data-open-order]")) { dlg.close(); openOrder(); }
     });
     dlg.addEventListener("close", () => {
       if (location.hash.startsWith("#item-")) history.replaceState(null, "", location.pathname + location.search);
@@ -329,7 +578,9 @@
       s.hidden = false;
       s.textContent = "These are example items. Connect the Catalog tab of the company sheet in js/config.js to show the real catalog.";
     }
+    renderNotices(); renderTools();
     renderChips(); renderGoods(); renderServices(); renderStoreFilter(); renderStores();
+    loadOrder(); renderOrderFab();
     // Sections such as a division's are built after the page loads, so the browser
     // cannot jump to a link like index.html#brand-ihi by itself. Do it now.
     if (location.hash.startsWith("#item-")) openItem(decodeURIComponent(location.hash.slice(6)));

@@ -1,0 +1,71 @@
+# Keeps two sets of generated files up to date, with no work by hand:
+#  - small, fast copies of every picture in images/ (images/opt, images/thumb, images/og)
+#  - one page per catalog item under item/, for link previews in Discord
+# Runs when pictures or the config are pushed, every hour (to follow the sheet), and on
+# demand from the Actions tab (Update site files → Run workflow).
+name: Update site files
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "images/**"
+      - "!images/opt/**"
+      - "!images/thumb/**"
+      - "!images/og/**"
+      - "js/config.js"
+      - ".github/scripts/**"
+      - ".github/workflows/site-files.yml"
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: site-files
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the picture library
+        run: pip install "pillow==11.0.0"
+
+      - name: Make small copies of new or changed pictures
+        run: python .github/scripts/optimize_images.py .
+
+      - name: Build item pages from the Catalog tab
+        run: python .github/scripts/build_item_pages.py .
+
+      - name: Save any changes
+        id: save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A images/opt images/thumb images/og item
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Update picture copies and item pages"
+          git pull --rebase --autostash
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # Changes saved by this workflow do not start a site rebuild by themselves; ask for one.
+      - name: Publish the site
+        if: steps.save.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"

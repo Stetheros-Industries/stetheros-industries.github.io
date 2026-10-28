@@ -57,6 +57,20 @@
     });
     toc.innerHTML = tocItems.join("");
 
+    // A small button after each clause label and section heading copies a link to it.
+    doc.querySelectorAll("p[id], h2[id]").forEach(el => {
+      const label = el.tagName === "H2" ? el.textContent.trim().split(/\s+/)[0] : el.firstElementChild.textContent.trim().replace(/\s.*$/, "");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "clause-link"; b.textContent = "Copy link";
+      b.setAttribute("aria-label", "Copy a link to " + label);
+      b.addEventListener("click", () => {
+        const url = location.href.split("#")[0] + "#" + el.id;
+        history.replaceState(null, "", "#" + el.id);
+        SI.copyText(url, () => { b.textContent = "Link copied"; b.classList.add("done"); setTimeout(() => { b.textContent = "Copy link"; b.classList.remove("done"); }, 1800); });
+      });
+      if (el.tagName === "H2") el.appendChild(b); else el.firstElementChild.after(b);
+    });
+
     // Link "§4.3" style references (but not a clause's own label or headings).
     const walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {
       acceptNode(n) {

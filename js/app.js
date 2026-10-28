@@ -7,6 +7,9 @@
   let mode = "member";
   try { mode = localStorage.getItem("si-mode") || "member"; } catch (e) { /* storage blocked */ }
   if (["#board", "#member", "#government"].includes(location.hash)) mode = location.hash.slice(1);
+  // A shared link: calculator/index.html?mode=member&calc=<id>&v=<values>#c-<id>
+  const shared = new URLSearchParams(location.search);
+  if (["member", "board", "government"].includes(shared.get("mode"))) mode = shared.get("mode");
   if (!["member", "board", "government"].includes(mode)) mode = "member";
 
   // ---------- constants panel ----------
@@ -79,6 +82,7 @@
         <div class="results" aria-live="polite"></div>
       </div>
       <div class="outwrap"></div>
+      <div class="share-row"><button type="button" class="btn ghost" data-share>Copy a link to these values</button><span class="copied" role="status"></span></div>
       ${howHTML(calc)}
     </section>`;
   }
@@ -153,8 +157,36 @@
       el.querySelector("form").addEventListener("input", () => update(calc, el));
       const ex = el.querySelector("[data-example]");
       if (ex) ex.addEventListener("click", () => { el.querySelector("textarea").value = calc.table.example; update(calc, el); });
+      el.querySelector("[data-share]").addEventListener("click", () => {
+        const vals = {};
+        el.querySelectorAll("[data-k]").forEach(f => { vals[f.dataset.k] = f.value; });
+        const ta = el.querySelector("textarea");
+        if (ta) vals._rows = ta.value;
+        const url = location.origin + location.pathname + "?mode=" + mode + "&calc=" + encodeURIComponent(calc.id) +
+          "&v=" + encodeURIComponent(JSON.stringify(vals)) + "#c-" + calc.id;
+        const msg = el.querySelector(".share-row .copied");
+        SI.copyText(url, () => { msg.textContent = "Link copied. Anyone who opens it sees these values."; setTimeout(() => { msg.textContent = ""; }, 3000); });
+      });
       update(calc, el);
     });
+  }
+
+  // Fills a calculator from a shared link, once, after the first render.
+  function applyShared() {
+    const id = shared.get("calc"), raw = shared.get("v");
+    if (!id || !raw) return;
+    const calc = CALCULATORS.find(c => c.id === id && c.modes.includes(mode));
+    const el = calc && $("#c-" + calc.id);
+    if (!el) return;
+    let vals;
+    try { vals = JSON.parse(raw); } catch (e) { return; }
+    Object.entries(vals || {}).forEach(([k, v]) => {
+      if (k === "_rows") { const ta = el.querySelector("textarea"); if (ta) ta.value = String(v); return; }
+      const f = el.querySelector(`[data-k="${CSS.escape(k)}"]`);
+      if (f) f.value = String(v);
+    });
+    update(calc, el);
+    requestAnimationFrame(() => el.scrollIntoView());
   }
 
   document.querySelectorAll("[data-mode]").forEach(b => b.addEventListener("click", () => {
@@ -164,5 +196,5 @@
   }));
   $("#jump").addEventListener("change", e => { const t = document.getElementById(e.target.value); if (t) t.scrollIntoView({ behavior: "smooth" }); });
 
-  SI.loadConstants().then(() => { renderStatus(); render(); });
+  SI.loadConstants().then(() => { renderStatus(); render(); applyShared(); });
 })();
