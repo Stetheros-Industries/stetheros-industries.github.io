@@ -36,6 +36,7 @@
     color-scheme: dark;
   }
 }
+:root,
 :root[data-theme="dark"] {
   --paper: #0f151b; --surface: #17202a; --sunken: #121a22; --ink: #e5eaef; --muted: #9aa6b2; --line: #2a3643;
   --band: #0a0f14; --band-ink: #e5eaef; --accent: #e6773f; --accent-ink: #10161c; --steel: #79a6dd;
