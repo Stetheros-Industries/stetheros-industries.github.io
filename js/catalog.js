@@ -141,7 +141,7 @@
       </div></article>`;
   }
   function svcHTML(it, withBadge) {
-    return `<article class="svc">
+    return `<article class="svc"><div class="thumb-open svc-thumb" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div>
         <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
