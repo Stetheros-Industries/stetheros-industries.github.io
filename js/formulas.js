@@ -192,7 +192,7 @@ window.FORMULAS = {
     sections: ["11.3"],
     tex: String.raw`r_{\text{new}} = (1 - x)\, r_{\text{old}}`,
     symbols: { x: "tax_cut" },
-    plain: "A provisional Economic Plan term: the nation cuts its sales tax on company sales by a share of its existing rate."
+    plain: "A provisional Stetheros Compact term: the nation cuts its sales tax on company sales by a share of its existing rate."
   },
   discount: {
     title: "Citizen, bulk, and promotional discounts",

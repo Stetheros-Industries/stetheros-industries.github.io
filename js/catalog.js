@@ -48,7 +48,7 @@
     return [
       { id: "none", label: "No discount", value: 0 },
       { id: "home", label: `Prunian citizen or government (${fmt(d, "pct")})`, value: d },
-      { id: "plan", label: `Economic Plan nation (${fmt(d, "pct")})`, value: d },
+      { id: "plan", label: `Stetheros Compact nation (${fmt(d, "pct")})`, value: d },
       { id: "custom", label: "Other discount", value: null }
     ];
   }

@@ -19,7 +19,7 @@ Stetheros Industries is a member-run industrial company. Members make goods and 
 7. **Contracts and services.** The company may give a member a priority contract, under which the member's goods are drawn first for sale in return for a weekly quota. Goods outside the catalog are unrestricted, custom orders have their own rules, and the company sells services on members' behalf, keeping 20% (§8).
 8. **Governance.** A CEO and a board run the company. The CEO can approve builds, contracts, and supply budgets alone, but a majority of the board can challenge an approval, and an approval becomes final when its 24-hour challenge window closes. Each eligible member has one vote, not weighted by equity, and the CEO can be removed by 66% of eligible members together with a majority of equity. Rule-breaking is handled by a three-strike system, with removal at the fourth strike (§9).
 9. **Reimbursement.** A member who pays with personal money for an approved company purchase, because no board member is online, is repaid within 7 days. A late payment carries a premium of 10% of the claim for each full week, up to 30% (§10).
-10. **Nations and war.** Prunia is covered by a Home Charter, and any other nation may sign the Economic Plan. Governments and citizens of both receive a 10% discount on company goods, and both share in a profit pool of 7% of company profit. Both also accept the wartime provisions: strategic goods never reach a nation's enemy, trade continues, company assets are protected, and the company takes no side in a war (§11, §12).
+10. **Nations and war.** Prunia is covered by a Home Charter, and any other nation may sign the Stetheros Compact. Governments and citizens of both receive a 10% discount on company goods, and both share in a profit pool of 7% of company profit. Both also accept the wartime provisions: strategic goods never reach a nation's enemy, trade continues, company assets are protected, and the company takes no side in a war (§11, §12).
 
 **How to read this document**
 
@@ -37,7 +37,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | §8 | Contracts and Services | Priority contracts, custom orders, services |
 | §9 | Governance and Enforcement | The board, the CEO, votes, roles, strikes |
 | §10 | Member-Advanced Purchases | Repayment when a member pays for approved purchases |
-| §11 | Nations: the Home Charter and the Economic Plan | The Home Charter, the Economic Plan, discounts, the profit pool |
+| §11 | Nations: the Home Charter and the Stetheros Compact | The Home Charter, the Stetheros Compact, discounts, the profit pool |
 | §12 | Wartime Provisions | Strategic goods, asset protection, escrow, leave |
 | Appendix A | Reference Table | Every value, with its section |
 
@@ -86,8 +86,8 @@ Every section except §2 opens with a statement of what the section does, follow
 | Asset | A machine, farm, build, or other means of production a member contributes or operates. |
 | Production infrastructure | A company-owned machine whose output flows automatically into company storage (§3.3). |
 | Home Charter | The agreement between the company and Prunia (§11.2). |
-| Economic Plan | The agreement between the company and any other nation that signs it (§11.3). |
-| Signatory nation | A nation that has signed the Economic Plan. |
+| Stetheros Compact | The agreement between the company and any other nation that signs it (§11.3). |
+| Signatory nation | A nation that has signed the Stetheros Compact. |
 | Pool nation | Prunia and every signatory nation, because each shares in the profit pool (§11.5). |
 | Region | The territory of a nation, as recorded for company storage and shops (§12.2). |
 | Origin tag | A record, kept with goods, of the region where they were produced (§12.2). |
@@ -407,9 +407,9 @@ Strikes expire after 12 weeks without a violation.
 
 **§10.5 False claims.** An inflated or false claim counts as defrauding the company, which is a severe offense (§9.9).
 
-## §11 Nations: the Home Charter and the Economic Plan
+## §11 Nations: the Home Charter and the Stetheros Compact
 
-> **What this section does.** It sets out how the company returns value to the nations where it operates. Prunia, the home nation, is covered by the Home Charter, and any other nation may sign the Economic Plan. It lists what each side gives and receives under the two agreements, the 10% citizen discount and how it interacts with the revenue split, the profit pool and how it is shared among nations, and the rule against reselling discounted goods.
+> **What this section does.** It sets out how the company returns value to the nations where it operates. Prunia, the home nation, is covered by the Home Charter, and any other nation may sign the Stetheros Compact. It lists what each side gives and receives under the two agreements, the 10% citizen discount and how it interacts with the revenue split, the profit pool and how it is shared among nations, and the rule against reselling discounted goods.
 
 **§11.1 Two agreements.** Both agreements are contracts between the company and a nation's government. Any nation that grants benefits similar to those Prunia grants can receive similar extras. The one exception is priority on stock that is not tied to any nation, which belongs only to the home nation, because the company cannot give that priority to both sides of a war (§12.4). The company is a private business with Prunia as its home jurisdiction, and it does not take any nation's side in a war beyond the rules in §12.
 
@@ -427,7 +427,7 @@ The company gives Prunia:
 
 1. banking only in the Credit (§1.4);
 2. a 10% goods discount for the government and citizens (§11.4);
-3. a first right to buy goods and services ahead of nations outside the Home Charter and the Economic Plan, applying when stock is short, at the normal price;
+3. a first right to buy goods and services ahead of nations outside the Home Charter and the Stetheros Compact, applying when stock is short, at the normal price;
 4. first call on strategic goods produced in Prunia, and on stock that is not tied to any nation (§12.4);
 5. a share of the profit pool (§11.5).
 
@@ -442,10 +442,10 @@ N = Taxes + Pool − Exchange ≥ 0
 
 **In plain terms.** Taxes are what the company pays Prunia in tax. Pool is the Prunian share of the profit pool (§11.5). Exchange is the exchange-cost compensation that Prunia pays the company. The test passes when taxes plus the pool share are at least the exchange compensation. With taxes of 100, a pool share of 150, and exchange compensation of 40, the result is 210, so the test passes.
 
-**§11.3 The Economic Plan (any nation).** A signatory nation receives:
+**§11.3 The Stetheros Compact (any nation).** A signatory nation receives:
 
 1. a 10% discount on company goods for its government and citizens, including strategic goods, the same discount the Home Charter grants Prunia (§11.4);
-2. a first right to buy goods and services ahead of nations outside the plan, applying when stock is short, at the normal price;
+2. a first right to buy goods and services ahead of nations outside the Compact, applying when stock is short, at the normal price;
 3. a share of the profit pool (§11.5).
 
 The company receives from a signatory nation:
@@ -462,7 +462,7 @@ r_new = 0.8 × r_old
 
 **In plain terms.** The new sales tax rate is 80% of the existing rate. A nation whose sales tax is 10% would lower it to 8%. The size of the cut therefore depends on each nation's existing rate.
 
-**§11.4 The citizen discount.** The government and citizens of every nation under the Home Charter or the Economic Plan receive a 10% discount on company goods, including strategic goods. There is no cap on discounted purchases. The discount comes off the whole sale price first, and the 80/20 split (§4.1) is then applied to the discounted price. On goods the company produces itself, the company bears the whole discount.
+**§11.4 The citizen discount.** The government and citizens of every nation under the Home Charter or the Stetheros Compact receive a 10% discount on company goods, including strategic goods. There is no cap on discounted purchases. The discount comes off the whole sale price first, and the 80/20 split (§4.1) is then applied to the discounted price. On goods the company produces itself, the company bears the whole discount.
 
 &#91;image: Formula: member and company amounts after the citizen discount\]
 
@@ -499,7 +499,7 @@ x_b > 5 × median(x)
 
 > **What this section does.** It keeps the company whole if nations go to war. Every signatory stays supplied, strategic goods never reach an opponent of the nation that produced them, and company assets are protected. It covers where goods are stored and how they are tagged, the strategic goods rule and priority on strategic goods, continued trade and embargoes, protection of assets, escrow as a bond, the ladder of remedies, what information is restricted, and leave for members during a war.
 
-**§12.1 Scope and purpose.** Both the Home Charter and the Economic Plan include these provisions. Under them, a signatory may not seize assets in its territory. A nation that feels cut off, or sees company assets helping its opponent, would otherwise be tempted to take them. The provisions therefore keep every signatory supplied, keep strategic goods from reaching an opponent, and make breaking them cost more than it gains. The server's war system has no declared enemies, so who counts as an enemy is determined dynamically, from the war system's own record of a war.
+**§12.1 Scope and purpose.** Both the Home Charter and the Stetheros Compact include these provisions. Under them, a signatory may not seize assets in its territory. A nation that feels cut off, or sees company assets helping its opponent, would otherwise be tempted to take them. The provisions therefore keep every signatory supplied, keep strategic goods from reaching an opponent, and make breaking them cost more than it gains. The server's war system has no declared enemies, so who counts as an enemy is determined dynamically, from the war system's own record of a war.
 
 **§12.2 Regional stock.** Goods are stored in the region where they are produced and are tagged with their origin. They are moved only to be sold, except where the board directs that certain goods be held in a particular region. The origin tag stays with the goods wherever they are moved, and the rules in §12.3 and §12.4 follow the tag, not the current location. Regional stock does not change target stock or guarantee budgets, which are set for each good across all regions together (§5.2).
 
@@ -518,7 +518,7 @@ x_b > 5 × median(x)
 
 **§12.7 Escrow as a bond.** During a war, pool payments (§11.5) to a belligerent signatory are held in escrow, meaning the company keeps them in trust. If the nation seizes assets, the escrow offsets the loss. Otherwise it is released after the war.
 
-**§12.8 Remedies.** The ladder has three steps: a written warning, then escrow, then suspension of plan benefits. Any step beyond escrow needs a 66% vote of the board and a written reason shown to all members. Civilian trade is never cut off completely.
+**§12.8 Remedies.** The ladder has three steps: a written warning, then escrow, then suspension of Compact benefits. Any step beyond escrow needs a 66% vote of the board and a written reason shown to all members. Civilian trade is never cut off completely.
 
 **§12.9 Information.** Sales of strategic goods to governments appear in the ledger as an aggregate figure. The detail is visible only to the board and the auditor. This is the one exception to the rule that all members see the ledger (§9.7). A nation also agrees not to use its access to company records for military intelligence.
 
@@ -581,11 +581,11 @@ x_b > 5 × median(x)
 | §10.1 | Reimbursement window | 7 days from the date the goods are recorded in company storage |
 | §10.2 | Challenge window threshold for member advances | Approvals above 10% of the treasury go through the 24-hour challenge window before the member spends |
 | §10.4 | Late reimbursement premium | 10% of the claim for each full week late, capped at 30% |
-| §11.1 | Nation agreements | A Home Charter for Prunia and an Economic Plan open to any nation |
+| §11.1 | Nation agreements | A Home Charter for Prunia and a Stetheros Compact open to any nation |
 | §11.3 | First right to buy | Signatory nations ahead of non-signatories when stock is short, at the normal price |
 | §11.3 | Sales-tax reduction by signatories | 20% of the existing rate (provisional) |
-| §11.4 | Discount for governments and citizens | 10% for the government and citizens of every nation under the Home Charter or the Economic Plan, including strategic goods; taken off the whole sale price before the revenue split; no cap on discounted purchases |
-| §11.5 | Nation profit pool | 7% of total company profit, never below zero; shared among Home Charter and Economic Plan nations, half by the value of company-owned infrastructure and half by sales, measured by location |
+| §11.4 | Discount for governments and citizens | 10% for the government and citizens of every nation under the Home Charter or the Stetheros Compact, including strategic goods; taken off the whole sale price before the revenue split; no cap on discounted purchases |
+| §11.5 | Nation profit pool | 7% of total company profit, never below zero; shared among Home Charter and Stetheros Compact nations, half by the value of company-owned infrastructure and half by sales, measured by location |
 | §11.6 | Discount resale rule | Discounted goods are for the buyer's own use or for other citizens of the buyer's nation; resale costs the discount for 4 weeks, then 12 weeks, then permanently (provisional); the auditor reviews buyers above five times the median buyer from the same nation |
 | §12.2 | Regional stock | Goods are stored where produced, tagged with their origin, and moved only for sale or by board direction; target stock and guarantee budgets ignore region |
 | §12.3 | Strategic goods rule | Never sold to the enemy of the nation where produced; a buyer at war may buy only goods produced outside its enemy's region; which goods are strategic is determined dynamically |

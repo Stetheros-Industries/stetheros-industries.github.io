@@ -499,7 +499,7 @@
     {
       id: "tax", title: "Signatory sales tax", modes: ["board", "government"],
       sections: ["11.3"], formulas: ["tax"],
-      intro: "The sales-tax rate a signatory nation applies to company sales under the Economic Plan.",
+      intro: "The sales-tax rate a signatory nation applies to company sales under the Stetheros Compact.",
       inputs: [pct("rate", "Nation's existing sales-tax rate", 10)],
       compute(v, C) { return { results: [R("New rate", (1 - C.tax_cut) * v.rate, "pct", true)] }; }
     },
@@ -508,7 +508,7 @@
       sections: ["11.4", "3.2", "3.7", "4.1"], formulas: ["discount"],
       intro: "How the citizen, bulk, and promotional discounts are shared when a member's goods sell at a discount.",
       inputs: [num("price", "List price per unit (Cr)", 100), num("units", "Units", 1),
-        yn("citizen", "Buyer is a citizen or government of a Home Charter or Economic Plan nation", "yes"),
+        yn("citizen", "Buyer is a citizen or government of a Home Charter or Stetheros Compact nation", "yes"),
         yn("bulk", "Order meets the item's bulk quantity", "no"),
         pct("promo", "Approved promotional discount on the item (0 if none)", 0)],
       compute(v, C) {
