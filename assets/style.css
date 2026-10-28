@@ -434,3 +434,4 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .svc h3 { font-size: 18px; }
   .svc .price .list { font-size: 16px; }
 }
+.foot-note { margin-top: 8px; font-size: 12px; opacity: 0.8; }

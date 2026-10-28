@@ -223,7 +223,7 @@
       ? `To book this service, join our Discord server and message ${who}. You pay when you book, and the payment is held in escrow until the job is done (<a href="policy/index.html#s8-4">§8.4</a>).`
       : `Buy it at any Stetheros Industries shop (<a href="#stores" data-close>store locations</a>). For a custom or bulk order, join our Discord server and message ${who}.`;
     return `<div class="dlg-contact"><p>${what}</p>
-      <div class="dlg-actions"><a class="btn" href="${esc(DISCORD)}" target="_blank" rel="noopener">Join the Discord server</a>
+      <div class="dlg-actions"><a class="btn" href="${esc(DISCORD)}" target="_blank" rel="noopener" data-discord>Join the Discord server</a>
       <button type="button" class="btn ghost" data-copy>Copy link to this item</button></div></div>`;
   }
   function dialogHTML(it) {
@@ -244,6 +244,7 @@
       ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${contactHTML(it)}`;
   }
+  const track = (path, title) => window.siTrack && window.siTrack(path, title);
   const dlg = $("#item-dialog");
   function openItem(key) {
     const it = items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === key);
@@ -254,6 +255,7 @@
     dlg.innerHTML = dialogHTML(it);
     dlg.dataset.item = key;
     if (!dlg.open) dlg.showModal();
+    track("item-" + key, it.name);
     dlg.scrollTop = 0;
     history.replaceState(null, "", "#item-" + key);
     return true;
