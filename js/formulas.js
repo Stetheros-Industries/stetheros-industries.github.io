@@ -209,13 +209,5 @@ window.FORMULAS = {
     symbols: { "π": "pool_rate" },
     legend: "A_r is the approved value of active company-owned infrastructure in nation r; S_r is company sales at shops there, after discounts. If either total is zero, the other term carries the full weight.",
     plain: "Each pool nation's payment is the pool times its weight, half by infrastructure and half by sales."
-  },
-  resale: {
-    title: "Resale review",
-    sections: ["11.6"],
-    tex: String.raw`x_b > k \times \operatorname{median}(x)`,
-    symbols: { k: "resale_multiple" },
-    legend: "x_b is buyer b's discounted purchases over four weeks; the median is taken over buyers from the same nation.",
-    plain: "A review is a question about intended use, not a finding of resale."
   }
 };

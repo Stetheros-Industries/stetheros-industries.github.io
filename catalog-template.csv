@@ -21,6 +21,7 @@ The buyer supplies the land and any permission needed from the nation it crosses
 S003,service,Construction,Build contract,,quoted per job,,,,,,Example service. Custom builds; the Sales role quotes each job and payment is held in escrow until it is done.,,yes,30,,,,
 S004,service,Construction,Heavy lift installation,,quoted per job,,,,,IHI,Example service from a branded division.,,yes,35,Example of a service with its own contact: the contact column names who to message instead of the @Sales role.,,@IsoKamakazi,
 IHI,brand,#2563FF #F42F66 #050810,Isonian Heavy Industries,,,,,,,,"Focused on logistics and transport, and headed by IsoKamakazi.",ihi-logo.png,yes,10,,,,
+N01,nation,,Example Nation,,,,,,,,,,yes,10,,,,
 ST01,store,Prunia,Stetheros,,,,,,,,Company headquarters. Main shop and order pickup point.,,yes,10,,,,
 ST02,store,Example Nation,Second Example City,,,,,,,,Example store.,,yes,20,,,,
 M01,member,CEO & Board,FighterPilot O5,,,,,,,,,,yes,10,,,,

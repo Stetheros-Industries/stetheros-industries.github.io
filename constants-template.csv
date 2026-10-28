@@ -30,4 +30,3 @@ tax_cut,20%,Signatory sales-tax cut,§11.3,Percent. Allowed range 0% to 100%
 bulk_discount,15%,Bulk-order discount,Catalog,Percent. Allowed range 0% to 100%
 citizen_discount,10%,Citizen discount,§11.4,Percent. Allowed range 0% to 100%
 pool_rate,7%,Nation profit pool (share of profit),§11.5,Percent. Allowed range 0% to 100%
-resale_multiple,5,Resale review multiple of the median buyer,§11.6,Allowed range 1 to 100

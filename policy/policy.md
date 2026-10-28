@@ -474,7 +474,7 @@ r_new = 0.8 × r_old
 
 **In plain terms.** P\_r is nation r's payment and Π is total company profit for the period. A\_r is the approved value of company-owned infrastructure currently active in nation r, and retired infrastructure is excluded. S\_r is the revenue the company received from sales at shops in nation r during the period, after discounts. Each sum runs over every pool nation m, Prunia included. If either total is zero, the other term carries the full weight. A new signatory dilutes the other nations' shares rather than enlarging the pool. For example, suppose Prunia holds 80% of the infrastructure value and 70% of the sales, and a second nation holds 20% and 30%. The Prunian weight is 0.5 × 0.8 + 0.5 × 0.7 = 0.75 and the second nation's is 0.25. On a profit of 1,000 Credits the pool is 70, of which Prunia receives 52.5 and the second nation 17.5.
 
-**§11.6 Resale of discounted goods.** Because discounted purchases have no cap, discounted goods are for the buyer's own use or for other citizens of the buyer's nation, who qualify for the discount anyway. Resale to anyone else is prohibited. A government may distribute discounted goods to its citizens but may not sell them on.
+**§11.6 Resale of discounted goods.** Discounted goods may be resold or passed on only to the governments and citizens of nations under the Home Charter or the Stetheros Compact, who qualify for the discount anyway. Resale to anyone else is prohibited. The company does not monitor purchases for resale; it acts when a resale outside these nations is discovered.
 
 1. A violation is established by evidence from the buyer or a witness of the resale itself, such as a screenshot of the resale. A majority of the board decides. Ordinary purchases from the company need no documentation.
 2. The penalties escalate. The values below are *provisional*.
@@ -485,15 +485,7 @@ r_new = 0.8 × r_old
 | Second | The buyer loses the discount for 12 weeks. |
 | Third | The buyer loses the discount permanently. |
 
-3. The auditor reviews any buyer whose discounted purchases over four weeks exceed five times those of the median buyer from the same nation, and may ask that buyer about the intended use.
-
-```text
-x_b > 5 × median(x)
-```
-
-**In plain terms.** Here x\_b is the value of discounted goods that buyer b bought in the past four weeks, and the median is taken across buyers from the same nation. If the median buyer spent 200 Credits, a buyer who spent more than 1,000 is reviewed. A review is a question about intended use, not a finding of resale.
-
-4. A nation commits to cooperate and to act against officials who run resale schemes. Repeated violations by a nation's buyers or officials go up the remedy ladder in §12.8.
+3. A nation commits to cooperate and to act against officials who run resale schemes. Repeated violations by a nation's buyers or officials go up the remedy ladder in §12.8.
 
 ## §12 Wartime Provisions
 
@@ -586,7 +578,7 @@ x_b > 5 × median(x)
 | §11.3 | Sales-tax reduction by signatories | 20% of the existing rate (provisional) |
 | §11.4 | Discount for governments and citizens | 10% for the government and citizens of every nation under the Home Charter or the Stetheros Compact, including strategic goods; taken off the whole sale price before the revenue split; no cap on discounted purchases |
 | §11.5 | Nation profit pool | 7% of total company profit, never below zero; shared among Home Charter and Stetheros Compact nations, half by the value of company-owned infrastructure and half by sales, measured by location |
-| §11.6 | Discount resale rule | Discounted goods are for the buyer's own use or for other citizens of the buyer's nation; resale costs the discount for 4 weeks, then 12 weeks, then permanently (provisional); the auditor reviews buyers above five times the median buyer from the same nation |
+| §11.6 | Discount resale rule | Discounted goods may be resold only to the governments and citizens of Home Charter and Stetheros Compact nations; purchases are not monitored; a discovered resale outside them costs the discount for 4 weeks, then 12 weeks, then permanently (provisional) |
 | §12.2 | Regional stock | Goods are stored where produced, tagged with their origin, and moved only for sale or by board direction; target stock and guarantee budgets ignore region |
 | §12.3 | Strategic goods rule | Never sold to the enemy of the nation where produced; a buyer at war may buy only goods produced outside its enemy's region; which goods are strategic is determined dynamically |
 | §12.4 | Priority in war | Each nation first on goods produced in its region; Prunia first on stock not tied to any nation |

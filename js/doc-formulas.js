@@ -23,6 +23,5 @@ window.DOC_FORMULAS = {
   "11.2": "N = \\text{Taxes} + \\text{Pool} - \\text{Exchange} \\ge 0",
   "11.3": "r_{\\text{new}} = 0.8\\; r_{\\text{old}}",
   "11.4": "\\begin{aligned}\n\\text{Member} &= 0.8\\,(1-d)\\,p\\\\\n\\text{Company} &= 0.2\\,(1-d)\\,p, \\qquad d = 0.10\n\\end{aligned}",
-  "11.5": "\\begin{aligned}\nP_r &= 0.07\\,\\max(0,\\ \\Pi)\\, w_r\\\\\nw_r &= \\frac{1}{2}\\,\\frac{A_r}{\\sum_m A_m} + \\frac{1}{2}\\,\\frac{S_r}{\\sum_m S_m}\n\\end{aligned}",
-  "11.6": "x_b > 5 \\times \\operatorname{median}(x)"
+  "11.5": "\\begin{aligned}\nP_r &= 0.07\\,\\max(0,\\ \\Pi)\\, w_r\\\\\nw_r &= \\frac{1}{2}\\,\\frac{A_r}{\\sum_m A_m} + \\frac{1}{2}\\,\\frac{S_r}{\\sum_m S_m}\n\\end{aligned}"
 };

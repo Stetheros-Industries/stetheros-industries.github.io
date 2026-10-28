@@ -72,7 +72,21 @@
       inp.classList.toggle("bad", !ok);
       discount = ok ? n / 100 : 0;
     } else discount = p.value;
+    renderCompactList();
     renderGoods(); renderServices();
+  }
+  // The Stetheros Compact nations (rows of type "nation" on the Catalog tab), shown
+  // under the discount picker when the Compact discount is chosen and at least one exists.
+  function renderCompactList() {
+    const box = $("#compact-list");
+    if (!box) return;
+    const nations = items.filter(i => i.type === "nation");
+    const show = discChoice === "plan" && nations.length > 0;
+    box.hidden = !show;
+    if (!show) return;
+    box.innerHTML = `<p class="compact-h">Stetheros Compact nations</p>
+      <ul class="compact-nations">${nations.map(n => `<li>${esc(n.name)}${n.example ? ' <span class="ex">Example</span>' : ""}${n.description ? ` <span class="compact-note">${esc(n.description)}</span>` : ""}</li>`).join("")}</ul>
+      <p class="fine">Citizens and governments of these nations receive the discount, and may resell discounted goods only to each other and to Prunians (<a href="policy/index.html#s11-6">§11.6</a>).</p>`;
   }
 
   // ---------- catalog ----------
@@ -296,6 +310,7 @@
   }).then(r => {
     items = r.items;
     buildBrands();
+    renderCompactList();
     if (r.updated) $("#cat-updated").textContent = `Last updated ${r.updated}.`;
     if (r.example) {
       const s = $("#cat-status");

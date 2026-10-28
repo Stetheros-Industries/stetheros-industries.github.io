@@ -546,30 +546,6 @@
           notes: ["During a war, payments to a belligerent signatory are held in escrow (§12.7)."]
         };
       }
-    },
-    {
-      id: "resale", title: "Resale review", modes: ["board", "government"],
-      sections: ["11.6"], formulas: ["resale"],
-      intro: "Which buyers' discounted purchases are high enough for the auditor to review.",
-      inputs: [],
-      table: {
-        label: "One buyer per line: buyer, nation, discounted purchases over the last four weeks (Cr)",
-        columns: ["Buyer", "Nation", "Purchases"],
-        example: "Ana, Prunia, 200\nBo, Prunia, 180\nCal, Prunia, 1250\nDara, Prunia, 220\nEnzo, Second nation, 90\nFay, Second nation, 110"
-      },
-      compute(v, C, rows) {
-        const bs = rows.map(r => ({ name: r[0], nation: r[1] || "", x: N(r[2]) || 0 }));
-        const by = {};
-        bs.forEach(b => (by[b.nation] = by[b.nation] || []).push(b.x));
-        const med = {};
-        Object.keys(by).forEach(k => (med[k] = median(by[k])));
-        const data = bs.map(b => [b.name, b.nation, b.x, med[b.nation], b.x > C.resale_multiple * med[b.nation] ? "Review" : ""]);
-        return {
-          results: [R("Buyers flagged", data.filter(d => d[4]).length, "int", true)],
-          out: { columns: ["Buyer", "Nation", "Purchases", "Nation median", "Flag"], kinds: [null, null, "cr", "cr", null], rows: data },
-          notes: ["A median from only a few buyers is unreliable. A review is a question about intended use, not a finding of resale."]
-        };
-      }
     }
   ];
 })();

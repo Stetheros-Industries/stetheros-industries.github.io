@@ -435,3 +435,11 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .svc .price .list { font-size: 16px; }
 }
 .foot-note { margin-top: 8px; font-size: 12px; opacity: 0.8; }
+
+/* ---------- Stetheros Compact nations (under the discount picker) ---------- */
+.compact-list { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: var(--radius); padding: 10px 14px; display: grid; gap: 6px; }
+.compact-h { margin: 0; font: 600 13px var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.compact-nations { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.compact-nations li { padding: 3px 10px; border-radius: 99px; background: var(--teal-bg); color: var(--teal); font-weight: 600; font-size: 14px; }
+.compact-note { font-weight: 400; color: var(--muted); }
+.compact-list .fine { font-size: 13px; }

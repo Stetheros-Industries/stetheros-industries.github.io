@@ -146,7 +146,7 @@
     $("#mode-note").textContent = {
       member: "These are estimates. Actual payouts come from the ledger (§1.3).",
       board: "Board tools work out actual figures from ledger values. They are a calculation aid, not a ruling: decisions are made under §9.",
-      government: "These show how the company's agreements with nations work out: the citizen discount, the profit pool, the sales-tax terms, and the resale review (§11). Actual figures come from the company's ledger."
+      government: "These show how the company's agreements with nations work out: the citizen discount, the profit pool, and the sales-tax terms (§11). Actual figures come from the company's ledger."
     }[mode];
     list.forEach(calc => {
       const el = $("#c-" + calc.id);
