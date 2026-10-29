@@ -327,12 +327,17 @@
   // The estimated price per unit, with the sale, the visitor's discount (goods only), and,
   // from the bulk quantity up, the bulk discount, each applied in turn (§3.2).
   function lineFor(it, q) {
-    if (it.price === null) return { it, q, unit: null, total: null, full: null, bulk: false };
+    if (it.price === null) return { it, q, unit: null, total: null, full: null, bulk: false, discs: [] };
     const d = it.type === "good" ? discount : 0;
-    let unit = it.price * (1 - saleNow(it)) * (1 - d);
+    const sale = saleNow(it);
+    let unit = it.price * (1 - sale) * (1 - d);
     const bulk = it.type === "good" && it.bulk && C.bulk_discount > 0 && q >= it.bulk;
     if (bulk) unit *= 1 - C.bulk_discount;
-    return { it, q, unit, total: unit * q, full: it.price * q, bulk };
+    const discs = [];
+    if (sale > 0) discs.push(`${fmt(sale, "pct")} sale`);
+    if (d > 0) discs.push(`${fmt(d, "pct")} ${customerDiscName()} discount`);
+    if (bulk) discs.push(`${fmt(C.bulk_discount, "pct")} bulk discount`);
+    return { it, q, unit, total: unit * q, full: it.price * q, bulk, discs };
   }
   function unitWord(it) { return it.unit ? (/^each$/i.test(it.unit) ? "" : it.unit) : ""; }
   function orderControlsHTML(it, msg) {
@@ -356,6 +361,10 @@
     fab.querySelector("[data-count]").textContent = order.length;
     document.body.classList.toggle("has-order", order.length > 0);
   }
+  // The customer's discount, named for the order: "Prunian citizen or government", and so on.
+  function customerDiscName() {
+    return { home: "Prunian citizen or government", plan: "Stetheros Compact", custom: "other" }[discChoice] || "customer";
+  }
   function discountLabel() {
     const p = presets().find(x => x.id === discChoice);
     if (!discount || !p || p.id === "none") return "";
@@ -375,7 +384,7 @@
     od.innerHTML = `<div class="dlg-head"><div><p class="cat">Kept in this browser only</p><h2 id="order-title">Your order list</h2></div>
         <button type="button" class="dlg-close" data-close aria-label="Close">&times;</button></div>
       ${lines.length ? `<div class="tablewrap"><table class="order-table"><thead><tr><th>Item</th><th class="numc">Quantity</th><th class="numc">Estimate</th><th><span class="visually-hidden">Remove</span></th></tr></thead><tbody>
-        ${lines.map(l => `<tr data-k="${esc(itemKey(l.it))}"><td><button type="button" class="title-btn" data-item="${esc(itemKey(l.it))}">${esc(l.it.name)}</button>${unitWord(l.it) ? `<small>${esc(unitWord(l.it))}</small>` : ""}${l.bulk ? ' <span class="bulk-tag">Bulk price</span>' : ""}${l.it.stock === "out" ? ' <span class="stock stock-out">Out of stock</span>' : ""}</td>
+        ${lines.map(l => `<tr data-k="${esc(itemKey(l.it))}"><td><button type="button" class="title-btn" data-item="${esc(itemKey(l.it))}">${esc(l.it.name)}</button>${unitWord(l.it) ? `<small>${esc(unitWord(l.it))}</small>` : ""}${l.discs.length ? `<small class="ol-discs">${esc(l.discs.join(" · "))}</small>` : ""}${l.it.stock === "out" ? ' <span class="stock stock-out">Out of stock</span>' : ""}</td>
           <td class="numc"><input class="ol-qty" type="text" inputmode="decimal" value="${esc(String(l.q))}" aria-label="Quantity of ${esc(l.it.name)}"></td>
           <td class="numc">${l.total === null ? (l.it.type === "service" ? "Quoted" : "On request") : fmt(l.total, "cr")}</td>
           <td><button type="button" class="ol-x" aria-label="Remove ${esc(l.it.name)}">&times;</button></td></tr>`).join("")}
@@ -403,12 +412,12 @@
     if (orderMeta.where === "delivery") out.push("Delivery: please quote a delivery rate");
     else if (orderMeta.where.startsWith("store:")) out.push(`Preferred pickup: ${orderMeta.where.slice(6)}`);
     const disc = discountLabel();
-    if (disc) out.push(`Discount claimed: ${disc}`);
+    if (disc) out.push(`Customer discount claimed: ${disc}`);
     out.push("");
     lines.forEach(l => {
       const u = unitWord(l.it);
       const what = `${fmt(l.q)} × ${l.it.name}${u ? ` (${u})` : ""}`;
-      const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.bulk ? " (bulk price)" : ""}`;
+      const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.discs.length ? ` (${l.discs.join(", ")})` : ""}`;
       out.push(`- ${what}: ${price}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
     });
     out.push("", `Estimated total: ${fmt(sum, "cr")}${quoted ? `, plus ${quoted} item${quoted > 1 ? "s" : ""} to be quoted` : ""}${orderMeta.where === "delivery" ? ", plus delivery" : ""}`);
