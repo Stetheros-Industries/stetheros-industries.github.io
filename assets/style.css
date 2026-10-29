@@ -584,3 +584,11 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .order-table tfoot tr:first-child > * { border-top: 2px solid var(--line); padding-top: 12px; }
 .order-table td small.ol-discs { color: var(--good); }
 .order-form { align-items: start; }
+
+/* ---------- Pop-up windows fit the visible screen ---------- */
+/* On phones, vh counts the area behind the browser's toolbars, so a window sized in vh can
+   slide under the address bar. dvh is the area actually visible; older browsers keep vh. */
+.item-dialog { max-height: min(88dvh, 900px); }
+@media (max-width: 560px) {
+  .item-dialog { max-height: calc(100dvh - 48px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+}
