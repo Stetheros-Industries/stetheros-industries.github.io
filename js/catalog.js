@@ -275,7 +275,12 @@
   // A row of type "notice": name = the headline, description = the text, and the optional
   // sale_from and sale_until dates set when it shows. category may be "warning" or "sale"
   // to change its color. Visitors can dismiss a notice; a changed notice shows again.
-  function noticeId(n) { return "si-notice-" + (n.id || n.name) + "-" + (n.name + n.description).length; }
+  // The key changes whenever the wording changes, so an edited notice shows again.
+  function noticeId(n) {
+    let h = 0;
+    for (const ch of n.name + "|" + n.description) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    return "si-notice-" + (n.id || n.name) + "-" + (h >>> 0).toString(36);
+  }
   function renderNotices() {
     const host = $("#site-notices");
     if (!host) return;
