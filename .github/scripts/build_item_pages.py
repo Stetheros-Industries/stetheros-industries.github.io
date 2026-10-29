@@ -8,7 +8,7 @@ Reads the Catalog tab from the link in js/config.js (or catalog-template.csv whe
 is set). Runs on a schedule (see .github/workflows/site-files.yml), so pages follow the
 sheet within about an hour. Pages for items that are removed or hidden are deleted.
 """
-import csv, html, io, json, os, re, shutil, sys, urllib.request
+import csv, hashlib, html, io, json, os, re, shutil, sys, urllib.request
 from datetime import date
 
 ROOT = sys.argv[1] if len(sys.argv) > 1 else "."
@@ -104,7 +104,16 @@ def picture(img):
         return img, None, None
     og = os.path.join("images", "og", slug(img) + ".jpg")
     if os.path.exists(os.path.join(ROOT, og)):
-        return f"{SITE}/{og}", 1200, 630
+        try:
+            from PIL import Image
+            with Image.open(os.path.join(ROOT, og)) as im:
+                w, h = im.size
+        except Exception:
+            w = h = None
+        # The file name changes with the picture, so Discord does not keep showing an old preview.
+        with open(os.path.join(ROOT, og), "rb") as f:
+            stamp = hashlib.sha1(f.read()).hexdigest()[:8]
+        return f"{SITE}/{og}?v={stamp}", w, h
     return f"{SITE}/images/{urllib.request.quote(img)}", None, None
 
 

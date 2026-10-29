@@ -327,12 +327,12 @@
   // The estimated price per unit, with the sale, the visitor's discount (goods only), and,
   // from the bulk quantity up, the bulk discount, each applied in turn (§3.2).
   function lineFor(it, q) {
-    if (it.price === null) return { it, q, unit: null, total: null, bulk: false };
+    if (it.price === null) return { it, q, unit: null, total: null, full: null, bulk: false };
     const d = it.type === "good" ? discount : 0;
     let unit = it.price * (1 - saleNow(it)) * (1 - d);
     const bulk = it.type === "good" && it.bulk && C.bulk_discount > 0 && q >= it.bulk;
     if (bulk) unit *= 1 - C.bulk_discount;
-    return { it, q, unit, total: unit * q, bulk };
+    return { it, q, unit, total: unit * q, full: it.price * q, bulk };
   }
   function unitWord(it) { return it.unit ? (/^each$/i.test(it.unit) ? "" : it.unit) : ""; }
   function orderControlsHTML(it, msg) {
@@ -367,8 +367,10 @@
     const lines = order.map(l => lineFor(byKey(l.k), l.q)).filter(l => l.it);
     const priced = lines.filter(l => l.total !== null);
     const sum = priced.reduce((a, l) => a + l.total, 0);
+    const full = priced.reduce((a, l) => a + l.full, 0);
+    const saved = full - sum;
     const quoted = lines.length - priced.length;
-    const where = [["", "Choose…"], ...stores().map(s => [`store:${s.name}`, `Collect at ${s.name}${s.category ? `, ${s.category}` : ""}`]), ["delivery", "Delivery (rate quoted by a board member)"]];
+    const where = [["", "Choose…"], ...stores().map(s => [`store:${s.name}`, `Pick up at ${s.name}${s.category ? `, ${s.category}` : ""}`]), ["delivery", "Delivery (rate quoted by a board member)"]];
     const disc = discountLabel();
     od.innerHTML = `<div class="dlg-head"><div><p class="cat">Kept in this browser only</p><h2 id="order-title">Your order list</h2></div>
         <button type="button" class="dlg-close" data-close aria-label="Close">&times;</button></div>
@@ -377,11 +379,14 @@
           <td class="numc"><input class="ol-qty" type="text" inputmode="decimal" value="${esc(String(l.q))}" aria-label="Quantity of ${esc(l.it.name)}"></td>
           <td class="numc">${l.total === null ? (l.it.type === "service" ? "Quoted" : "On request") : fmt(l.total, "cr")}</td>
           <td><button type="button" class="ol-x" aria-label="Remove ${esc(l.it.name)}">&times;</button></td></tr>`).join("")}
-        </tbody><tfoot><tr><th colspan="2">Estimated total${quoted ? `, plus ${quoted} quoted item${quoted > 1 ? "s" : ""}` : ""}</th><td class="numc"><b>${fmt(sum, "cr")}</b></td><td></td></tr></tfoot></table></div>
+        </tbody><tfoot>${saved > 0.005 ? `<tr class="full"><th colspan="2">Without discounts</th><td class="numc"><s>${fmt(full, "cr")}</s></td><td></td></tr>` : ""}
+          <tr><th colspan="2">Estimated total${quoted ? `, plus ${quoted} quoted item${quoted > 1 ? "s" : ""}` : ""}</th><td class="numc"><b>${fmt(sum, "cr")}</b></td><td></td></tr>
+          ${saved > 0.005 ? `<tr class="full save"><th colspan="2">You save</th><td class="numc">${fmt(saved, "cr")}</td><td></td></tr>` : ""}</tfoot></table></div>
         <p class="fine">${disc ? `Includes your discount: ${esc(disc)}. ` : "No customer discount is included; choose one at the top of the catalog if it applies to you. "}Sales and bulk prices are applied where they apply. This is an estimate: the Sales role confirms the final price.</p>
         <div class="order-form">
           <label><span>Your in-game name</span><input id="ol-name" type="text" autocomplete="off" value="${esc(orderMeta.name)}"></label>
-          <label><span>Collection or delivery</span><select id="ol-where">${where.map(([v, t]) => `<option value="${esc(v)}"${v === orderMeta.where ? " selected" : ""}>${esc(t)}</option>`).join("")}</select></label>
+          <label><span>Preferred pickup or delivery</span><select id="ol-where">${where.map(([v, t]) => `<option value="${esc(v)}"${v === orderMeta.where ? " selected" : ""}>${esc(t)}</option>`).join("")}</select>
+            <span class="where-note">Pickup may not be possible for large orders or certain items. The member who fulfills your order will tell you how it will be delivered.</span></label>
           <label class="wide"><span>Note (optional)</span><textarea id="ol-note" rows="2">${esc(orderMeta.note)}</textarea></label>
         </div>
         <ol class="order-steps"><li>Copy the order.</li><li>Join our Discord server and send it to someone with the <strong>@Sales</strong> role${lines.some(l => l.it.contact) ? ", or to the contact named on an item" : ""}.</li></ol>
@@ -391,11 +396,12 @@
   function orderText() {
     const lines = order.map(l => lineFor(byKey(l.k), l.q)).filter(l => l.it);
     const sum = lines.filter(l => l.total !== null).reduce((a, l) => a + l.total, 0);
+    const full = lines.filter(l => l.total !== null).reduce((a, l) => a + l.full, 0);
     const quoted = lines.filter(l => l.total === null).length;
     const out = ["**Order for Stetheros Industries**"];
     if (orderMeta.name) out.push(`Name: ${orderMeta.name}`);
     if (orderMeta.where === "delivery") out.push("Delivery: please quote a delivery rate");
-    else if (orderMeta.where.startsWith("store:")) out.push(`Collect at: ${orderMeta.where.slice(6)}`);
+    else if (orderMeta.where.startsWith("store:")) out.push(`Preferred pickup: ${orderMeta.where.slice(6)}`);
     const disc = discountLabel();
     if (disc) out.push(`Discount claimed: ${disc}`);
     out.push("");
@@ -406,6 +412,7 @@
       out.push(`- ${what}: ${price}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
     });
     out.push("", `Estimated total: ${fmt(sum, "cr")}${quoted ? `, plus ${quoted} item${quoted > 1 ? "s" : ""} to be quoted` : ""}${orderMeta.where === "delivery" ? ", plus delivery" : ""}`);
+    if (full - sum > 0.005) out.push(`Without discounts: ${fmt(full, "cr")} (saving ${fmt(full - sum, "cr")})`);
     if (orderMeta.note.trim()) out.push(`Note: ${orderMeta.note.trim()}`);
     return out.join("\n");
   }
@@ -420,8 +427,9 @@
     const od = $("#order-dialog"), fab = $("#order-fab");
     if (!od || !fab) return;
     fab.addEventListener("click", openOrder);
+    closeOnBackdrop(od);
     od.addEventListener("click", e => {
-      if (e.target === od || e.target.closest("[data-close]")) { od.close(); return; }
+      if (e.target.closest("[data-close]")) { od.close(); return; }
       const x = e.target.closest(".ol-x");
       if (x) { setQty(x.closest("tr").dataset.k, 0); return; }
       if (e.target.closest(".title-btn")) { od.close(); return; } // the item window opens from the shared handler
@@ -504,6 +512,21 @@
       ${contactHTML(it)}`;
   }
   const track = (path, title) => window.siTrack && window.siTrack(path, title);
+  // A dialog closes when the visitor clicks the dimmed area around it: the press and the
+  // release must both land outside the window. A click on empty space inside the window,
+  // or a drag (such as selecting text in a box) that ends outside it, does not close it.
+  function outsideBox(d, e) {
+    const r = d.getBoundingClientRect();
+    return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+  }
+  function closeOnBackdrop(d) {
+    let pressedOutside = false;
+    d.addEventListener("pointerdown", e => { pressedOutside = e.target === d && outsideBox(d, e); });
+    d.addEventListener("click", e => {
+      if (pressedOutside && e.target === d && outsideBox(d, e)) d.close();
+      pressedOutside = false;
+    });
+  }
   function currentItem() { return items.find(i => (i.type === "good" || i.type === "service") && itemKey(i) === dlg.dataset.item); }
   const dlg = $("#item-dialog");
   function openItem(key) {
@@ -521,8 +544,9 @@
     return true;
   }
   if (dlg) {
+    closeOnBackdrop(dlg);
     dlg.addEventListener("click", e => {
-      if (e.target === dlg || e.target.closest("[data-close]") || e.target.closest(".brand-badge")) { dlg.close(); return; }
+      if (e.target.closest("[data-close]") || e.target.closest(".brand-badge")) { dlg.close(); return; }
       const pic = e.target.closest("[data-pic]");
       if (pic) {
         const main = dlg.querySelector(".dlg-main img");

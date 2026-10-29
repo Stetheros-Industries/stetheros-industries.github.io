@@ -3,7 +3,7 @@
 For each picture, writes:
   images/opt/<name>.webp    up to 1600 px wide, for the item window and division logos
   images/thumb/<name>.webp  up to 640 px wide, for catalog cards and store rows
-  images/og/<name>.jpg      1200 x 630, for link previews in Discord and similar apps
+  images/og/<name>.jpg      up to 1200 x 1200, uncropped, for link previews in Discord and similar apps
 
 <name> is the file name in lower case with anything other than letters and digits
 turned into dashes, so "Large Wind Turbine 4_3.png" becomes "large-wind-turbine-4-3".
@@ -21,7 +21,7 @@ SRC = os.path.join(ROOT, "images")
 EXTS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp")
 DIRS = {"opt": ".webp", "thumb": ".webp", "og": ".jpg"}
 MANIFEST = os.path.join(SRC, "opt", "sources.json")
-VERSION = 1  # raise to rebuild every copy after changing the sizes below
+VERSION = 2  # raise to rebuild every copy after changing the sizes below
 
 
 def slug(filename):
@@ -77,8 +77,10 @@ def main():
                 if alpha:  # link previews have no transparency: put the picture on the site's dark background
                     flat = Image.new("RGB", im.size, (15, 21, 27))
                     flat.paste(im, mask=im.split()[-1])
-                ImageOps.fit(flat.convert("RGB"), (1200, 630), Image.LANCZOS).save(
-                    outs["og"], "JPEG", quality=84, optimize=True, progressive=True)
+                # Keep the picture's own shape so previews show all of it, not a wide crop.
+                og = flat.convert("RGB")
+                og.thumbnail((1200, 1200), Image.LANCZOS)
+                og.save(outs["og"], "JPEG", quality=84, optimize=True, progressive=True)
         except Exception as e:  # a broken upload should not stop the others
             print(f"skipped {name}: {e}")
             now.pop(name, None)
