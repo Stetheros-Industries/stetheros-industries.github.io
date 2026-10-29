@@ -327,7 +327,7 @@
   // The estimated price per unit, with the sale, the visitor's discount (goods only), and,
   // from the bulk quantity up, the bulk discount, each applied in turn (§3.2).
   function lineFor(it, q) {
-    if (it.price === null) return { it, q, unit: null, total: null, full: null, bulk: false, discs: [] };
+    if (it.price === null) return { it, q, unit: null, total: null, full: null, bulk: false, discs: [], itemDiscs: [] };
     const d = it.type === "good" ? discount : 0;
     const sale = saleNow(it);
     let unit = it.price * (1 - sale) * (1 - d);
@@ -337,7 +337,9 @@
     if (sale > 0) discs.push(`${fmt(sale, "pct")} sale`);
     if (d > 0) discs.push(`${fmt(d, "pct")} ${customerDiscName()} discount`);
     if (bulk) discs.push(`${fmt(C.bulk_discount, "pct")} bulk discount`);
-    return { it, q, unit, total: unit * q, full: it.price * q, bulk, discs };
+    // The copied order names the customer discount once at the top, so its lines leave it out.
+    const itemDiscs = discs.filter(x => !x.endsWith(`${customerDiscName()} discount`));
+    return { it, q, unit, total: unit * q, full: it.price * q, bulk, discs, itemDiscs };
   }
   function unitWord(it) { return it.unit ? (/^each$/i.test(it.unit) ? "" : it.unit) : ""; }
   function orderControlsHTML(it, msg) {
@@ -417,7 +419,7 @@
     lines.forEach(l => {
       const u = unitWord(l.it);
       const what = `${fmt(l.q)} × ${l.it.name}${u ? ` (${u})` : ""}`;
-      const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.discs.length ? ` (${l.discs.join(", ")})` : ""}`;
+      const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.itemDiscs.length ? ` (${l.itemDiscs.join(", ")})` : ""}`;
       out.push(`- ${what}: ${price}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
     });
     out.push("", `Estimated total: ${fmt(sum, "cr")}${quoted ? `, plus ${quoted} item${quoted > 1 ? "s" : ""} to be quoted` : ""}${orderMeta.where === "delivery" ? ", plus delivery" : ""}`);
