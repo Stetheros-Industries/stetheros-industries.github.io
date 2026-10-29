@@ -549,7 +549,7 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 /* ---------- About: membership ---------- */
 .join { display: grid; gap: 16px; }
 .join-intro { max-width: 70ch; }
-.join-kicker { margin: 0 0 4px; font: 600 12.5px var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.join-kicker { margin: 0 0 4px; font: 600 12.5px var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); }
 .join-intro h2 { margin-bottom: 8px; }
 .join-intro p:last-child { font-size: 16.5px; margin: 0; }
 .join-feature { padding: 18px 20px; border-radius: var(--radius); border: 1px solid var(--accent);
