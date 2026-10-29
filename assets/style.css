@@ -476,7 +476,7 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .stock-order { color: var(--steel); }
 .svc-main .stock { margin-top: 4px; }
 .item.is-out .thumb img { opacity: 0.55; filter: grayscale(0.6); }
-.dlg-stock { margin: 12px 0 0; }
+.dlg-stock { margin-top: 12px; margin-bottom: 0; }
 
 /* ---------- Announcement banner ---------- */
 .site-notices { display: grid; gap: 8px; }
