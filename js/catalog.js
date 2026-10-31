@@ -521,10 +521,10 @@
         <button type="button" class="dlg-close" data-close aria-label="Close" autofocus>&times;</button></div>
       ${media}
       ${it.description ? `<p class="dlg-desc">${esc(it.description)}</p>` : ""}
+      ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${stockTag(it, true) ? `<p class="dlg-stock">${stockTag(it, true)}</p>` : ""}
       ${priceHTML(it)}
       ${orderControlsHTML(it)}
-      ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${contactHTML(it)}`;
   }
   const track = (path, title) => window.siTrack && window.siTrack(path, title);

@@ -592,3 +592,6 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 @media (max-width: 560px) {
   .item-dialog { max-height: calc(100dvh - 48px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 }
+/* The details come before the price and the order box, set off by a line. */
+.dlg-details { padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.dlg-details > :last-child { margin-bottom: 10px; }
