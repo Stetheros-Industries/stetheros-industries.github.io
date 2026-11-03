@@ -498,6 +498,16 @@
     flushP(); flushL();
     return out.join("");
   }
+  // Builds the company sells are protected designs (§8.5). The "protected" column says
+  // yes or no; when it is empty, an item in a "Structures" category counts as a build.
+  function isProtected(it) {
+    const v = String(it.protect || "").trim();
+    if (v) return SI.parseBool(v);
+    return catsOf(it).some(c => /^(structures?|builds?)$/i.test(c));
+  }
+  function protectedHTML() {
+    return `<div class="dlg-protected"><p><strong>Protected build.</strong> This design may not be copied, in whole or in substantial part, without a license. You can negotiate one with the board before or after you buy (<a href="policy/index.html#s8-5">§8.5</a>).</p></div>`;
+  }
   function contactHTML(it) {
     const who = it.contact ? `<strong>${esc(it.contact)}</strong>` : `someone with the <strong>@Sales</strong> role`;
     const what = it.type === "service"
@@ -523,6 +533,7 @@
       ${it.description ? `<p class="dlg-desc">${esc(it.description)}</p>` : ""}
       ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${stockTag(it, true) ? `<p class="dlg-stock">${stockTag(it, true)}</p>` : ""}
+      ${isProtected(it) ? protectedHTML() : ""}
       ${priceHTML(it)}
       ${orderControlsHTML(it)}
       ${contactHTML(it)}`;

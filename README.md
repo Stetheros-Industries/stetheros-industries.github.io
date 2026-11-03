@@ -53,6 +53,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | `stock` | Optional. `in stock`, `low`, `out of stock`, or `made to order`. Cards show Low stock, Out of stock, and Made to order; the item window also shows In stock. When any good is out of stock, a **Hide out of stock** box appears above the goods. Leave it empty to show nothing. |
 | `coords` | Stores only, optional. The store's coordinates, as `1200 64 -340` (X Y Z) or `1200 -340` (X Z). Visitors get a **Copy** button that copies them. |
 | `map` | Stores only, optional. A `https://` link to the store on a web map, shown as **Open map**. |
+| `protected` | Optional. Whether the item is a protected build under policy §8.5, which protects every build the company sells. Leave it empty and any item with `Structures` among its categories counts as one. Put `yes` to mark another item (for example a build service), or `no` for a build the board has chosen not to protect. A protected build's window shows a **Protected build** notice above the price, with a link to §8.5. |
 | `visible` | `yes` or `no`. `no` hides the item without deleting the row. Empty counts as yes. |
 | `sort` | A number that sets the order. Categories follow the order of their first item. |
 

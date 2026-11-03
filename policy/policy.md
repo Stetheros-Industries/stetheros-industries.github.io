@@ -16,7 +16,7 @@ Stetheros Industries is a member-run industrial company. Members make goods and 
 4. **Stock targets.** The company aims to hold two weeks of expected sales of each good. Up-front payment is guaranteed only while stock is below that target, and the weekly budget is divided equally among active members, with a priority contract holder's committed quota covered first. A ledger kept by the Sales role and checked by an auditor records every deposit (§5).
 5. **Ownership and dividends.** Members earn equity points by contributing assets, with a bonus for contributing early in a server's life. The company distributes part of its profit to active members. The rate is 25% at server launch, and afterward the CEO or the board may change it, subject to the usual board challenge. Of each dividend, 85% is paid by equity share and 15% equally among active members, and a new member without equity starts receiving the equal portion after two weeks. A member stays active by passing the activity test every two weeks, inactive points decay, and a member who leaves is bought out at the original value of the equity granted (§6).
 6. **Assets.** A member keeps an asset by default and sells its goods through the company at the 80/20 split. The company buys an asset only with approval, at a value fixed on approval, paying half at purchase and the rest from what the asset earns. The member may take payment as equity, cash, or goods, and builders of infrastructure also receive weekly payments while it serves the company (§7).
-7. **Contracts and services.** The company may give a member a priority contract, under which the member's goods are drawn first for sale in return for a weekly quota. Goods outside the catalog are unrestricted, custom orders have their own rules, and the company sells services on members' behalf, keeping 20% (§8).
+7. **Contracts and services.** The company may give a member a priority contract, under which the member's goods are drawn first for sale in return for a weekly quota. Goods outside the catalog are unrestricted, custom orders have their own rules, and the company sells services on members' behalf, keeping 20%. Every build the company sells is protected, and copying one needs a license (§8).
 8. **Governance.** A CEO and a board run the company. The CEO can approve builds, contracts, and supply budgets alone, but a majority of the board can challenge an approval, and an approval becomes final when its 24-hour challenge window closes. Each eligible member has one vote, not weighted by equity, and the CEO can be removed by 66% of eligible members together with a majority of equity. Rule-breaking is handled by a three-strike system, with removal at the fourth strike (§9).
 9. **Reimbursement.** A member who pays with personal money for an approved company purchase, because no board member is online, is repaid within 7 days. A late payment carries a premium of 10% of the claim for each full week, up to 30% (§10).
 10. **Nations and war.** Prunia is covered by a Home Charter, and any other nation may sign the Stetheros Compact. Governments and citizens of both receive a 10% discount on company goods, and both share in a profit pool of 7% of company profit. Both also accept the wartime provisions: strategic goods never reach a nation's enemy, trade continues, company assets are protected, and the company takes no side in a war (§11, §12).
@@ -34,7 +34,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | §5 | Supply Management | Stock targets, guarantee budgets, the stock ledger |
 | §6 | Equity and Dividends | Earning equity, dividends, activity, decay, buyback |
 | §7 | Assets and Ownership | Keeping or selling assets, valuation, infrastructure |
-| §8 | Contracts and Services | Priority contracts, custom orders, services |
+| §8 | Contracts and Services | Priority contracts, custom orders, services, protected builds |
 | §9 | Governance and Enforcement | The board, the CEO, votes, roles, strikes |
 | §10 | Member-Advanced Purchases | Repayment when a member pays for approved purchases |
 | §11 | Nations: the Home Charter and the Stetheros Compact | The Home Charter, the Stetheros Compact, discounts, the profit pool |
@@ -75,6 +75,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | Good | An item the company sells. Primary goods are raw materials, secondary goods are processed or crafted items, and tertiary goods are services. |
 | Catalog | The fixed list of goods the company officially produces and sells (§3.2). |
 | Branded division | A part of the company that sells under its own name and logo but is otherwise the company in every respect (§3.8). |
+| Protected build | A build the company sells, whose design may be copied only under a license (§8.5). |
 | Revenue | The Credit the company receives from selling goods or services. |
 | Cost of goods | What the company pays members for deposited goods: the up-front payment plus the share paid after the sale (§4). |
 | Internal price | The price at which the company values its own goods when a member takes them for personal use, when goods are paid in a buyback, and when a member's materials are credited in a custom order. It is determined dynamically rather than fixed in advance (§3.5, §6.9, §8.3). |
@@ -311,7 +312,7 @@ At purchase = α × v,   where α = 0.5
 
 ## §8 Contracts and Services
 
-> **What this section does.** It covers special arrangements: priority contracts that let a member's goods sell first, goods outside the catalog, custom orders, and services. It sets the quota a contract holder commits to and when a contract lapses, who owns a custom good depending on whose materials built it, and how a service is booked, held in escrow, confirmed, and paid.
+> **What this section does.** It covers special arrangements: priority contracts that let a member's goods sell first, goods outside the catalog, custom orders, and services. It sets the quota a contract holder commits to and when a contract lapses, who owns a custom good depending on whose materials built it, and how a service is booked, held in escrow, confirmed, and paid. It also protects the designs of the builds the company sells, and sets how a license to copy one is agreed and the penalties for copying without one.
 
 **§8.1 Priority contracts.** The company may make a specific deal under which a member's goods are the first drawn from stock for sale, ahead of other members' units of the same good. The contract holder is credited with those sales until the holder's units run out. After that, the remaining quota is filled through entitlements and the shared pool (§5.4, §5.5). In return, the holder commits to a weekly quota.
 
@@ -344,6 +345,24 @@ c_g = κ × D_g,   where κ = 0.5 to start
 4. On completion, the provider receives 80% and the company keeps 20%. Where the provider uses company-owned infrastructure, its builder is paid under §7.8.
 5. A job counts as confirmed if the buyer does not dispute it within 48 hours of the provider reporting it complete. The board settles disputes.
 
+**§8.5 Protected builds.** Every build the company sells, whether as a good or as a service (§8.4), is a protected build, and its design may not be copied without a license. A copy is a build that reproduces the distinctive layout, shape, and appearance of a protected build, in whole or in substantial part, by any means, including a schematic. A build made to a design the buyer supplied is not protected, and the board may waive protection for any build by marking it unprotected in the catalog.
+
+1. The following are not copies: a build that shares only standard parts or a general function with a protected build, a design its builder can show was made independently, and the repair, moving, or recoloring of a build bought from the company.
+2. Anyone may negotiate a license to copy a protected build, before or after buying it. The terms, such as a fee for each copy, a single fee, or limits on use, are open to negotiation. A license needs the agreement of a majority of the board and of the member who designed or produces the build, where there is one. Unless the license says otherwise, a license fee is divided like a sale of the build (§4.1). Without a negotiated license, the standard fee is the build's list price for each copy, or a fee set by the board where the build has no list price.
+3. A member may not copy a protected build outside the company without the board's permission. The member who designed a build may build it anywhere and at any time, including after leaving the company. A member's violation is handled under the strike system (§9.8), with each copy counted as a sale at the standard fee.
+4. For anyone outside the company, a violation is established by evidence, such as a screenshot of the copy or a witness. The person is shown the evidence and may respond before a majority of the board decides. Penalties fall on the person who made the copy or had it made, and on anyone who knowingly sells copies, whatever their nation.
+5. The penalties escalate.
+
+| Violation | Penalty |
+| --- | --- |
+| First | A written notice. Within 7 days, the person removes every copy, pays the standard fee for each copy kept, or agrees a license under item 2. |
+| Second, or a first notice not met within 7 days | The company sells the person no builds or services, and gives the person no discounts, for 3 weeks. |
+| Third, or selling copies to others | The company permanently refuses to sell the person builds or services, and may tell its members and the pool nations why (§11.5). |
+| Fourth | The company refuses all business with the person, goods included. |
+
+6. The board may reduce or lift any penalty under this clause at any time by a majority, for example after a license is agreed.
+7. A nation under the Home Charter or the Stetheros Compact commits to cooperate against its citizens who copy protected builds, and to act against officials who copy them or allow them to be copied. Only repeated copying by a nation's officials goes up the remedy ladder in §12.8.
+
 ## §9 Governance and Enforcement
 
 > **What this section does.** It says who makes decisions, how members can challenge or remove those who lead, and what happens to a member who breaks the rules. It covers the board and its powers, which approvals the CEO can give alone and which need the board, the 24-hour challenge window, who may vote, how the CEO can be removed, the Sales and auditor roles, who can see the ledger, the three-strike system, and severe offenses.
@@ -370,7 +389,7 @@ c_g = κ × D_g,   where κ = 0.5 to start
 
 **§9.7 Visibility.** All members can see the ledger, the payments, and the approvals. The single exception is in §12.9.
 
-**§9.8 Violations and strikes.** A violation of the outside-sale rule (§3.1) is established by evidence from a buyer or witness (§3.6). A member receives three strikes with graduated penalties and is removed at the fourth.
+**§9.8 Violations and strikes.** A violation of the outside-sale rule (§3.1), or a member's copy of a protected build (§8.5), is established by evidence from a buyer or witness (§3.6). A member receives three strikes with graduated penalties and is removed at the fourth.
 
 | Strike | Penalty |
 | --- | --- |
@@ -561,6 +580,7 @@ r_new = 0.8 × r_old
 | §8.1 | Priority contract: committed quota | A percentage of the good's weekly demand, starting at 50% |
 | §8.1 | Priority contract: volume cap | Equal to the committed quota |
 | §8.4 | Service dispute window | 48 hours |
+| §8.5 | Protected builds | Every build the company sells; copying needs a license agreed with the board and the member who designed or produces it, or the standard fee of the list price per copy; penalties outside the company: a written notice, then 3 weeks without builds, services, or discounts, then permanent refusal of builds and services, then refusal of all business; the board may lift any penalty |
 | §9.2 | Board vote threshold | 66% |
 | §9.3 | Challenge window for CEO approvals | 24 hours; members may build earlier at the risk of the approval being blocked |
 | §9.4 | Member votes | One member, one vote, not weighted by equity |

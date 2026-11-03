@@ -240,6 +240,7 @@
         contact: get(r, "contact"),
         listed: parseDate(get(r, "listed"), false),
         stock: parseStock(get(r, "stock")),
+        protect: get(r, "protected"),
         coords: get(r, "coords"),
         map: get(r, "map"),
         sort: isNaN(sort) ? 1e9 + idx : sort

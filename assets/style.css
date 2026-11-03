@@ -595,3 +595,8 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 /* The details come before the price and the order box, set off by a line. */
 .dlg-details { padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 .dlg-details > :last-child { margin-bottom: 10px; }
+
+/* ---------- Protected build notice (policy §8.5), in the item window ---------- */
+.dlg-protected { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); background: var(--sunken); border-left: 4px solid var(--steel); }
+.dlg-protected p { margin: 0; font-size: 14px; color: var(--muted); }
+.dlg-protected strong { color: var(--ink); }
