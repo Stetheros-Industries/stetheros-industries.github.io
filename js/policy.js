@@ -64,7 +64,11 @@
       b.type = "button"; b.className = "clause-link"; b.textContent = "Copy link";
       b.setAttribute("aria-label", "Copy a link to " + label);
       b.addEventListener("click", () => {
-        const url = location.href.split("#")[0] + "#" + el.id;
+        // §-numbered sections and clauses have their own page at policy/<number>/, which gives
+        // the link a preview of that clause in Discord. Other headings link by "#".
+        const m = el.id.match(/^s(\d+(?:-\d+)?)$/);
+        const url = m ? new URL(m[1].replace("-", ".") + "/", location.href.split("#")[0].replace(/[^/]*$/, "")).href
+          : location.href.split("#")[0] + "#" + el.id;
         history.replaceState(null, "", "#" + el.id);
         SI.copyText(url, () => { b.textContent = "Link copied"; b.classList.add("done"); setTimeout(() => { b.textContent = "Copy link"; b.classList.remove("done"); }, 1800); });
       });

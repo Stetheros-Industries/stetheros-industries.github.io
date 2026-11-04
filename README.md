@@ -112,7 +112,7 @@ If a run fails with a permissions error, open **Settings → Actions → General
 
 - **Order list.** Visitors open a good or service, choose a quantity, and add it to an order list. The list shows an estimated total with their discount, any sale, and bulk prices; asks for their in-game name and a store to collect from (or delivery); and copies the whole order as a message for the @Sales role on Discord. The list is kept in the visitor's own browser; the site sends nothing.
 - **Sort and filter.** Goods and services can be sorted by price, newest, or name. "Featured" follows the `sort` column.
-- **Links.** Every policy clause has a **Copy link** button. Each calculator has **Copy a link to these values**, which opens the calculator with the same numbers filled in. Unknown addresses show a "page not found" page with links back into the site.
+- **Links.** Every policy clause has a **Copy link** button. It gives a link such as `/policy/8.5/`, which shows that clause's number, title, and opening words when pasted into Discord, then opens the clause. These pages are rebuilt automatically whenever `policy/policy.md` changes; do not edit the numbered folders in `policy/`. Each calculator has **Copy a link to these values**, which opens the calculator with the same numbers filled in. Unknown addresses show a "page not found" page with links back into the site.
 
 ## 3. Routine updates
 
