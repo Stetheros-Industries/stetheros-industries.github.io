@@ -241,6 +241,7 @@
         listed: parseDate(get(r, "listed"), false),
         stock: parseStock(get(r, "stock")),
         protect: get(r, "protected"),
+        locations: get(r, "locations").split(/[,;\n]+/).map(s => s.trim()).filter(Boolean),
         coords: get(r, "coords"),
         map: get(r, "map"),
         sort: isNaN(sort) ? 1e9 + idx : sort

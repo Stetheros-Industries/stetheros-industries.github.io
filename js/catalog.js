@@ -103,6 +103,45 @@
     if (!it.stock || (it.stock === "in" && !all)) return "";
     return `<span class="stock stock-${it.stock}">${STOCK[it.stock]}</span>`;
   }
+  // ---------- items sold only at some stores ----------
+  // The "locations" column lists store names (the name of a store row) or nations (a store
+  // row's category), separated by commas. A nation means every store in it. Empty means
+  // the item is sold everywhere.
+  const lc = s => String(s).trim().toLowerCase();
+  function storesFor(it) {
+    if (!it.locations || !it.locations.length) return null;
+    const all = items.filter(i => i.type === "store");
+    const out = [];
+    it.locations.forEach(t => {
+      const byName = all.filter(st => lc(st.name) === lc(t));
+      const byNation = byName.length ? [] : all.filter(st => lc(st.category) === lc(t));
+      const hits = byName.length ? byName : byNation;
+      if (hits.length) hits.forEach(st => out.push({ name: st.name, nation: st.category }));
+      else out.push({ name: t, nation: "" });
+    });
+    const seen = new Set();
+    return out.filter(x => !seen.has(lc(x.name)) && seen.add(lc(x.name)));
+  }
+  function soldAt(it, store) {
+    const list = storesFor(it);
+    return !store || !list || list.some(x => lc(x.name) === lc(store));
+  }
+  function locTag(it) {
+    const list = storesFor(it);
+    if (!list) return "";
+    return `<span class="loc-tag">${list.length === 1 ? `Only at ${esc(list[0].name)}` : "Select locations"}</span>`;
+  }
+  function tagRow(it) {
+    const t = stockTag(it) + locTag(it);
+    return t ? `<div class="tag-row">${t}</div>` : "";
+  }
+  function locationsHTML(it) {
+    const list = storesFor(it);
+    if (!list) return "";
+    const names = list.map(x => `<strong>${esc(x.name)}</strong>${x.nation ? ` (${esc(x.nation)})` : ""}`);
+    const joined = names.length < 3 ? names.join(" and ") : names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+    return `<div class="dlg-locations"><p><strong>Limited availability.</strong> Sold only at ${joined}. Other shops do not stock it (<a href="#stores" data-close>store locations</a>).</p></div>`;
+  }
   function priceHTML(it) {
     if (it.price === null) {
       const label = it.id.toUpperCase() === "DELIVERY" ? "Quoted by a board member" : it.type === "service" ? "Quoted" : "Price on request";
@@ -140,7 +179,7 @@
     host.querySelectorAll("button").forEach(b => b.addEventListener("click", () => onPick(b.dataset.c)));
     return current;
   }
-  let svcCategory = "All", svcQuery = "", goodsSort = "featured", svcSort = "featured", hideOut = false;
+  let svcCategory = "All", svcQuery = "", goodsSort = "featured", svcSort = "featured", hideOut = false, atStore = "";
   // Sorting. "Featured" is the order set in the sheet's sort column.
   function nowPrice(it) { return it.price === null ? null : it.price * (1 - saleNow(it)); }
   function sorted(list, how) {
@@ -153,7 +192,19 @@
     }[how] || (() => 0);
     return list.map((it, i) => [it, i]).sort((x, y) => by(x[0], y[0]) || x[1] - y[1]).map(x => x[0]);
   }
+  // "Sold at" filter: shown when some item is sold only at some stores and there are 2+ stores.
+  function renderStorePick() {
+    const storeList = items.filter(i => i.type === "store");
+    const show = storeList.length > 1 && items.some(i => (i.type === "good" || i.type === "service") && storesFor(i));
+    if (!storeList.some(st => st.name === atStore)) atStore = "";
+    document.querySelectorAll(".store-pick").forEach(lab => {
+      lab.hidden = !show;
+      const sel = lab.querySelector("select");
+      sel.innerHTML = `<option value="">All stores</option>` + storeList.map(st => `<option value="${esc(st.name)}"${st.name === atStore ? " selected" : ""}>${esc(st.name)}${st.category ? `, ${esc(st.category)}` : ""}</option>`).join("");
+    });
+  }
   function renderTools() {
+    renderStorePick();
     const ho = $("#hide-out-wrap");
     if (ho) ho.hidden = !items.some(i => i.type === "good" && i.stock === "out");
     const anyListed = type => items.some(i => i.type === type && i.listed instanceof Date);
@@ -171,7 +222,7 @@
   }
   function renderGoods() {
     const q = query.trim().toLowerCase();
-    const list = sorted(items.filter(i => i.type === "good").filter(i => matches(i, category, q)).filter(i => !(hideOut && i.stock === "out")), goodsSort);
+    const list = sorted(items.filter(i => i.type === "good").filter(i => matches(i, category, q)).filter(i => !(hideOut && i.stock === "out")).filter(i => soldAt(i, atStore)), goodsSort);
     $("#goods-grid").innerHTML = list.length ? list.map(it => goodHTML(it, true)).join("")
       : `<p class="empty-msg">No goods match${q ? ` "${esc(query)}"` : ""}.</p>`;
     renderBrands();
@@ -182,14 +233,14 @@
         ${withBadge ? badge(it) : ""}
         <h3>${titleBtn(it)}</h3>
         ${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}
-        ${stockTag(it)}
+        ${tagRow(it)}
         ${priceHTML(it)}
         ${moreBtn(it)}
       </div></article>`;
   }
   function svcHTML(it, withBadge) {
     return `<article class="svc"><div class="thumb-open svc-thumb" data-item="${esc(itemKey(it))}" aria-hidden="true">${thumbHTML(it)}</div>
-        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${stockTag(it)}${moreBtn(it)}</div>
+        <div class="svc-main"><p class="cat">${catLine(it)}${tags(it)}</p>${withBadge ? badge(it) : ""}<h3>${titleBtn(it)}</h3>${it.description ? `<p class="desc">${esc(it.description)}</p>` : ""}${tagRow(it)}${moreBtn(it)}</div>
         ${priceHTML(it)}
       </article>`;
   }
@@ -218,7 +269,7 @@
   function renderServices() {
     const all = items.filter(i => i.type === "service");
     const q = svcQuery.trim().toLowerCase();
-    const list = sorted(all.filter(i => matches(i, svcCategory, q)), svcSort);
+    const list = sorted(all.filter(i => matches(i, svcCategory, q)).filter(i => soldAt(i, atStore)), svcSort);
     $("#services-list").innerHTML = list.length ? list.map(it => svcHTML(it, true)).join("")
       : all.length ? `<p class="empty-msg">No services match${q ? ` "${esc(svcQuery)}"` : ""}.</p>`
       : `<p class="empty-msg">No services are listed at the moment.</p>`;
@@ -265,6 +316,11 @@
   if ($("#sort-goods")) $("#sort-goods").addEventListener("change", e => { goodsSort = e.target.value; renderGoods(); });
   if ($("#sort-svc")) $("#sort-svc").addEventListener("change", e => { svcSort = e.target.value; renderServices(); });
   if ($("#hide-out")) $("#hide-out").addEventListener("change", e => { hideOut = e.target.checked; renderGoods(); });
+  document.querySelectorAll(".store-pick select").forEach(sel => sel.addEventListener("change", e => {
+    atStore = e.target.value;
+    document.querySelectorAll(".store-pick select").forEach(o => { o.value = atStore; });
+    renderGoods(); renderServices();
+  }));
   document.addEventListener("click", e => {
     const b = e.target.closest(".copy-coords");
     if (!b) return;
@@ -378,6 +434,14 @@
     return p.id === "custom" ? `Other discount (${fmt(discount, "pct")})` : p.label;
   }
   function stores() { return items.filter(i => i.type === "store"); }
+  function pickupStore() { return orderMeta.where.startsWith("store:") ? orderMeta.where.slice(6) : ""; }
+  function olWhere(it) {
+    const list = storesFor(it);
+    if (!list) return "";
+    const pick = pickupStore();
+    const warn = pick && !soldAt(it, pick);
+    return `<small class="ol-where${warn ? " warn" : ""}">${warn ? `Not sold at ${esc(pick)}. ` : ""}Only at ${esc(list.map(x => x.name).join(", "))}.</small>`;
+  }
   function renderOrder() {
     const od = $("#order-dialog");
     const lines = order.map(l => lineFor(byKey(l.k), l.q)).filter(l => l.it);
@@ -391,7 +455,7 @@
     od.innerHTML = `<div class="dlg-head"><div><p class="cat">Kept in this browser only</p><h2 id="order-title">Your order list</h2></div>
         <button type="button" class="dlg-close" data-close aria-label="Close">&times;</button></div>
       ${lines.length ? `<div class="tablewrap"><table class="order-table"><thead><tr><th>Item</th><th class="numc">Quantity</th><th class="numc">Estimate</th><th><span class="visually-hidden">Remove</span></th></tr></thead><tbody>
-        ${lines.map(l => `<tr data-k="${esc(itemKey(l.it))}"><td><button type="button" class="title-btn" data-item="${esc(itemKey(l.it))}">${esc(l.it.name)}</button>${unitWord(l.it) ? `<small>${esc(unitWord(l.it))}</small>` : ""}${l.discs.length ? `<small class="ol-discs">${esc(l.discs.join(" · "))}</small>` : ""}${l.it.stock === "out" ? ' <span class="stock stock-out">Out of stock</span>' : ""}</td>
+        ${lines.map(l => `<tr data-k="${esc(itemKey(l.it))}"><td><button type="button" class="title-btn" data-item="${esc(itemKey(l.it))}">${esc(l.it.name)}</button>${unitWord(l.it) ? `<small>${esc(unitWord(l.it))}</small>` : ""}${l.discs.length ? `<small class="ol-discs">${esc(l.discs.join(" · "))}</small>` : ""}${l.it.stock === "out" ? ' <span class="stock stock-out">Out of stock</span>' : ""}${olWhere(l.it)}</td>
           <td class="numc"><input class="ol-qty" type="text" inputmode="decimal" value="${esc(String(l.q))}" aria-label="Quantity of ${esc(l.it.name)}"></td>
           <td class="numc">${l.total === null ? (l.it.type === "service" ? "Quoted" : "On request") : fmt(l.total, "cr")}</td>
           <td><button type="button" class="ol-x" aria-label="Remove ${esc(l.it.name)}">&times;</button></td></tr>`).join("")}
@@ -425,7 +489,8 @@
       const u = unitWord(l.it);
       const what = `${fmt(l.q)} × ${l.it.name}${u ? ` (${u})` : ""}`;
       const price = l.total === null ? "to be quoted" : `${fmt(l.total, "cr")}${l.itemDiscs.length ? ` (${l.itemDiscs.join(", ")})` : ""}`;
-      out.push(`- ${what}: ${price}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
+      const only = storesFor(l.it);
+      out.push(`- ${what}: ${price}${only ? ` [only at ${only.map(x => x.name).join(", ")}]` : ""}${l.it.contact ? ` [contact ${l.it.contact}]` : ""}`);
     });
     out.push("", `Estimated total: ${fmt(sum, "cr")}${quoted ? `, plus ${quoted} item${quoted > 1 ? "s" : ""} to be quoted` : ""}${orderMeta.where === "delivery" ? ", plus delivery" : ""}`);
     if (full - sum > 0.005) out.push(`Without discounts: ${fmt(full, "cr")} (saving ${fmt(full - sum, "cr")})`);
@@ -466,7 +531,12 @@
     });
     od.addEventListener("input", e => {
       if (e.target.id === "ol-name") orderMeta.name = e.target.value;
-      else if (e.target.id === "ol-where") { orderMeta.where = e.target.value; e.target.classList.remove("bad"); }
+      else if (e.target.id === "ol-where") {
+        orderMeta.where = e.target.value; saveOrder();
+        // Re-check which items the chosen store sells.
+        if (order.some(l => storesFor(byKey(l.k)))) { renderOrder(); const w = $("#ol-where"); if (w) w.focus(); }
+        return;
+      }
       else if (e.target.id === "ol-note") orderMeta.note = e.target.value;
       else return;
       saveOrder();
@@ -533,6 +603,7 @@
       ${it.description ? `<p class="dlg-desc">${esc(it.description)}</p>` : ""}
       ${it.details ? `<div class="dlg-details">${detailsHTML(it.details)}</div>` : ""}
       ${stockTag(it, true) ? `<p class="dlg-stock">${stockTag(it, true)}</p>` : ""}
+      ${locationsHTML(it)}
       ${isProtected(it) ? protectedHTML() : ""}
       ${priceHTML(it)}
       ${orderControlsHTML(it)}

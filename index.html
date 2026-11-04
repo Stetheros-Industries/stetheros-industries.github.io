@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-11-03c">
+<link rel="stylesheet" href="assets/style.css?v=2026-11-03d">
 </head>
 <body>
 <div class="band">
@@ -82,6 +82,7 @@
     <div class="list-tools">
       <label class="sort" for="sort-goods"><span>Sort</span><select id="sort-goods">
         <option value="featured">Featured</option><option value="new">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label>
+      <label class="sort store-pick" hidden><span>Sold at</span><select></select></label>
       <label class="check" id="hide-out-wrap" for="hide-out" hidden><input id="hide-out" type="checkbox"> Hide out of stock</label>
     </div>
     <div class="grid" id="goods-grid"><p class="loading">Loading the catalog…</p></div>
@@ -97,6 +98,7 @@
     <div class="list-tools">
       <label class="sort" for="sort-svc"><span>Sort</span><select id="sort-svc">
         <option value="featured">Featured</option><option value="new">Newest</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="name">Name</option></select></label>
+      <label class="sort store-pick" hidden><span>Sold at</span><select></select></label>
     </div>
     <div class="services" id="services-list"></div>
   </section>
@@ -138,10 +140,10 @@
 <div class="wrap foot-note">This site counts visits anonymously with GoatCounter: no cookies and no personal data.</div></footer>
 
 <script>window.SITE_ROOT = "";</script>
-<script src="js/header.js?v=2026-11-03c"></script>
-<script src="js/config.js?v=2026-11-03c"></script>
-<script src="js/common.js?v=2026-11-03c"></script>
-<script src="js/catalog.js?v=2026-11-03c"></script>
+<script src="js/header.js?v=2026-11-03d"></script>
+<script src="js/config.js?v=2026-11-03d"></script>
+<script src="js/common.js?v=2026-11-03d"></script>
+<script src="js/catalog.js?v=2026-11-03d"></script>
 <script data-goatcounter="https://stetheros.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
