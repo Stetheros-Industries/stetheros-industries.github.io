@@ -602,12 +602,14 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .dlg-protected strong { color: var(--ink); }
 
 /* ---------- Items sold only at some stores ---------- */
+/* Lavender, so it is not mistaken for the teal New label or the blue Made to order label. */
+:root { --loc: #b9a6f2; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 4px 6px; align-self: flex-start; }
-.loc-tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 99px; color: var(--teal); border: 1px dashed var(--teal); }
+.loc-tag { display: inline-block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 99px; color: var(--loc); border: 1px dashed var(--loc); }
 .svc-main .tag-row { margin-top: 4px; }
 .svc-main .tag-row .stock { margin-top: 0; }
-.dlg-locations { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); background: var(--sunken); border-left: 4px solid var(--teal); }
+.dlg-locations { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius); background: var(--sunken); border-left: 4px solid var(--loc); }
 .dlg-locations p { margin: 0; font-size: 14px; color: var(--muted); }
 .dlg-locations strong { color: var(--ink); }
-.order-table td small.ol-where { color: var(--teal); }
+.order-table td small.ol-where { color: var(--loc); }
 .order-table td small.ol-where.warn { color: var(--warn); font-weight: 600; }
