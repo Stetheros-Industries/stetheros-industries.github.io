@@ -682,3 +682,4 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .job { grid-template-columns: minmax(0, 1fr); }
   .job-thumb img { aspect-ratio: 16 / 9; }
 }
+.job-terms { margin: -2px 0 10px; font-size: 13.5px; color: var(--muted); }

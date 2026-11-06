@@ -16,7 +16,7 @@ Stetheros Industries is a member-run industrial company. Members make goods and 
 4. **Stock targets.** The company aims to hold two weeks of expected sales of each good. Up-front payment is guaranteed only while stock is below that target, and the weekly budget is divided equally among active members, with a priority contract holder's committed quota covered first. A ledger kept by the Sales role and checked by an auditor records every deposit (§5).
 5. **Ownership and dividends.** Members earn equity points by contributing assets, with a bonus for contributing early in a server's life. The company distributes part of its profit to active members. The rate is 25% at server launch, and afterward the CEO or the board may change it, subject to the usual board challenge. Of each dividend, 85% is paid by equity share and 15% equally among active members, and a new member without equity starts receiving the equal portion after two weeks. A member stays active by passing the activity test every two weeks, inactive points decay, and a member who leaves is bought out at the original value of the equity granted (§6).
 6. **Assets.** A member keeps an asset by default and sells its goods through the company at the 80/20 split. The company buys an asset only with approval, at a value fixed on approval, paying half at purchase and the rest from what the asset earns. The member may take payment as equity, cash, or goods, and builders of infrastructure also receive weekly payments while it serves the company (§7).
-7. **Contracts and services.** The company may give a member a priority contract, under which the member's goods are drawn first for sale in return for a weekly quota. Goods outside the catalog are unrestricted, custom orders have their own rules, and the company sells services on members' behalf, keeping 20%. Every build the company sells is protected, and copying one needs a license (§8).
+7. **Contracts and services.** The company may give a member a priority contract, under which the member's goods are drawn first for sale in return for a weekly quota. Goods outside the catalog are unrestricted, custom orders have their own rules, and the company sells services on members' behalf, keeping 20%. Every build the company sells is protected, and copying one needs a license, and the company may list paid contract jobs that anyone may take (§8).
 8. **Governance.** A CEO and a board run the company. The CEO can approve builds, contracts, and supply budgets alone, but a majority of the board can challenge an approval, and an approval becomes final when its 24-hour challenge window closes. Each eligible member has one vote, not weighted by equity, and the CEO can be removed by 66% of eligible members together with a majority of equity. Rule-breaking is handled by a three-strike system, with removal at the fourth strike (§9).
 9. **Reimbursement.** A member who pays with personal money for an approved company purchase, because no board member is online, is repaid within 7 days. A late payment carries a premium of 10% of the claim for each full week, up to 30% (§10).
 10. **Nations and war.** Prunia is covered by a Home Charter, and any other nation may sign the Stetheros Compact. Governments and citizens of both receive a 10% discount on company goods, and both share in a profit pool of 7% of company profit. Both also accept the wartime provisions: strategic goods never reach a nation's enemy, trade continues, company assets are protected, and the company takes no side in a war (§11, §12).
@@ -34,7 +34,7 @@ Every section except §2 opens with a statement of what the section does, follow
 | §5 | Supply Management | Stock targets, guarantee budgets, the stock ledger |
 | §6 | Equity and Dividends | Earning equity, dividends, activity, decay, buyback |
 | §7 | Assets and Ownership | Keeping or selling assets, valuation, infrastructure |
-| §8 | Contracts and Services | Priority contracts, custom orders, services, protected builds |
+| §8 | Contracts and Services | Priority contracts, custom orders, services, protected builds, contract jobs |
 | §9 | Governance and Enforcement | The board, the CEO, votes, roles, strikes |
 | §10 | Member-Advanced Purchases | Repayment when a member pays for approved purchases |
 | §11 | Nations: the Home Charter and the Stetheros Compact | The Home Charter, the Stetheros Compact, discounts, the profit pool |
@@ -76,6 +76,8 @@ Every section except §2 opens with a statement of what the section does, follow
 | Catalog | The fixed list of goods the company officially produces and sells (§3.2). |
 | Branded division | A part of the company that sells under its own name and logo but is otherwise the company in every respect (§3.8). |
 | Protected build | A build the company sells, whose design may be copied only under a license (§8.5). |
+| Contract job | A paid job the company lists for anyone to take, including people outside the company (§8.6). |
+| Contractor | A person who takes a contract job. A contractor is not a member (§8.6). |
 | Revenue | The Credit the company receives from selling goods or services. |
 | Cost of goods | What the company pays members for deposited goods: the up-front payment plus the share paid after the sale (§4). |
 | Internal price | The price at which the company values its own goods when a member takes them for personal use, when goods are paid in a buyback, and when a member's materials are credited in a custom order. It is determined dynamically rather than fixed in advance (§3.5, §6.9, §8.3). |
@@ -312,7 +314,7 @@ At purchase = α × v,   where α = 0.5
 
 ## §8 Contracts and Services
 
-> **What this section does.** It covers special arrangements: priority contracts that let a member's goods sell first, goods outside the catalog, custom orders, and services. It sets the quota a contract holder commits to and when a contract lapses, who owns a custom good depending on whose materials built it, and how a service is booked, held in escrow, confirmed, and paid. It also protects the designs of the builds the company sells, and sets how a license to copy one is agreed and the penalties for copying without one.
+> **What this section does.** It covers special arrangements: priority contracts that let a member's goods sell first, goods outside the catalog, custom orders, and services. It sets the quota a contract holder commits to and when a contract lapses, who owns a custom good depending on whose materials built it, and how a service is booked, held in escrow, confirmed, and paid. It also protects the designs of the builds the company sells, and sets how a license to copy one is agreed and the penalties for copying without one. Finally, it sets the rules for contract jobs, which people outside the company may take.
 
 **§8.1 Priority contracts.** The company may make a specific deal under which a member's goods are the first drawn from stock for sale, ahead of other members' units of the same good. The contract holder is credited with those sales until the holder's units run out. After that, the remaining quota is filled through entitlements and the shared pool (§5.4, §5.5). In return, the holder commits to a weekly quota.
 
@@ -362,6 +364,17 @@ c_g = κ × D_g,   where κ = 0.5 to start
 
 6. The board may reduce or lift any penalty under this clause at any time by a majority, for example after a license is agreed.
 7. A nation under the Home Charter or the Stetheros Compact commits to cooperate against its citizens who copy protected builds, and to act against officials who copy them or allow them to be copied. Only repeated copying by a nation's officials goes up the remedy ladder in §12.8.
+
+**§8.6 Contract jobs.** The company may list paid jobs, called contract jobs, that anyone may take, including people outside the company. A person who takes one is a contractor. A contractor is not a member, and a contract job brings no equity, dividends, or votes.
+
+1. A job paid with company funds needs the approval of a majority of the board, and its pay is recorded in the ledger as an operating expense. A member may ask the board to list a job that the member pays from the member's own funds. The listing says so, and the member, not the company, owes the pay.
+2. The listing states the pay, or states that the pay is agreed when the job is claimed. Pay agreed when the job is claimed is written down, such as in a message, before work starts.
+3. The first person whom the job's contact confirms takes the job. The listing states how long the contractor has to finish it once it is claimed, and the board may agree a different time with the contractor. If that time runs out, the job reopens and nothing is owed for unfinished work, though the board may pay for part of it.
+4. The job's contact or a board member checks the work within 3 days of the contractor reporting it done, or on a later date the contractor agrees to. Work not checked in that time counts as accepted.
+5. The listing states when the pay is due. Unless it says otherwise, pay is due when the work is accepted, and the listing may provide for part or all of it to be paid up front. Pay is made within 3 days of the time it is due, or on a later date the contractor agrees to, and the late premium in §10.4 applies to late pay.
+6. Anything the company supplies for a job remains company property. The contractor returns what is not used, and keeping or selling it is theft.
+7. A member may take a contract job, subject to any restrictions the board or the CEO sets.
+8. The board may bar a contractor from future jobs for repeated failure to finish or for poor work. Theft or fraud by a contractor is handled under the penalties in §8.5, item 5.
 
 ## §9 Governance and Enforcement
 
@@ -581,6 +594,7 @@ r_new = 0.8 × r_old
 | §8.1 | Priority contract: volume cap | Equal to the committed quota |
 | §8.4 | Service dispute window | 48 hours |
 | §8.5 | Protected builds | Every build the company sells; copying needs a license agreed with the board and the member who designed or produces it, or the standard fee of the list price per copy; penalties outside the company: a written notice, then 3 weeks without builds, services, or discounts, then permanent refusal of builds and services, then refusal of all business; the board may lift any penalty |
+| §8.6 | Contract jobs | Open to anyone; a job paid with company funds needs a board majority, and a member may ask the board to list a job the member pays; work checked within 3 days of being reported done, and pay made within 3 days of its due date, unless the contractor agrees to later; late premium as in §10.4 |
 | §9.2 | Board vote threshold | 66% |
 | §9.3 | Challenge window for CEO approvals | 24 hours; members may build earlier at the risk of the approval being blocked |
 | §9.4 | Member votes | One member, one vote, not weighted by equity |

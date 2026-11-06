@@ -90,7 +90,10 @@ Each row of the Contracts tab is one paid job for people outside the company, sh
 | `description` | A sentence or two. |
 | `details` | Requirements. Blank lines start a new paragraph; lines starting with `- ` become bullets. Shown under "Requirements and details". |
 | `location` | Where the work is, in any words. |
-| `deadline` | The last day to finish. The job disappears after that day. |
+| `time_allowed` | How long the contractor has once they claim the job, such as `3 days` or `1 week` (§8.6). The board may agree a different time with a contractor. |
+| `payment` | When the pay is due, such as `half up front, half after checking`. Empty means after the work is checked. |
+| `paid_by` | Only for a job a member pays from their own funds (§8.6): that member, such as `@IsoKamakazi`. The job then says it is not paid by the company. |
+| `deadline` | The last day the job is open to claim. It disappears from the page after that day. |
 | `status` | Empty or `open`; `taken` to show it as taken (dimmed, listed after the open jobs); `closed` or `filled` to take it down. |
 | `contact` | Who to message to claim it, such as `@FighterPilot O5`. Empty means the @Sales role. |
 | `listed` | The date posted; shows a New label for 8 days. |

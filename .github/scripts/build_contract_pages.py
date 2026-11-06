@@ -17,7 +17,7 @@ from build_item_pages import config_value, number, parse_date, truthy, money, pi
 
 ROOT = sys.argv[1] if len(sys.argv) > 1 else "."
 OUT = os.path.join(ROOT, "contractors")
-ALIASES = {"pay": "price", "location": "locations", "where": "locations", "job": "name", "kind": "category"}
+ALIASES = {"pay": "price", "location": "locations", "where": "locations", "job": "name", "kind": "category", "time": "time_allowed", "time allowed": "time_allowed", "open until": "deadline", "paid by": "paid_by"}
 
 
 def fetch(url):
@@ -67,10 +67,12 @@ def main():
         key = re.sub(r"[^A-Za-z0-9_-]+", "-", r.get("id") or name)
         pay, unit = number(r.get("price")), r.get("unit", "")
         facts = [f"Pay: {money(pay)}{(' ' + unit) if unit else ''}" if pay is not None else "Pay agreed when you claim it"]
+        if r.get("time_allowed") or r.get("time"):
+            facts.append(f"Time to finish: {r.get('time_allowed') or r.get('time')}")
         if r.get("locations"):
             facts.append(f"Where: {r['locations']}")
         if due:
-            facts.append(f"Deadline: {due.strftime('%b')} {due.day}")
+            facts.append(f"Open until {due.strftime('%b')} {due.day}")
         if re.match(r"^(taken|claimed|in progress|progress|assigned)", r.get("status", ""), re.I):
             facts.append("Taken")
         desc = " · ".join(facts) + "." + (" " + r["description"] if r.get("description") else "")

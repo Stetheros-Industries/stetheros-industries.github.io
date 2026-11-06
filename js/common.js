@@ -245,6 +245,9 @@
         stock: parseStock(get(r, "stock")),
         protect: get(r, "protected"),
         deadline: parseDate(get(r, "deadline"), true),
+        timeAllowed: get(r, "time_allowed"),
+        payment: get(r, "payment"),
+        paidBy: get(r, "paid_by"),
         status: get(r, "status").trim().toLowerCase(),
         locations: get(r, "locations").split(/[,;\n]+/).map(s => s.trim()).filter(Boolean),
         coords: get(r, "coords"),
@@ -271,7 +274,7 @@
   // Contract jobs come from their own Contracts tab (CONTRACTS_CSV_URL in js/config.js).
   // Without that link: the example jobs while the catalog is not connected either, or else
   // any rows with type "contract" on the Catalog tab.
-  const CONTRACT_ALIASES = { pay: "price", location: "locations", where: "locations", job: "name", kind: "category" };
+  const CONTRACT_ALIASES = { pay: "price", location: "locations", where: "locations", job: "name", kind: "category", time: "time_allowed", "time allowed": "time_allowed", "open until": "deadline", "paid by": "paid_by" };
   async function loadContracts() {
     const url = (window.CONTRACTS_CSV_URL || "").trim();
     const onlyJobs = r => Object.assign(r, { items: r.items.filter(i => i.type === "contract") });

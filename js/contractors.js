@@ -6,7 +6,10 @@
 //   description  one or two sentences
 //   details      requirements; lines starting with "- " become bullet points
 //   location     where the work is (free text)
-//   deadline     last day to finish; the job disappears after it
+//   time_allowed how long the contractor has to finish once the job is claimed, e.g. "5 days"
+//   payment      when the pay is due, e.g. "half up front"; empty means after the work is checked
+//   paid_by      for a job a member pays from their own funds (§8.6), that member
+//   deadline     the last day the job is open to claim; it disappears after that day
 //   status       empty or "open"; "taken" shows the job as taken; "closed" or "filled" hides it
 //   contact      who to message; empty means the Sales role
 //   listed       date posted (shows a New label for 8 days); image optional
@@ -46,7 +49,7 @@
     if (!(j.deadline instanceof Date)) return "";
     const left = Math.ceil((j.deadline - Date.now()) / DAY);
     const when = left <= 0 ? "today" : left === 1 ? "1 day left" : `${left} days left`;
-    return `<div><dt>Deadline</dt><dd>${esc(fmtDate(j.deadline))} <span class="${left <= 3 ? "soon" : "muted"}">(${when})</span></dd></div>`;
+    return `<div><dt>Open until</dt><dd>${esc(fmtDate(j.deadline))} <span class="${left <= 3 ? "soon" : "muted"}">(${when})</span></dd></div>`;
   }
 
   function jobHTML(j) {
@@ -60,7 +63,8 @@
         ${catsOf(j).length ? `<p class="cat">${esc(catsOf(j).join(" · "))}</p>` : ""}
         <h3>${esc(j.name)}${SI.isNew(j) ? ' <span class="new-tag">New</span>' : ""}${st === "taken" ? ' <span class="taken-tag">Taken</span>' : ""}${j.example ? ' <span class="ex">Example</span>' : ""}</h3>
         ${j.description ? `<p class="desc">${esc(j.description)}</p>` : ""}
-        <dl class="job-facts"><div><dt>Pay</dt><dd>${pay}</dd></div>${where}${deadlineHTML(j)}</dl>
+        <dl class="job-facts"><div><dt>Pay</dt><dd>${pay}</dd></div>${j.timeAllowed ? `<div><dt>Time to finish</dt><dd>${esc(j.timeAllowed)}</dd></div>` : ""}${where}${deadlineHTML(j)}</dl>
+        <p class="job-terms">${j.payment ? `Paid ${esc(j.payment.replace(/^paid\s+/i, ""))}.` : "Paid after the work is checked."}${j.paidBy ? ` This job is paid by ${esc(j.paidBy)}, not by the company.` : ""} <a href="../policy/index.html#s8-6">Terms (§8.6)</a></p>
         ${j.details ? `<details class="job-details"><summary>Requirements and details</summary>${detailsHTML(j.details)}</details>` : ""}
         <div class="job-actions">
           ${st === "taken"
