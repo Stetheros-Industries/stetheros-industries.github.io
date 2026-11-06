@@ -84,18 +84,22 @@
     const now = Date.now();
     return jobs.filter(j => state(j) !== "closed" && !(j.deadline instanceof Date && j.deadline.getTime() < now));
   }
+  // Filters: "New" (jobs posted in the last 8 days) when there are any, then the kinds of job.
+  const NEW = "__new__";
   function renderChips() {
     const cats = [...new Set(visible().flatMap(catsOf))];
-    if (cats.length < 2) { chipsHost.hidden = true; cat = "All"; return; }
-    if (!cats.includes(cat)) cat = "All";
+    const anyNew = visible().some(j => SI.isNew(j));
+    const chips = ["All", ...(anyNew ? [NEW] : []), ...cats];
+    if (chips.length < 3 && !anyNew) { chipsHost.hidden = true; cat = "All"; return; }
+    if (!chips.includes(cat)) cat = "All";
     chipsHost.hidden = false;
-    chipsHost.innerHTML = ["All", ...cats].map(c => `<button type="button" class="chip-btn" aria-pressed="${c === cat}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+    chipsHost.innerHTML = chips.map(c => `<button type="button" class="chip-btn${c === NEW ? " chip-new" : ""}" aria-pressed="${c === cat}" data-c="${esc(c)}">${c === NEW ? "New" : esc(c)}</button>`).join("");
     chipsHost.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { cat = b.dataset.c; renderChips(); render(); }));
   }
   function render() {
     const q = query.trim().toLowerCase();
     const shown = visible()
-      .filter(j => cat === "All" || catsOf(j).includes(cat))
+      .filter(j => cat === "All" || (cat === NEW ? SI.isNew(j) : catsOf(j).includes(cat)))
       .filter(j => !q || [j.name, j.description, j.category, j.details, (j.locations || []).join(" ")].join(" ").toLowerCase().includes(q))
       .sort((a, b) => (state(a) === "taken") - (state(b) === "taken"));
     if (shown.length) { list.innerHTML = shown.map(jobHTML).join(""); return; }
