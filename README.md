@@ -95,7 +95,7 @@ Each row of the Contracts tab is one paid job for people outside the company, sh
 | `paid_by` | Only for a job a member pays from their own funds (§8.6): that member, such as `@IsoKamakazi`. The job then says it is not paid by the company. |
 | `deadline` | The last day the job is open to claim. It disappears from the page after that day. |
 | `status` | Empty or `open`; `taken` to show it as taken (dimmed, listed after the open jobs); `closed` or `filled` to take it down. |
-| `contact` | Who to message to claim it, such as `@FighterPilot O5`. Empty means the @Sales role. |
+| `contact` | Who to message to claim it, such as `@FighterPilot O5`. Empty means the member in `paid_by`, or the @Sales role if the company pays. |
 | `listed` | The date posted; shows a New label for 8 days. |
 | `image` | Optional picture, as in the Catalog tab. |
 | `visible` | `yes` or `no`. |
