@@ -20,12 +20,14 @@ You may already have the constants sheet from the calculator. Add the catalog to
 1. Open the company spreadsheet (or create one, signed in with the company's Google account).
 2. **Constants tab:** if you don't have it yet, **File → Import → Upload** `constants-template.csv`, choose **Insert new sheet(s)**, and name the tab `Constants`.
 3. **Catalog tab:** **File → Import → Upload** `catalog-template.csv`, choose **Insert new sheet(s)**, and name the tab `Catalog`. Replace the example rows with the real catalog.
+   **Contracts tab:** the same way, import `contracts-template.csv` as a new tab named `Contracts`. It holds the contract jobs for the Contractors page (columns below).
 4. Share the spreadsheet as **Editor** only with the CEO, the board members who may change constants, and the Sales role. Because this tab is the official catalog, editing it changes what members may not sell elsewhere (§3.1).
 5. **File → Share → Publish to web**. Publish **each tab separately** as **Comma-separated values (.csv)**: choose the tab under "Link", click **Publish**, copy the link, then repeat for the other tab. Keep **Automatically republish when changes are made** ticked.
 6. Paste the two links into `js/config.js`:
    ```js
    window.SHEET_CSV_URL = "…the Constants tab link…";
    window.CATALOG_CSV_URL = "…the Catalog tab link…";
+   window.CONTRACTS_CSV_URL = "…the Contracts tab link…";
    ```
    If you already set up the calculator, copy `SHEET_CSV_URL` from the old `config.js`.
 
@@ -34,7 +36,7 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | Column | What to enter |
 |---|---|
 | `id` | Any short code, such as G001 or S001. Not shown on the site. |
-| `type` | `good`, `service`, `store`, `member`, `brand`, `nation`, or `notice`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). A `brand` row is a branded division (see below). A `nation` row is a nation that has signed the Stetheros Compact: put its name in `name` and, optionally, a short note in `description`. These are listed under the discount picker when a visitor chooses the Compact discount, and the list is hidden while there are none. A `notice` row is an announcement banner (see below). A `contract` row is a paid job for people outside the company, listed on the Contractors page (see below). |
+| `type` | `good`, `service`, `store`, `member`, `brand`, `nation`, or `notice`. Services are listed in their own section. A `store` row is a store location: put the city in `name`, the nation in `category`, any note in `description`, and a photo of the store or city in `image`. A `member` row is a company member shown on the About page: put the name in `name` and the role, if any, in `category` (for example `CEO & Board`). A `brand` row is a branded division (see below). A `nation` row is a nation that has signed the Stetheros Compact: put its name in `name` and, optionally, a short note in `description`. These are listed under the discount picker when a visitor chooses the Compact discount, and the list is hidden while there are none. A `notice` row is an announcement banner (see below). |
 | `category` | A heading such as Metals or Logistics. Goods can be filtered by category. A good or service can have several, separated by commas, such as `Metals, Components`; it then appears under each of those filters. (For `store`, `member`, and `brand` rows this column holds the nation, the role, or the colors, as described below.) |
 | `name` | The item name. |
 | `price` | The reference price in Credits, as a number. Leave it empty to show "Price on request" (goods) or "Quoted" (services). |
@@ -50,8 +52,6 @@ You may already have the constants sheet from the calculator. Add the catalog to
 | `contact` | Optional. Who to message about this item, for example `@IsoKamakazi`. Leave it empty and the site says to message someone with the @Sales role. |
 | `listed` | Optional. The date the item was added, as `2026-11-01` or `11/1/2026`. The item shows a teal **New** label for 8 days, counting that day, and the label then disappears by itself. |
 | `image` | A file name in the `images/` folder (for example `iron-ingots.png` or `stetheros-store.png`), or a full `https://` link. Leave it empty for a plain tile. Goods use a 4:3 picture; stores use a wider one, about 16:9. |
-| `deadline` | Contract jobs only, optional. The last day to finish the job; the job disappears from the Contractors page after that day. |
-| `status` | Contract jobs only, optional. Empty or `open` for an open job; `taken` to show it as taken (it stays listed, dimmed, after the open jobs); `closed` or `filled` to remove it. |
 | `stock` | Optional. `in stock`, `low`, `out of stock`, or `made to order`. Cards show Low stock, Out of stock, and Made to order; the item window also shows In stock. When any good is out of stock, a **Hide out of stock** box appears above the goods. Leave it empty to show nothing. |
 | `coords` | Stores only, optional. The store's coordinates, as `1200 64 -340` (X Y Z) or `1200 -340` (X Z). Visitors get a **Copy** button that copies them. |
 | `map` | Stores only, optional. A `https://` link to the store on a web map, shown as **Open map**. |
@@ -70,13 +70,33 @@ The service row whose `id` is `DELIVERY` lists delivery in the Services section.
 
 **Branded divisions.** Add a column headed `brand` (anywhere; the site reads columns by their heading), then one row per division: type `brand`, its key in `id` (for example `IHI`), its name in `name`, its logo file in `image` (for example `ihi-logo.png`, uploaded to the `images` folder), and an optional short line in `description`. In `category`, put up to three colors: the accent, a highlight, and the background, for example `#2563FF #F42F66 #050810`. Each division gets its own dark section near the bottom of the catalog, labeled as a branded division of Stetheros Industries. A division exists only after a 66% vote of the whole board (§3.8). If it ends, set its row's `visible` to `no` and clear the `brand` cells of its items.
 
-**Contract jobs.** Add a row with type `contract` for each job you want done by people outside the company. `name` is the job, `category` the kind of job (it becomes a filter when there are two or more kinds), `price` and `unit` the pay (such as `120` and `per 10 stacks delivered`; leave `price` empty for "agreed when you claim it"), `description` a sentence or two, `details` the requirements (lines starting with `- ` become bullets), `locations` where the work is, `deadline` the last day, `status` as above, `contact` who to message (empty means the @Sales role), `listed` the date posted (a New label for 8 days), and `image` an optional picture. Set `visible` to `no` or `status` to `closed` to take a job down.
-
 **Announcements.** Add a row with type `notice`. Put the headline in `name` (for example `Winter sale.`) and the text in `description`. `sale_from` and `sale_until` set the first and last day it shows; leave both empty to show it until you hide the row. Put `warning` in `category` for an amber banner, or `sale` for an orange edge. Visitors can dismiss a notice, and a notice you reword shows again.
 
 **If you already imported the Catalog tab,** add the columns `stock`, `coords`, and `map` (anywhere; the site reads columns by their heading). Leave them empty where they don't apply.
 
 **If you already have a Constants tab,** add one row to it: `bulk_discount` with the value `15%`. Until you do, the site uses 15% and the calculator shows a note that the row is missing.
+
+### Contracts columns
+
+Each row of the Contracts tab is one paid job for people outside the company, shown on the Contractors page. Each open job also gets its own link with a preview in Discord, rebuilt within the hour.
+
+| Column | What it does |
+|---|---|
+| `id` | A short unique code such as `C001`. It forms the job's link, so keep it once posted. |
+| `category` | The kind of job, such as `Mining`, `Hauling`, or `Building`. With two or more kinds, they become filters. |
+| `name` | The job. |
+| `pay` | The pay in Credits, such as `120`. Leave it empty for "agreed when you claim it". |
+| `unit` | What the pay is for, such as `per 10 stacks delivered` or `for the whole job`. |
+| `description` | A sentence or two. |
+| `details` | Requirements. Blank lines start a new paragraph; lines starting with `- ` become bullets. Shown under "Requirements and details". |
+| `location` | Where the work is, in any words. |
+| `deadline` | The last day to finish. The job disappears after that day. |
+| `status` | Empty or `open`; `taken` to show it as taken (dimmed, listed after the open jobs); `closed` or `filled` to take it down. |
+| `contact` | Who to message to claim it, such as `@FighterPilot O5`. Empty means the @Sales role. |
+| `listed` | The date posted; shows a New label for 8 days. |
+| `image` | Optional picture, as in the Catalog tab. |
+| `visible` | `yes` or `no`. |
+| `sort` | Order on the page; smaller numbers first. |
 
 ### Images
 
@@ -149,6 +169,8 @@ The Markdown export leaves out images. The policy page puts the formulas back fr
 | `item/` | Link-preview pages for each item, built automatically. Do not edit. |
 | `images/opt/`, `images/thumb/`, `images/og/` | Small copies of the pictures, built automatically. Do not edit. |
 | `.github/workflows/site-files.yml`, `.github/scripts/` | The automatic picture and item-page updates |
+| `contracts-template.csv` | Starting Contracts tab. The site shows it as example jobs until a sheet is connected. |
+| `contractors/` | The Contractors page, and link-preview pages for each open job (built automatically; do not edit the folders inside it). |
 | `catalog-template.csv`, `constants-template.csv` | Starting tabs for the sheet. The site shows `catalog-template.csv` as example items until the Catalog link is set. |
 
 To test on your own computer, run `python -m http.server` in this folder and open `http://localhost:8000`. Pages that read files fail when opened by double-clicking.

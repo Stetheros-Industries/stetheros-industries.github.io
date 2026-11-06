@@ -204,10 +204,13 @@
     return "";
   }
 
-  function parseCatalog(text, example) {
+  // opts.type: the type of every row when the sheet has no "type" column (the Contracts tab).
+  // opts.aliases: other names for columns, e.g. { pay: "price" }.
+  function parseCatalog(text, example, opts) {
+    opts = opts || {};
     const rows = parseCSV(text);
     if (!rows.length) return { items: [], updated: null };
-    const head = rows[0].map(h => h.toLowerCase().trim());
+    const head = rows[0].map(h => h.toLowerCase().trim()).map(h => (opts.aliases || {})[h] || h);
     const get = (r, name) => { const i = head.indexOf(name); return i >= 0 ? (r[i] || "").trim() : ""; };
     let updated = null;
     const out = [];
@@ -218,7 +221,7 @@
       if (!name) return;
       const vis = get(r, "visible");
       if (vis && !parseBool(vis)) return;
-      const t = get(r, "type");
+      const t = get(r, "type") || opts.type || "";
       const p = parseNumber(get(r, "price"));
       const sort = parseNumber(get(r, "sort"));
       const bulk = parseNumber(get(r, "bulk_min"));
@@ -263,6 +266,26 @@
     const res = await fetch(src, { cache: "no-store" });
     if (!res.ok) throw new Error("HTTP " + res.status);
     return Object.assign(parseCatalog(await res.text(), example), { example });
+  }
+
+  // Contract jobs come from their own Contracts tab (CONTRACTS_CSV_URL in js/config.js).
+  // Without that link: the example jobs while the catalog is not connected either, or else
+  // any rows with type "contract" on the Catalog tab.
+  const CONTRACT_ALIASES = { pay: "price", location: "locations", where: "locations", job: "name", kind: "category" };
+  async function loadContracts() {
+    const url = (window.CONTRACTS_CSV_URL || "").trim();
+    const onlyJobs = r => Object.assign(r, { items: r.items.filter(i => i.type === "contract") });
+    if (url) {
+      const res = await fetch(url + (url.includes("?") ? "&" : "?") + "nocache=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return onlyJobs(Object.assign(parseCatalog(await res.text(), false, { type: "contract", aliases: CONTRACT_ALIASES }), { example: false }));
+    }
+    if (!(window.CATALOG_CSV_URL || "").trim()) {
+      const res = await fetch((window.SITE_ROOT || "") + "contracts-template.csv", { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return onlyJobs(Object.assign(parseCatalog(await res.text(), true, { type: "contract", aliases: CONTRACT_ALIASES }), { example: true }));
+    }
+    return onlyJobs(await loadCatalog());
   }
 
   function imageSrc(img) {
@@ -317,5 +340,5 @@
   }
 
   window.SI = { parseCSV, parseNumber, parseBool, C, meta, status, loadConstants, fmt, fmtConst, tex, secId, secLink, esc,
-    parseDate, fmtDate, parseSale, saleNow, isNew, parseCatalog, loadCatalog, imageSrc, imageVariant, imgAttrs, imgSlug, imgRetry, copyText };
+    parseDate, fmtDate, parseSale, saleNow, isNew, parseCatalog, loadCatalog, loadContracts, imageSrc, imageVariant, imgAttrs, imgSlug, imgRetry, copyText };
 })();

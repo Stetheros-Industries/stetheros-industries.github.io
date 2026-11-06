@@ -2,10 +2,12 @@
 //
 // SHEET_CSV_URL is the "Publish to web" CSV link of the Constants tab.
 // CATALOG_CSV_URL is the "Publish to web" CSV link of the Catalog tab.
+// CONTRACTS_CSV_URL is the "Publish to web" CSV link of the Contracts tab (contract jobs).
 // Each tab has its own link (see README.md). Leave a link empty to run on the
 // built-in starting values (constants) or the example items (catalog).
 window.SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZUn_e6HAYiMersD33BJ_7LhHgQ7I0V1xvDrM36g9WTkrhH6NckrzF8roG3BKc5r6fi_NqKMD3bZu7/pub?gid=1971219426&single=true&output=csv";
 window.CATALOG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZUn_e6HAYiMersD33BJ_7LhHgQ7I0V1xvDrM36g9WTkrhH6NckrzF8roG3BKc5r6fi_NqKMD3bZu7/pub?gid=1616221061&single=true&output=csv";
+window.CONTRACTS_CSV_URL = "";
 
 // Every constant the calculator uses. The sheet overrides `value` by `key`.
 // `min` and `max` are safety limits: a sheet value outside them is ignored,

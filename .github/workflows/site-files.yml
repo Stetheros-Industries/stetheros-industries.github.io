@@ -2,6 +2,7 @@
 #  - small, fast copies of every picture in images/ (images/opt, images/thumb, images/og)
 #  - one page per catalog item under item/, for link previews in Discord
 #  - one page per policy section and clause under policy/<number>/, likewise
+#  - one page per open contract job under contractors/<id>/, likewise
 # Runs when pictures or the config are pushed, every hour (to follow the sheet), and on
 # demand from the Actions tab (Update site files → Run workflow).
 name: Update site files
@@ -15,6 +16,7 @@ on:
       - "!images/thumb/**"
       - "!images/og/**"
       - "js/config.js"
+      - "contracts-template.csv"
       - "policy/policy.md"
       - ".github/scripts/**"
       - ".github/workflows/site-files.yml"
@@ -49,6 +51,9 @@ jobs:
       - name: Build item pages from the Catalog tab
         run: python .github/scripts/build_item_pages.py .
 
+      - name: Build contract job pages from the Contracts tab
+        run: python .github/scripts/build_contract_pages.py .
+
       - name: Build policy clause pages from policy.md
         run: python .github/scripts/build_policy_pages.py .
 
@@ -57,7 +62,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A images/opt images/thumb images/og item policy
+          git add -A images/opt images/thumb images/og item policy contractors
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0

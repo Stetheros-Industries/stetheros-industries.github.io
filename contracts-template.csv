@@ -1,0 +1,8 @@
+id,category,name,pay,unit,description,details,location,deadline,status,contact,listed,image,visible,sort
+C001,Mining,Iron ore haul,120,per 10 stacks delivered,Example job. Mine raw iron ore and deliver it to the Stetheros depot.,"What is needed:
+- At least 10 stacks of raw iron ore
+- Delivered to the depot chest in Stetheros
+
+Pay is per 10 stacks; partial loads are paid pro rata.","Stetheros, Prunia",2026-12-15,,,2026-11-05,,yes,10
+C002,Building,Station platform extension,,,"Example job with its pay agreed when claimed. Its status column is ""taken"", so it shows as taken.",,Second Example City,,taken,@FighterPilot O5,,,yes,20
+C003,Hauling,Old example job,50,per trip,Example of a job past its deadline: it does not appear on the website.,,,2026-01-01,,,,,yes,30

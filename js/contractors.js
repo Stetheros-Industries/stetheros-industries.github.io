@@ -1,18 +1,18 @@
-// Contractors page: paid jobs open to people outside the company. Each job is a row with
-// type "contract" on the Catalog tab of the company sheet.
+// Contractors page: paid jobs open to people outside the company, one row each on the
+// Contracts tab of the company sheet (CONTRACTS_CSV_URL in js/config.js).
 //   name         the job
 //   category     the kind of job (Mining, Hauling, Building, ...); several, separated by commas
-//   price, unit  the pay, e.g. 200 and "per stack delivered"; leave price empty for "agreed when claimed"
+//   pay, unit    the pay, e.g. 200 and "per stack delivered"; leave pay empty for "agreed when claimed"
 //   description  one or two sentences
 //   details      requirements; lines starting with "- " become bullet points
-//   locations    where the work is (free text)
+//   location     where the work is (free text)
 //   deadline     last day to finish; the job disappears after it
 //   status       empty or "open"; "taken" shows the job as taken; "closed" or "filled" hides it
 //   contact      who to message; empty means the Sales role
 //   listed       date posted (shows a New label for 8 days); image optional
 (function () {
   "use strict";
-  const { esc, fmt, fmtDate, loadConstants, loadCatalog, imgAttrs } = SI;
+  const { esc, fmt, fmtDate, loadContracts, imgAttrs } = SI;
   const $ = s => document.querySelector(s);
   const list = $("#job-list"), chipsHost = $("#chips-jobs"), status = $("#jobs-status");
   const DISCORD = window.DISCORD_URL || "https://discord.gg/qZYwghHq5J";
@@ -107,7 +107,9 @@
   document.addEventListener("click", e => {
     const c = e.target.closest("[data-copy-job]");
     if (c) {
-      const url = location.href.split("#")[0] + "#job-" + c.dataset.copyJob;
+      // Each job has its own page at contractors/<id>/, which gives the link a preview of
+      // the job in Discord and then opens it here.
+      const url = new URL(encodeURIComponent(c.dataset.copyJob) + "/", location.href.split("#")[0].replace(/[^/]*$/, "")).href;
       SI.copyText(url, () => { c.textContent = "Link copied"; setTimeout(() => { c.textContent = "Copy link"; }, 1800); });
     }
     const d = e.target.closest("[data-job]");
@@ -115,8 +117,8 @@
   });
   $("#q-jobs").addEventListener("input", e => { query = e.target.value; render(); });
 
-  Promise.all([loadConstants().catch(() => null), loadCatalog()]).then(([, r]) => {
-    jobs = r.items.filter(i => i.type === "contract");
+  loadContracts().then(r => {
+    jobs = r.items;
     if (r.example) { status.hidden = false; status.textContent = "Showing example jobs: the company sheet is not connected yet."; }
     renderChips(); render(); focusHash();
     window.addEventListener("hashchange", focusHash);
