@@ -613,3 +613,22 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .dlg-locations strong { color: var(--ink); }
 .order-table td small.ol-where { color: var(--loc); }
 .order-table td small.ol-where.warn { color: var(--warn); font-weight: 600; }
+
+/* ---------- Catalog header: route map ---------- */
+/* Faint rail and trade-route lines (assets/hero-routes.svg) under soft glows in the logo's
+   orange, teal, and navy. A dark fade on the left keeps the heading readable; on phones,
+   where the text spans the whole width, a veil dims the lines further. */
+.hero-routes {
+  --hero-veil: linear-gradient(transparent, transparent);
+  background:
+    var(--hero-veil),
+    linear-gradient(90deg, #0b1118 0%, rgba(11, 17, 24, 0.95) 32%, rgba(11, 17, 24, 0.15) 72%, rgba(11, 17, 24, 0) 100%),
+    radial-gradient(ellipse 30% 70% at 70% 30%, rgba(230, 119, 63, 0.15), transparent 70%),
+    radial-gradient(ellipse 35% 80% at 88% 80%, rgba(0, 128, 128, 0.18), transparent 70%),
+    radial-gradient(ellipse 45% 90% at 95% 10%, rgba(0, 51, 102, 0.55), transparent 70%),
+    url("hero-routes.svg") right center / cover no-repeat,
+    linear-gradient(90deg, #0b1118 0%, #0b1118 35%, #0c1726 100%);
+}
+@media (max-width: 700px) {
+  .hero-routes { --hero-veil: linear-gradient(rgba(11, 17, 24, 0.45), rgba(11, 17, 24, 0.45)); }
+}
