@@ -101,7 +101,7 @@
     if (shown.length) { list.innerHTML = shown.map(jobHTML).join(""); return; }
     list.innerHTML = visible().length
       ? `<p class="muted">No jobs match your search.</p>`
-      : `<div class="no-jobs"><p><strong>No contract jobs are open right now.</strong> New jobs are posted on our Discord server as well as here, so join it to hear about them first.</p></div>`;
+      : `<div class="no-jobs"><p><strong>No contract jobs are open right now.</strong> Join our Discord server and take the @Contractor role to be pinged when a new job is posted.</p></div>`;
   }
 
   // A link to one job (#job-<id>) scrolls to it and outlines it.
