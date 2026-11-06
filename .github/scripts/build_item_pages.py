@@ -86,7 +86,7 @@ def truthy(s):
 def kind(t):
     t = t.lower()
     return "service" if t.startswith("serv") else "brand" if t.startswith(("brand", "division")) else \
-        "good" if not t or not re.match(r"^(store|shop|location|member|nation|compact|notice|announce|banner)", t) else "other"
+        "good" if not t or not re.match(r"^(store|shop|location|member|nation|compact|notice|announce|banner|contract|job|bounty)", t) else "other"
 
 
 def money(n):

@@ -224,7 +224,7 @@
       const bulk = parseNumber(get(r, "bulk_min"));
       out.push({
         id, name, example,
-        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : /^(brand|division)/i.test(t) ? "brand" : /^(nation|compact)/i.test(t) ? "nation" : /^(notice|announce|banner)/i.test(t) ? "notice" : "good",
+        type: /^serv/i.test(t) ? "service" : /^(store|shop|location)/i.test(t) ? "store" : /^member/i.test(t) ? "member" : /^(brand|division)/i.test(t) ? "brand" : /^(nation|compact)/i.test(t) ? "nation" : /^(notice|announce|banner)/i.test(t) ? "notice" : /^(contract|job|bounty)/i.test(t) ? "contract" : "good",
         brand: get(r, "brand").toUpperCase(),
         category: get(r, "category"),
         price: isNaN(p) ? null : p,
@@ -241,6 +241,8 @@
         listed: parseDate(get(r, "listed"), false),
         stock: parseStock(get(r, "stock")),
         protect: get(r, "protected"),
+        deadline: parseDate(get(r, "deadline"), true),
+        status: get(r, "status").trim().toLowerCase(),
         locations: get(r, "locations").split(/[,;\n]+/).map(s => s.trim()).filter(Boolean),
         coords: get(r, "coords"),
         map: get(r, "map"),
