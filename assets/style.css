@@ -632,3 +632,9 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 @media (max-width: 700px) {
   .hero-routes { --hero-veil: linear-gradient(rgba(11, 17, 24, 0.45), rgba(11, 17, 24, 0.45)); }
 }
+
+/* ---------- Catalog terms, at the foot of the catalog ---------- */
+.catalog-terms { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 28px; scroll-margin-top: calc(var(--head-h, 64px) + 16px); }
+.catalog-terms p { margin: 0; font-size: 13.5px; color: var(--muted); max-width: 70ch; }
+.catalog-terms strong { color: var(--ink); }
+@media (max-width: 700px) { .catalog-terms { grid-template-columns: minmax(0, 1fr); } }
