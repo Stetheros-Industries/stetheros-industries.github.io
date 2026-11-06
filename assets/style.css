@@ -652,11 +652,15 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 .job-steps b { display: block; font: 600 19px var(--display); letter-spacing: 0.01em; margin-bottom: 2px; }
 .job-steps span { font-size: 14px; color: var(--muted); }
 .job-list { display: grid; gap: 14px; }
-.job { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px;
+.job { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px;
   scroll-margin-top: calc(var(--head-h, 64px) + 16px); }
 .job:not(:has(.job-thumb)) { grid-template-columns: minmax(0, 1fr); }
 .job.is-target { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .job.is-taken { opacity: 0.72; }
+/* On wide screens the picture sits on the right, so every job's text starts at the same edge. */
+.job-thumb { grid-column: 2; grid-row: 1; }
+.job-main { grid-column: 1; grid-row: 1; }
+.job:not(:has(.job-thumb)) .job-main { grid-column: 1 / -1; }
 .job-thumb img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: calc(var(--radius) - 2px); display: block; background: var(--sunken); }
 .job-main .cat { margin: 0 0 2px; font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .job-main h3 { margin: 0 0 4px; font: 700 24px/1.1 var(--display); letter-spacing: 0.01em; }
@@ -680,6 +684,7 @@ body:has(.item-dialog[open]) { overflow: hidden; }
 @media (max-width: 760px) {
   .job-steps { grid-template-columns: minmax(0, 1fr); }
   .job { grid-template-columns: minmax(0, 1fr); }
+  .job-thumb, .job-main { grid-column: 1; grid-row: auto; }
   .job-thumb img { aspect-ratio: 16 / 9; }
 }
 .job-terms { margin: -2px 0 10px; font-size: 13.5px; color: var(--muted); }
