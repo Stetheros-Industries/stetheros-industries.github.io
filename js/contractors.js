@@ -56,7 +56,10 @@
     const key = keyOf(j), st = state(j);
     const pay = j.price === null ? "Agreed when you claim it" : `<b>${fmt(j.price, "cr")}</b>${j.unit ? ` ${esc(j.unit)}` : ""}`;
     const where = j.locations && j.locations.length ? `<div><dt>Where</dt><dd>${esc(j.locations.join(", "))}</dd></div>` : "";
-    const contact = j.contact ? `<strong>${esc(j.contact)}</strong>` : `someone with the <strong>@Sales</strong> role`;
+    // Who to message: the job's contact; for a job a member pays for (§8.6), that member;
+    // otherwise the Sales role.
+    const who = j.contact || j.paidBy;
+    const contact = who ? `<strong>${esc(who)}</strong>` : `someone with the <strong>@Sales</strong> role`;
     return `<article class="job${st === "taken" ? " is-taken" : ""}" id="job-${esc(key)}">
       ${j.image ? `<div class="job-thumb"><img ${imgAttrs(j.image, "thumb")} alt="" loading="lazy" onerror="if(!SI.imgRetry(this)){this.onerror=null;this.parentNode.remove();}"></div>` : ""}
       <div class="job-main">

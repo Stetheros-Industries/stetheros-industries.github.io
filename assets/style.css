@@ -688,3 +688,5 @@ body:has(.item-dialog[open]) { overflow: hidden; }
   .job-thumb img { aspect-ratio: 16 / 9; }
 }
 .job-terms { margin: -2px 0 10px; font-size: 13.5px; color: var(--muted); }
+/* Job title labels share one size: New, Taken, Example. */
+.job-main h3 .new-tag, .job-main h3 .taken-tag, .job-main h3 .ex { display: inline-block; vertical-align: 3px; font: 600 11.5px/1.5 var(--body); letter-spacing: 0.04em; padding: 1px 8px; border-radius: 99px; }
